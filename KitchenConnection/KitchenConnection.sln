@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33110.190
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KitchenConnection", "KitchenConnection\KitchenConnection.csproj", "{C4606FEA-6A2B-4CFB-932D-0EE6F5914AA7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KitchenConnection.DataLayer", "KitchenConnection.Data\KitchenConnection.DataLayer.csproj", "{D5B16562-E7C8-4301-82BE-288727CCD859}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C4606FEA-6A2B-4CFB-932D-0EE6F5914AA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4606FEA-6A2B-4CFB-932D-0EE6F5914AA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4606FEA-6A2B-4CFB-932D-0EE6F5914AA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4606FEA-6A2B-4CFB-932D-0EE6F5914AA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5B16562-E7C8-4301-82BE-288727CCD859}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5B16562-E7C8-4301-82BE-288727CCD859}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5B16562-E7C8-4301-82BE-288727CCD859}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5B16562-E7C8-4301-82BE-288727CCD859}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C2F0866F-B425-4466-B02B-35FD50D64DA2}
+	EndGlobalSection
+EndGlobal
