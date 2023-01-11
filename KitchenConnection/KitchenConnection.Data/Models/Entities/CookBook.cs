@@ -1,5 +1,6 @@
 ﻿
 using KitchenConnection.Models.Entities;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace KitchenConnection.DataLayer.Models.Entities; 

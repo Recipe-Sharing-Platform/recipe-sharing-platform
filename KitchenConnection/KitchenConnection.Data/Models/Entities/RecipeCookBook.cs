@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using KitchenConnection.Models.Entities;
 
-namespace KitchenConnection.DataLayer.Models.Entities; 
+namespace KitchenConnection.DataLayer.Models.Entities;
+
 public class RecipeCookBook : BaseEntity {
     public string RecipeId { get; set; }
     [ForeignKey("RecipeId")]

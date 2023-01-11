@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\KitchenConnection.Data\KitchenConnection.DataLayer.csproj" />
+  </ItemGroup>
+
 </Project>
