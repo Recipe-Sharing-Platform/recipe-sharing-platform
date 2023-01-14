@@ -10,8 +10,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KitchenConnection.BusinessLogic.Services
-{
+namespace KitchenConnection.BusinessLogic.Services;
     public class CookBookService : ICookBookService
     {
         public readonly IUnitOfWork _unitOfWork;
@@ -55,4 +54,4 @@ namespace KitchenConnection.BusinessLogic.Services
             _unitOfWork.Complete();
         }
     }
-}
+

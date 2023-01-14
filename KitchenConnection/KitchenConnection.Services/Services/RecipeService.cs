@@ -18,9 +18,9 @@ public class RecipeService : IRecipeService {
     public async Task<Recipe> GetRecipe(string id){
         
         Expression<Func<Recipe, bool>> expression = x => x.Id == id;
-        var recipe = _unitOfWork.Repository<Recipe>().GetById(expression);
+        var recipe = await _unitOfWork.Repository<Recipe>().GetById(expression).FirstOrDefaultAsync();
 
-        return (Recipe)recipe;
+        return recipe;
     }
 
     public async Task UpdateRecipe(Recipe recipeToUpdate)
