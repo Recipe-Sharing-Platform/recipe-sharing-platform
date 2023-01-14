@@ -1,4 +1,5 @@
-﻿using KitchenConnection.Models.Entities;
+﻿using KitchenConnection.DataLayer.Models.Entities;
+using KitchenConnection.Models.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +10,9 @@ namespace KitchenConnection.BusinessLogic.Services.IServices
 {
     public interface IRecipeCookBookService
     {
-        Task<List<Recipe>> GetRecipeCookBooks();
+        Task<List<RecipeCookBook>> GetRecipeCookBooks();
 
-        Task<Recipe> GetRecipeCookBook(string id);
+        Task<RecipeCookBook> GetRecipeCookBook(string id);
 
         Task DeleteRecipeCookBook(string id);
     }

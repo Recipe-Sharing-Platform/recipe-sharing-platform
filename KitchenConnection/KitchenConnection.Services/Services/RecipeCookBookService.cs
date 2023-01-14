@@ -42,15 +42,5 @@ namespace KitchenConnection.BusinessLogic.Services;
 
             _unitOfWork.Complete();
         }
-
-    Task<List<Recipe>> IRecipeCookBookService.GetRecipeCookBooks()
-    {
-        throw new NotImplementedException();
-    }
-
-    Task<Recipe> IRecipeCookBookService.GetRecipeCookBook(string id)
-    {
-        throw new NotImplementedException();
-    }
 }
 
