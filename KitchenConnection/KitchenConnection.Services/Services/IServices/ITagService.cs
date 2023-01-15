@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KitchenConnection.BusinessLogic.Services
+namespace KitchenConnection.BusinessLogic.Services.IServices
 {
-    internal class RecipeIngredient
+    public interface ITagService
     {
     }
 }

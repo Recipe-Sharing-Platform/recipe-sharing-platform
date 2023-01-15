@@ -17,5 +17,6 @@ namespace KitchenConnection.BusinessLogic.Services.IServices
         Task UpdateCookBook(CookBook cookbookToUpdate);
 
         Task DeleteCookBook(string id);
+        Task CreateCookBook(CookBook cookBookToCreate);
     }
 }

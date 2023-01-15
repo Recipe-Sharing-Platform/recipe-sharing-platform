@@ -42,5 +42,5 @@ namespace KitchenConnection.BusinessLogic.Services;
 
             _unitOfWork.Complete();
         }
-}
+    }
 

@@ -45,12 +45,12 @@ public class RecipeService : IRecipeService {
         _unitOfWork.Complete();
     }
 
-   /* public async Task CreateProduct(ProductCreateDto coverToCreate)
+       public async Task CreateRecipe(Recipe recipeToCreate)
     {
-        var product = _mapper.Map<Product>(coverToCreate);
+        //var product = _mapper.Map<Product>(coverToCreate);
 
-        _unitOfWork.Repository<Product>().Create(product);
+        _unitOfWork.Repository<Recipe>().Create(recipeToCreate);
 
         _unitOfWork.Complete();
-    }*/
+    }
 }
