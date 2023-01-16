@@ -1,4 +1,7 @@
+using KitchenConnection.BusinessLogic.Services;
+using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.DataLayer.Data;
+using KitchenConnection.DataLayer.Data.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -11,9 +14,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<KitchenConnectionDbContext>(options => {
+builder.Services.AddDbContext<KitchenConnectionDbContext>(options =>
+{
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), serverOptions => serverOptions.MigrationsAssembly("KitchenConnection"));
 });
+builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
+builder.Services.AddTransient<ITagService,TagService>();
+
 
 var app = builder.Build();
 

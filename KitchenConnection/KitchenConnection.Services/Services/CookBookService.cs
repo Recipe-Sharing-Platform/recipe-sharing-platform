@@ -27,9 +27,9 @@ namespace KitchenConnection.BusinessLogic.Services;
         {
 
             Expression<Func<CookBook, bool>> expression = x => x.Id == id;
-            var cookbook = _unitOfWork.Repository<CookBook>().GetById(expression);
+            var cookbook = await _unitOfWork.Repository<CookBook>().GetById(expression).FirstOrDefaultAsync();
 
-            return (CookBook)cookbook;
+            return cookbook;
         }
 
         public async Task UpdateCookBook(CookBook cookbookToUpdate)
@@ -51,6 +51,12 @@ namespace KitchenConnection.BusinessLogic.Services;
 
             _unitOfWork.Repository<CookBook>().Delete(cookBook);
 
+            _unitOfWork.Complete();
+        }
+
+        public async Task CreateCookBook(CookBook cookBookToCreate)
+        {
+            _unitOfWork.Repository<CookBook>().Create(cookBookToCreate);
             _unitOfWork.Complete();
         }
     }

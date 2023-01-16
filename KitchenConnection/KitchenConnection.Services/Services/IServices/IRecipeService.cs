@@ -10,4 +10,5 @@ public interface IRecipeService {
     Task UpdateRecipe(Recipe recipeToUpdate);
 
     Task DeleteRecipe(string id);
+    Task CreateRecipe(Recipe recipeToCreate);
 }

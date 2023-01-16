@@ -8,7 +8,7 @@ public class Recipe : BaseEntity {
     public string Description { get; set; }
     public string UserId { get; set; }
     [ForeignKey("UserId")]
-    public User User { get; set; }
+    public User? User { get; set; }
     [NotMapped]
     public List<Step> Steps { get; set; }
 }
