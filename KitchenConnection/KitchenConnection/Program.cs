@@ -20,6 +20,8 @@ builder.Services.AddDbContext<KitchenConnectionDbContext>(options =>
 });
 builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
 builder.Services.AddTransient<ITagService,TagService>();
+builder.Services.AddTransient<IRecipeService, RecipeService>();
+builder.Services.AddTransient<ICookBookService, CookBookService>();
 
 
 var app = builder.Build();
