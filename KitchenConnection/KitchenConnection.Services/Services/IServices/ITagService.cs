@@ -5,8 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KitchenConnection.BusinessLogic.Services.IServices
-{
+namespace KitchenConnection.BusinessLogic.Services.IServices;
     public interface ITagService
     {
         Task<List<Tag>> GetTags();
@@ -15,4 +14,3 @@ namespace KitchenConnection.BusinessLogic.Services.IServices
         Task DeleteTag(string id);
         Task CreateTag(Tag tagToCreate);
     }
-}

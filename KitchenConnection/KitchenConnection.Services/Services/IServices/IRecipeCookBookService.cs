@@ -6,8 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KitchenConnection.BusinessLogic.Services.IServices
-{
+namespace KitchenConnection.BusinessLogic.Services.IServices;
     public interface IRecipeCookBookService
     {
         Task<List<RecipeCookBook>> GetRecipeCookBooks();
@@ -16,4 +15,3 @@ namespace KitchenConnection.BusinessLogic.Services.IServices
 
         Task DeleteRecipeCookBook(string id);
     }
-}

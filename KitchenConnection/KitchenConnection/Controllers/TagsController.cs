@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace KitchenConnection.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
     public class TagsController : ControllerBase
     {

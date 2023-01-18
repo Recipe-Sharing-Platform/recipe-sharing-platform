@@ -4,9 +4,7 @@ using KitchenConnection.Models.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace KitchenConnection.Controllers
-{
-    [Route("api/[controller]")]
+namespace KitchenConnection.Controllers;
     [ApiController]
     public class CookBooksController : ControllerBase
     {
@@ -53,4 +51,3 @@ namespace KitchenConnection.Controllers
             return Ok("CookBook Deleted Successfully!");
         }
     }
-}
