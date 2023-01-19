@@ -1,4 +1,4 @@
-﻿using KitchenConnection.BusinessLogic.Services.IServices;
+using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.DataLayer.Data.UnitOfWork;
 using KitchenConnection.DataLayer.Models.Entities;
 using KitchenConnection.Models.Entities;
@@ -10,7 +10,8 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KitchenConnection.BusinessLogic.Services;
+namespace KitchenConnection.BusinessLogic.Services
+{
     public class CookBookService : ICookBookService
     {
         public readonly IUnitOfWork _unitOfWork;
@@ -23,13 +24,13 @@ namespace KitchenConnection.BusinessLogic.Services;
             return await _unitOfWork.Repository<CookBook>().GetAll().ToListAsync();
         }
 
-        public async Task<CookBook> GetCookBook(string id)
+        public async Task<CookBook> GetCookBook(Guid id)
         {
 
             Expression<Func<CookBook, bool>> expression = x => x.Id == id;
-            var cookbook = await _unitOfWork.Repository<CookBook>().GetById(expression).FirstOrDefaultAsync();
+            var cookbook = _unitOfWork.Repository<CookBook>().GetById(expression);
 
-            return cookbook;
+            return (CookBook)cookbook;
         }
 
         public async Task UpdateCookBook(CookBook cookbookToUpdate)
@@ -45,7 +46,7 @@ namespace KitchenConnection.BusinessLogic.Services;
             _unitOfWork.Complete();
         }
 
-        public async Task DeleteCookBook(string id)
+        public async Task DeleteCookBook(Guid id)
         {
             var cookBook = await GetCookBook(id);
 
@@ -53,11 +54,5 @@ namespace KitchenConnection.BusinessLogic.Services;
 
             _unitOfWork.Complete();
         }
-
-        public async Task CreateCookBook(CookBook cookBookToCreate)
-        {
-            _unitOfWork.Repository<CookBook>().Create(cookBookToCreate);
-            _unitOfWork.Complete();
-        }
     }
-
+}

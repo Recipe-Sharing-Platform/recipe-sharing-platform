@@ -1,25 +1,35 @@
 ﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using KitchenConnection.Application.Models.DTOs.Recipe;
+using KitchenConnection.DataLayer.Models.DTOs;
+using KitchenConnection.DataLayer.Models.Entities;
+using KitchenConnection.DataLayer.Models.Entities.Mappings;
+using KitchenConnection.Models.Entities;
 
 namespace KitchenConnection.BusinessLogic.Helpers;
 
-    public class AutoMapperConfigurations : Profile
+public class AutoMapperConfigurations : Profile
     {
         public AutoMapperConfigurations()
         {
-           /* CreateMap<Category>().ReverseMap();
-            CreateMap<Category, CategoryCreateDto>().ReverseMap();
+            CreateMap<Recipe, RecipeCreateDTO>().ReverseMap();
+            CreateMap<Recipe, RecipeDTO>().ReverseMap();
 
-            CreateMap<Unit, UnitDto>().ReverseMap();
-            CreateMap<Unit, UnitCreateDto>().ReverseMap();
+            CreateMap<RecipeIngredient, RecipeIngredientCreateDTO>().ReverseMap();
+            CreateMap<RecipeIngredient, RecipeIngredientDTO>().ReverseMap();
 
-            CreateMap<Product, ProductDto>().ReverseMap();
-            CreateMap<Product, ProductCreateDto>().ReverseMap();*/
+            CreateMap<RecipeInstruction, RecipeInstructionCreateDTO>().ReverseMap();
+            CreateMap<RecipeInstruction, RecipeInstructionDTO>().ReverseMap();
+        
+            CreateMap<Tag, TagCreateDTO>().ReverseMap();
+            CreateMap<Tag, TagDTO>().ReverseMap();
+
+            CreateMap<RecipeTag, TagCreateDTO>().ReverseMap();
+            CreateMap<RecipeTag, TagDTO>().ReverseMap();
+        
+            CreateMap<Cuisine, CuisineCreateDTO>().ReverseMap();
+            CreateMap<Cuisine, CuisineDTO>().ReverseMap();
+
+            CreateMap<User, UserDTO>().ReverseMap();
         }
     }
 

@@ -1,14 +1,12 @@
-﻿
 using KitchenConnection.Models.Entities;
 
 namespace KitchenConnection.BusinessLogic.Services.IServices; 
 public interface IRecipeService {
     Task<List<Recipe>> GetRecipes();
 
-    Task<Recipe> GetRecipe(string id);
+    Task<Recipe> GetRecipe(Guid id);
 
     Task UpdateRecipe(Recipe recipeToUpdate);
 
-    Task DeleteRecipe(string id);
-    Task CreateRecipe(Recipe recipeToCreate);
+    Task DeleteRecipe(Guid id);
 }

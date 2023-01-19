@@ -1,4 +1,3 @@
-﻿
 using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.DataLayer.Data.UnitOfWork;
 using KitchenConnection.Models.Entities;
@@ -15,12 +14,12 @@ public class RecipeService : IRecipeService {
         return await _unitOfWork.Repository<Recipe>().GetAll().ToListAsync();
     }
 
-    public async Task<Recipe> GetRecipe(string id){
+    public async Task<Recipe> GetRecipe(Guid id){
         
         Expression<Func<Recipe, bool>> expression = x => x.Id == id;
-        var recipe = await _unitOfWork.Repository<Recipe>().GetById(expression).FirstOrDefaultAsync();
+        var recipe = _unitOfWork.Repository<Recipe>().GetById(expression);
 
-        return recipe;
+        return (Recipe)recipe;
     }
 
     public async Task UpdateRecipe(Recipe recipeToUpdate)
@@ -29,14 +28,14 @@ public class RecipeService : IRecipeService {
 
         recipe.Name = recipeToUpdate.Name;
         recipe.Description = recipeToUpdate.Description;
-        recipe.Steps = recipeToUpdate.Steps;
+        recipe.Instructions = recipeToUpdate.Instructions;
 
         _unitOfWork.Repository<Recipe>().Update(recipe);
 
         _unitOfWork.Complete();
     }
 
-    public async Task DeleteRecipe(string id)
+    public async Task DeleteRecipe(Guid id)
     {
         var recipe = await GetRecipe(id);
 
@@ -45,12 +44,12 @@ public class RecipeService : IRecipeService {
         _unitOfWork.Complete();
     }
 
-       public async Task CreateRecipe(Recipe recipeToCreate)
+   /* public async Task CreateProduct(ProductCreateDto coverToCreate)
     {
-        //var product = _mapper.Map<Product>(coverToCreate);
+        var product = _mapper.Map<Product>(coverToCreate);
 
-        _unitOfWork.Repository<Recipe>().Create(recipeToCreate);
+        _unitOfWork.Repository<Product>().Create(product);
 
         _unitOfWork.Complete();
-    }
+    }*/
 }
