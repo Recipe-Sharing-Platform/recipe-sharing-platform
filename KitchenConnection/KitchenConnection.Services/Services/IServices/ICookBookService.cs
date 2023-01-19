@@ -12,10 +12,10 @@ namespace KitchenConnection.BusinessLogic.Services.IServices
     {
         Task<List<CookBook>> GetCookBooks();
 
-        Task<CookBook> GetCookBook(string id);
+        Task<CookBook> GetCookBook(Guid id);
 
         Task UpdateCookBook(CookBook cookbookToUpdate);
 
-        Task DeleteCookBook(string id);
+        Task DeleteCookBook(Guid id);
     }
 }

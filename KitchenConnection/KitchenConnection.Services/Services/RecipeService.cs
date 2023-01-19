@@ -15,7 +15,7 @@ public class RecipeService : IRecipeService {
         return await _unitOfWork.Repository<Recipe>().GetAll().ToListAsync();
     }
 
-    public async Task<Recipe> GetRecipe(string id){
+    public async Task<Recipe> GetRecipe(Guid id){
         
         Expression<Func<Recipe, bool>> expression = x => x.Id == id;
         var recipe = _unitOfWork.Repository<Recipe>().GetById(expression);
@@ -29,14 +29,14 @@ public class RecipeService : IRecipeService {
 
         recipe.Name = recipeToUpdate.Name;
         recipe.Description = recipeToUpdate.Description;
-        recipe.Steps = recipeToUpdate.Steps;
+        recipe.Instructions = recipeToUpdate.Instructions;
 
         _unitOfWork.Repository<Recipe>().Update(recipe);
 
         _unitOfWork.Complete();
     }
 
-    public async Task DeleteRecipe(string id)
+    public async Task DeleteRecipe(Guid id)
     {
         var recipe = await GetRecipe(id);
 
