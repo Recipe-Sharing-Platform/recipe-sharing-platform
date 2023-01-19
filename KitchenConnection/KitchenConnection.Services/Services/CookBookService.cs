@@ -24,7 +24,7 @@ namespace KitchenConnection.BusinessLogic.Services
             return await _unitOfWork.Repository<CookBook>().GetAll().ToListAsync();
         }
 
-        public async Task<CookBook> GetCookBook(string id)
+        public async Task<CookBook> GetCookBook(Guid id)
         {
 
             Expression<Func<CookBook, bool>> expression = x => x.Id == id;
@@ -46,7 +46,7 @@ namespace KitchenConnection.BusinessLogic.Services
             _unitOfWork.Complete();
         }
 
-        public async Task DeleteCookBook(string id)
+        public async Task DeleteCookBook(Guid id)
         {
             var cookBook = await GetCookBook(id);
 
