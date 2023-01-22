@@ -23,6 +23,5 @@ public class Recipe : BaseEntity
     public double Calories { get; set; }
     public string AudioInstructions { get; set; } // Audio Url
     public string VideoInstructions { get; set; } // Video Url
-
-    public List<Review> Reviews { get; set; }
+    public List<Review> Reviews { get; set; } = new List<Review>();
 }

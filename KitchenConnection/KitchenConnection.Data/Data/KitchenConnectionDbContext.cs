@@ -38,6 +38,7 @@ public class KitchenConnectionDbContext : DbContext {
         modelBuilder.Entity<Recipe>().HasOne(u => u.User).WithMany(r => r.Recipes)
             .HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.NoAction);
         modelBuilder.Entity<Recipe>().HasMany(r => r.Reviews).WithOne(r => r.Recipe).HasForeignKey(r => r.RecipeId).OnDelete(DeleteBehavior.NoAction);
+        modelBuilder.Entity<Recipe>().Property(r => r.Tags).HasDefaultValue(new List<RecipeTag>());//if no tags on recipe creation are added
         
         modelBuilder.Entity<Tag>().Property(t => t.Id).ValueGeneratedOnAdd();
 

@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace KitchenConnection.DataLayer.Models.DTOs
 {
-    public class UserDTO
-    {
-        public Guid Id { get; set; }
+    public class UserCreateDTO
+    {      
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Gender { get; set; }

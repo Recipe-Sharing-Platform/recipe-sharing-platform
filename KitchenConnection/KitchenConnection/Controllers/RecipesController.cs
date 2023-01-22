@@ -1,4 +1,5 @@
-﻿using KitchenConnection.BusinessLogic.Services.IServices;
+﻿using KitchenConnection.Application.Models.DTOs.Recipe;
+using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.DataLayer.Models.Entities;
 using KitchenConnection.Models.Entities;
 using Microsoft.AspNetCore.Http;
@@ -18,38 +19,74 @@ namespace KitchenConnection.Controllers
         [HttpGet("GetAllRecipes")]
         public async Task<IActionResult> GetRecipes()
         {
-            var Recipes = await _recipeService.GetRecipes();
-            return Ok(Recipes);
+            var recipes = await _recipeService.GetRecipes();
+
+            if (recipes != null)
+            {
+                return Ok(recipes);
+            }
+            else
+            {
+                return NotFound("Could not find recipes!");
+            }
+            
         }
         [HttpGet("GetSingleRecipe")]
-        public async Task<IActionResult> GetRecipe(string id)
+        public async Task<IActionResult> GetRecipe(Guid id)
         {
             var Recipe = await _recipeService.GetRecipe(id);
             if (Recipe == null)
             {
-                return NotFound();
+                return NotFound("Could not find recipe!");
             }
             return Ok(Recipe);
         }
 
         [HttpPost("CreateRecipe")]
-        public async Task<IActionResult> CreateRecipe(Recipe RecipeToCreate)
+        public async Task<IActionResult> CreateRecipe(RecipeCreateDTO RecipeToCreate)
         {
-            await _recipeService.CreateRecipe(RecipeToCreate);
+            var recipe=await _recipeService.CreateRecipe(RecipeToCreate);
 
-            return Ok("Recipe created successfully!");
+            if (recipe != null)
+            {
+                return Ok(recipe);
+            }
+
+            else
+            {
+                return BadRequest("Could not create recipe!");
+            }
+            
         }
         [HttpPut("UpdateRecipe")]
-        public async Task<IActionResult> UpdateRecipe(Recipe recipe)
+        public async Task<IActionResult> UpdateRecipe(RecipeDTO recipe)
         {
-            await _recipeService.UpdateRecipe(recipe);
-            return Ok("Recipe updated Successfully!");
+            var updatedRecipe= await _recipeService.UpdateRecipe(recipe);
+            if (updatedRecipe != null)
+            {
+                return Ok("Recipe updated Successfully!");
+            }
+
+            else
+            {
+                return BadRequest("Could not update recipe!");
+            }
         }
         [HttpDelete("DeleteRecipe")]
-        public async Task<IActionResult> DeleteRecipe(string id)
+        public async Task<IActionResult> DeleteRecipe(Guid id)
         {
-            await _recipeService.DeleteRecipe(id);
-            return Ok("Recipe Deleted Successfully!");
+            var res= await _recipeService.DeleteRecipe(id);
+
+            if (res)
+            {
+                return Ok("Recipe Deleted Successfully!");
+            }
+
+            else
+            {
+                return BadRequest("Could not delete recipe!");
+            }
+            
         }
     }
 }

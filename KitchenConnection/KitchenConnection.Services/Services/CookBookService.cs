@@ -33,7 +33,7 @@ namespace KitchenConnection.BusinessLogic.Services
             return (CookBook)cookbook;
         }
 
-        public async Task UpdateCookBook(CookBook cookbookToUpdate)
+        public async Task<CookBook> UpdateCookBook(CookBook cookbookToUpdate)
         {
             CookBook? cookBook = await GetCookBook(cookbookToUpdate.Id);
 
@@ -43,16 +43,42 @@ namespace KitchenConnection.BusinessLogic.Services
 
             _unitOfWork.Repository<CookBook>().Update(cookBook);
 
-            _unitOfWork.Complete();
+            var res=_unitOfWork.Complete();
+
+            if (res)
+            {
+                return cookBook;//return updated cookbook
+            }
+
+            else
+            {
+                return null;//couldn't update
+            }
         }
 
-        public async Task DeleteCookBook(Guid id)
+        public async Task<bool> DeleteCookBook(Guid id)
         {
             var cookBook = await GetCookBook(id);
 
             _unitOfWork.Repository<CookBook>().Delete(cookBook);
 
-            _unitOfWork.Complete();
+            return _unitOfWork.Complete();
+        }
+
+        public async Task<CookBook> CreateCookBook(CookBook cookBookToCreate) 
+        {
+            await _unitOfWork.Repository<CookBook>().Create(cookBookToCreate);
+            
+            var res=_unitOfWork.Complete();
+
+            if (res)
+            {
+                return cookBookToCreate;
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }
