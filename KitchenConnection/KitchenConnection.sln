@@ -3,15 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KitchenConnection", "KitchenConnection\KitchenConnection.csproj", "{C4606FEA-6A2B-4CFB-932D-0EE6F5914AA7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KitchenConnection", "KitchenConnection\KitchenConnection.csproj", "{C4606FEA-6A2B-4CFB-932D-0EE6F5914AA7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KitchenConnection.DataLayer", "KitchenConnection.Data\KitchenConnection.DataLayer.csproj", "{D5B16562-E7C8-4301-82BE-288727CCD859}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KitchenConnection.DataLayer", "KitchenConnection.Data\KitchenConnection.DataLayer.csproj", "{D5B16562-E7C8-4301-82BE-288727CCD859}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KitchenConnection.Elastic", "KitchenConnection.Elastic\KitchenConnection.Elastic.csproj", "{6A8A08FD-2A51-4688-A18F-44C3485E1319}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KitchenConnection.Elastic", "KitchenConnection.Elastic\KitchenConnection.Elastic.csproj", "{6A8A08FD-2A51-4688-A18F-44C3485E1319}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KitchenConnection.BusinessLogic", "KitchenConnection.Services\KitchenConnection.BusinessLogic.csproj", "{AF42FC08-6E83-495B-81B1-66CA93211C96}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KitchenConnection.BusinessLogic", "KitchenConnection.Services\KitchenConnection.BusinessLogic.csproj", "{AF42FC08-6E83-495B-81B1-66CA93211C96}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KitchenConnection.Notifier", "KitchenConnection.Notifier\KitchenConnection.Notifier.csproj", "{7A774BFD-FFE0-45EA-9AC6-6BAE8DBFE9C0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KitchenConnection.Notifier", "KitchenConnection.Notifier\KitchenConnection.Notifier.csproj", "{7A774BFD-FFE0-45EA-9AC6-6BAE8DBFE9C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KitchenConnection.SignalR", "KitchenConnection.SignalR\KitchenConnection.SignalR.csproj", "{5188E6E7-1842-4C1B-B621-E2EA2B2CA27E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{7A774BFD-FFE0-45EA-9AC6-6BAE8DBFE9C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A774BFD-FFE0-45EA-9AC6-6BAE8DBFE9C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A774BFD-FFE0-45EA-9AC6-6BAE8DBFE9C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5188E6E7-1842-4C1B-B621-E2EA2B2CA27E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5188E6E7-1842-4C1B-B621-E2EA2B2CA27E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5188E6E7-1842-4C1B-B621-E2EA2B2CA27E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5188E6E7-1842-4C1B-B621-E2EA2B2CA27E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
