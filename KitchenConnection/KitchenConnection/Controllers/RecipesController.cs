@@ -3,6 +3,7 @@ using KitchenConnection.DataLayer.Models.Entities;
 using KitchenConnection.Models.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using KitchenConnection.SignalR;
 
 namespace KitchenConnection.Controllers
 {
@@ -50,6 +51,12 @@ namespace KitchenConnection.Controllers
         {
             await _recipeService.DeleteRecipe(id);
             return Ok("Recipe Deleted Successfully!");
+        }
+        [HttpPost("send")]
+        public async Task<IActionResult> Send([FromBody] string message)
+        {
+            await _hubContext.Clients.All.SendAsync("ReceiveMessage", message);
+            return Ok();
         }
     }
 }
