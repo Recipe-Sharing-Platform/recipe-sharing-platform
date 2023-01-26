@@ -10,7 +10,9 @@ namespace KitchenConnection.BusinessLogic.Services.IServices
 {
     public interface IReviewService
     {
-        Task<List<Review>> GetRecipeReviews(Guid recipeId);
-        Task CreateReview(ReviewCreateDTO reviewCreate);
+        Task<ReviewDTO> Create(ReviewCreateDTO reviewToCreate);
+        Task<List<ReviewDTO>> GetRecipeReviews(Guid recipeId);
+        Task<ReviewDTO> Update(ReviewUpdateDTO reviewToUpdate);
+        Task<ReviewDTO> Delete(Guid id);
     }
 }

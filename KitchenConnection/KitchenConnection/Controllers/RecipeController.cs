@@ -7,58 +7,82 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
-namespace KitchenConnection.Controllers
+namespace KitchenConnection.Controllers;
+
+[ApiController]
+[Route("api/recipes")]
+[Authorize(AuthenticationSchemes = "Bearer")]
+public class RecipeController : ControllerBase
 {
-    [ApiController]
-    [Route("recipes")]
-    [Authorize(AuthenticationSchemes = "Bearer")]
-    public class RecipeController : ControllerBase
+    private readonly IRecipeService _recipeService;
+    public RecipeController(IRecipeService recipeService)
     {
-        private readonly IRecipeService _recipeService;
-        public RecipeController(IRecipeService recipeService)
+        _recipeService = recipeService;
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<RecipeDTO>> Create(RecipeCreateDTO recipeToCreate)
+    {
+        recipeToCreate.UserId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+        var recipe = await _recipeService.Create(recipeToCreate);
+
+        if(recipe == null)
         {
-            _recipeService = recipeService;
+            return BadRequest("Recipe could not be created!");
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create(RecipeCreateDTO recipeToCreate)
-        {
-            recipeToCreate.UserId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            await _recipeService.Create(recipeToCreate);
+        return Ok(recipe);
+    }
 
-            return Ok("Recipe created successfully!");
+    [HttpGet]
+    public async Task<ActionResult<List<RecipeDTO>>> GetAll()
+    {
+        var recipes = await _recipeService.GetAll();
+
+        if(recipes == null)
+        {
+            return NotFound();
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
+        return Ok(recipes);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<RecipeDTO>> Get(Guid id)
+    {
+        var recipe = await _recipeService.Get(id);
+        
+        if (recipe == null)
         {
-            var recipes = await _recipeService.GetAll();
-            return Ok(recipes);
+            return NotFound();
+        }
+        
+        return Ok(recipe);
+    }
+
+    [HttpPut]
+    public async Task<ActionResult<RecipeDTO>> Update(RecipeUpdateDTO recipeToUpdate)
+    {
+        var recipe = await _recipeService.Update(recipeToUpdate);
+
+        if(recipe == null)
+        {
+            return BadRequest("Recipe could not be updated!");
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(Guid id)
+        return Ok(recipe);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult<RecipeDTO>> Delete(Guid id)
+    {
+        var recipe = await _recipeService.Delete(id);
+
+        if(recipe == null)
         {
-            var Recipe = await _recipeService.Get(id);
-            if (Recipe == null)
-            {
-                return NotFound();
-            }
-            return Ok(Recipe);
+            return BadRequest("Recipe could not be deleted!");
         }
 
-        [HttpPut]
-        public async Task<IActionResult> Update(RecipeUpdateDTO recipe)
-        {
-            await _recipeService.Update(recipe);
-            return Ok("Recipe updated Successfully!");
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
-        {
-            await _recipeService.Delete(id);
-            return Ok("Recipe Deleted Successfully!");
-        }
+        return Ok(recipe);
     }
 }

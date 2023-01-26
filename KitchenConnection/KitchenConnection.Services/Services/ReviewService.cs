@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -24,30 +25,44 @@ namespace KitchenConnection.BusinessLogic.Services
             _mapper = mapper;
         }
 
-        public async Task<List<Review>> GetRecipeReviews(Guid recipeId)
+        public async Task<ReviewDTO> Create(ReviewCreateDTO reviewToCreate)
         {
-           var review = await _unitOfWork.Repository<Review>().GetByCondition(x => x.RecipeId == recipeId).ToListAsync();
-           foreach(var item in review)
-            {
-                item.Recipe = _unitOfWork.Repository<Recipe>().GetById(x=>x.Id == recipeId).FirstOrDefault();
-                item.User = _unitOfWork.Repository<User>().GetById(x => x.Id == item.UserId).FirstOrDefault();
-            }
-           return review;
-        }
-        
-        public async Task CreateReview(ReviewCreateDTO reviewCreate)
-        {
-            Review review = new Review();
-
-            review.Message = reviewCreate.Message;
-            review.Rating = reviewCreate.Rating;
-            review.RecipeId= reviewCreate.RecipeId;
-            review.UserId = reviewCreate.UserId;
-            review.Recipe = await _unitOfWork.Repository<Recipe>().GetById(x => x.Id == reviewCreate.RecipeId).FirstOrDefaultAsync();
-            review.User = await _unitOfWork.Repository<User>().GetById(x => x.Id == reviewCreate.UserId).FirstOrDefaultAsync();
-
-            await _unitOfWork.Repository<Review>().Create(review);
+            var review = await _unitOfWork.Repository<Review>().Create(_mapper.Map<Review>(reviewToCreate));
             _unitOfWork.Complete();
+
+            return _mapper.Map<ReviewDTO>(review);
+        }
+
+        public async Task<List<ReviewDTO>> GetRecipeReviews(Guid recipeId)
+        {
+           var reviews = await _unitOfWork.Repository<Review>().GetByConditionWithIncludes(x => x.RecipeId == recipeId, "User, Recipe").ToListAsync();
+           
+           return _mapper.Map<List<ReviewDTO>>(reviews);
+        }
+
+        public async Task<ReviewDTO> Update(ReviewUpdateDTO reviewToUpdate)
+        {
+            var review = await _unitOfWork.Repository<Review>().GetById(x => x.Id == reviewToUpdate.Id).FirstOrDefaultAsync();
+
+            review.Rating = reviewToUpdate.Rating;
+            review.Message = reviewToUpdate.Message;
+
+            _unitOfWork.Repository<Review>().Update(review);
+            _unitOfWork.Complete();
+
+            return _mapper.Map<ReviewDTO>(review);
+        }
+
+        public async Task<ReviewDTO> Delete(Guid id)
+        {
+            var review = await _unitOfWork.Repository<Review>().GetById(x => x.Id == id).FirstOrDefaultAsync();
+
+            if (review == null) return null;
+
+            _unitOfWork.Repository<Review>().Delete(review);
+            _unitOfWork.Complete();
+
+            return _mapper.Map<ReviewDTO>(review);
         }
     }
 }

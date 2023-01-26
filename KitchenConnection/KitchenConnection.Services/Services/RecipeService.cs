@@ -8,6 +8,7 @@ using KitchenConnection.DataLayer.Models.Entities;
 using KitchenConnection.DataLayer.Models.Entities.Mappings;
 using KitchenConnection.Models.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace KitchenConnection.BusinessLogic.Services;
@@ -23,28 +24,15 @@ public class RecipeService : IRecipeService {
     {
         var recipe = _mapper.Map<Recipe>(recipeToCreate);
 
-        var tags = await _unitOfWork.Repository<Tag>().GetAll().ToListAsync();
         var tagsToCheck = new List<Tag>();
         recipeToCreate.Tags.ForEach(t => tagsToCheck.Add(new Tag { Name = t.Name }));
-        var missingTags = tagsToCheck.Except(tags, new TagNameComparer()).ToList();
-        if (missingTags.Any())
-        {
-            await _unitOfWork.Repository<Tag>().CreateRange(missingTags);
-        }
-
-        var recipeTags = await _unitOfWork.Repository<Tag>().GetAll().ToListAsync();
+        
         recipe.Ingredients.ForEach(x => x.RecipeId = recipe.Id);
         recipe.Instructions.ForEach(x => x.RecipeId = recipe.Id);
-        recipe.Tags = new List<Tag>();
-        recipeTags.ForEach(x =>
-        {
-            if (tagsToCheck.Contains(x, new TagNameComparer()))
-            {
-                recipe.Tags.Add(x);
-            }
-        });
+        recipe.Tags = await AddTagsToRecipe(recipe, tagsToCheck);
+        recipe.Cuisine = await _unitOfWork.Repository<Cuisine>().GetById(x => x.Id == recipe.CuisineId).FirstOrDefaultAsync();
 
-        await _unitOfWork.Repository<Recipe>().Create(recipe);
+        recipe = await _unitOfWork.Repository<Recipe>().Create(recipe);
         _unitOfWork.Complete();
 
         return _mapper.Map<RecipeDTO>(recipe);
@@ -59,7 +47,7 @@ public class RecipeService : IRecipeService {
     }
 
     public async Task<List<RecipeDTO>> GetAll() {
-        var recipes = await _unitOfWork.Repository<Recipe>().GetAll().ToListAsync();
+        var recipes = await _unitOfWork.Repository<Recipe>().GetAll().Include(c => c.Cuisine).ToListAsync();
 
         return _mapper.Map<List<RecipeDTO>>(recipes);
     }
@@ -91,15 +79,42 @@ public class RecipeService : IRecipeService {
         return _mapper.Map<RecipeDTO>(recipe);
     }
 
-    public async Task Delete(Guid id)
+    public async Task<RecipeDTO> Delete(Guid id)
     {
         var recipe = await _unitOfWork.Repository<Recipe>().GetById(r => r.Id == id).FirstOrDefaultAsync();
 
-        if (recipe == null) return;
+        if (recipe == null) return null;
 
         _unitOfWork.Repository<Recipe>().Delete(recipe);
         _unitOfWork.Complete();
+
+        return _mapper.Map<RecipeDTO>(recipe);
     }
 
-    
+    private async Task<List<Tag>> AddTagsToRecipe(Recipe recipe, List<Tag> tagsToCreate)
+    {
+        var existingTags = await _unitOfWork.Repository<Tag>().GetAll().ToListAsync();
+
+        // Check if any of the tags is missing in database when assigned to the recipe on creation
+        // create the ones that are missing, and assign the existing ones accordingly
+
+        var missingTags = tagsToCreate.Except(existingTags, new TagNameComparer()).ToList();
+        if (missingTags.Any())
+        {
+            await _unitOfWork.Repository<Tag>().CreateRange(missingTags);
+        }
+
+        existingTags.AddRange(missingTags);
+
+        var tagsToAdd = new List<Tag>();
+        existingTags.ForEach(recipeTag =>
+        {
+            if (tagsToCreate.Contains(recipeTag, new TagNameComparer()))
+            {
+                tagsToAdd.Add(recipeTag);
+            }
+        });
+
+        return tagsToAdd;
+    }
 }

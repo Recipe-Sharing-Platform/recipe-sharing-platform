@@ -9,5 +9,5 @@ public interface IRecipeService
     Task<RecipeDTO> Get(Guid id);
     Task<List<RecipeDTO>> GetAll();
     Task<RecipeDTO> Update(RecipeUpdateDTO recipeToUpdate);
-    Task Delete(Guid id);
+    Task<RecipeDTO> Delete(Guid id);
 }

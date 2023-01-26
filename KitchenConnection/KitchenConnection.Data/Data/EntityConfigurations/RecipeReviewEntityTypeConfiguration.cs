@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KitchenConnection.DataLayer.Models.DTOs
+namespace KitchenConnection.DataLayer.Data.EntityConfigurations
 {
-    public class UserDTO
+    public class RecipeReviewEntityTypeConfiguration
     {
-        public string Name { get; set; }
     }
 }

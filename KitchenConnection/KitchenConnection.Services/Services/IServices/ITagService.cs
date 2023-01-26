@@ -8,11 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace KitchenConnection.BusinessLogic.Services.IServices;
-    public interface ITagService
-    {
-        Task<List<Tag>> GetTags();
-        Task<Tag> GetTag(Guid id);
-        Task UpdateTag(TagDTO tagToUpdate);
-        Task DeleteTag(Guid id);
-        Task CreateTag(TagCreateDTO tagToCreate);
-    }
+public interface ITagService
+{
+    Task<TagDTO> Create(TagCreateDTO tagToCreate);
+    Task<List<TagDTO>> GetAll();
+    Task<TagDTO> Get(Guid id);
+    Task<TagDTO> Update(TagDTO tagToUpdate);
+    Task<TagDTO> Delete(Guid id);
+}

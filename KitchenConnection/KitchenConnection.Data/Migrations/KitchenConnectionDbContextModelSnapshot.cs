@@ -63,9 +63,6 @@ namespace KitchenConnection.DataLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("NumberOfRecipes")
-                        .HasColumnType("int");
-
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
@@ -110,27 +107,6 @@ namespace KitchenConnection.DataLayer.Migrations
                     b.HasIndex("RecipeId");
 
                     b.ToTable("CollectionRecipes");
-                });
-
-            modelBuilder.Entity("KitchenConnection.DataLayer.Models.Entities.Mappings.CookBookRecipe", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CookBookId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("RecipeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CookBookId");
-
-                    b.HasIndex("RecipeId");
-
-                    b.ToTable("CookBookRecipes");
                 });
 
             modelBuilder.Entity("KitchenConnection.DataLayer.Models.Entities.Mappings.RecipeIngredient", b =>
@@ -204,6 +180,8 @@ namespace KitchenConnection.DataLayer.Migrations
 
                     b.HasIndex("RecipeId");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("Reviews");
                 });
 
@@ -272,6 +250,9 @@ namespace KitchenConnection.DataLayer.Migrations
                     b.Property<double>("Calories")
                         .HasColumnType("float");
 
+                    b.Property<Guid?>("CookBookId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime>("CookTime")
                         .HasColumnType("datetime2");
 
@@ -306,6 +287,8 @@ namespace KitchenConnection.DataLayer.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CookBookId");
 
                     b.HasIndex("CuisineId");
 
@@ -370,25 +353,6 @@ namespace KitchenConnection.DataLayer.Migrations
                     b.Navigation("Recipe");
                 });
 
-            modelBuilder.Entity("KitchenConnection.DataLayer.Models.Entities.Mappings.CookBookRecipe", b =>
-                {
-                    b.HasOne("KitchenConnection.DataLayer.Models.Entities.CookBook", "CookBook")
-                        .WithMany("Recipes")
-                        .HasForeignKey("CookBookId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("KitchenConnection.Models.Entities.Recipe", "Recipe")
-                        .WithMany()
-                        .HasForeignKey("RecipeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CookBook");
-
-                    b.Navigation("Recipe");
-                });
-
             modelBuilder.Entity("KitchenConnection.DataLayer.Models.Entities.Mappings.RecipeIngredient", b =>
                 {
                     b.HasOne("KitchenConnection.Models.Entities.Recipe", "Recipe")
@@ -413,16 +377,16 @@ namespace KitchenConnection.DataLayer.Migrations
 
             modelBuilder.Entity("KitchenConnection.DataLayer.Models.Entities.Review", b =>
                 {
-                    b.HasOne("KitchenConnection.DataLayer.Models.Entities.User", "User")
-                        .WithMany("Reviews")
-                        .HasForeignKey("RecipeId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.HasOne("KitchenConnection.Models.Entities.Recipe", "Recipe")
                         .WithMany("Reviews")
                         .HasForeignKey("RecipeId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("KitchenConnection.DataLayer.Models.Entities.User", "User")
+                        .WithMany("Reviews")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Recipe");
@@ -432,6 +396,11 @@ namespace KitchenConnection.DataLayer.Migrations
 
             modelBuilder.Entity("KitchenConnection.Models.Entities.Recipe", b =>
                 {
+                    b.HasOne("KitchenConnection.DataLayer.Models.Entities.CookBook", "CookBook")
+                        .WithMany("Recipes")
+                        .HasForeignKey("CookBookId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("KitchenConnection.DataLayer.Models.Entities.Cuisine", "Cuisine")
                         .WithMany("Recipes")
                         .HasForeignKey("CuisineId")
@@ -441,8 +410,10 @@ namespace KitchenConnection.DataLayer.Migrations
                     b.HasOne("KitchenConnection.DataLayer.Models.Entities.User", "User")
                         .WithMany("Recipes")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.Navigation("CookBook");
 
                     b.Navigation("Cuisine");
 

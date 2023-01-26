@@ -8,9 +8,9 @@ namespace KitchenConnection.DataLayer.Models.DTOs.Review
 {
     public class ReviewCreateDTO
     {
-        public double Rating { get; set; }
-        public string Message { get; set; }
-        public Guid RecipeId { get; set; }
         public Guid UserId { get; set; }
+        public Guid RecipeId { get; set; }
+        public double Rating { get; set; }
+        public string? Message { get; set; }
     }
 }
