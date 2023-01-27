@@ -1,4 +1,5 @@
 ﻿using KitchenConnection.DataLayer.Models.Entities;
+using KitchenConnection.DataLayer.Models.Entities.Mappings;
 using KitchenConnection.Models.Entities;
 using System;
 using System.Collections.Generic;
@@ -9,9 +10,8 @@ using System.Threading.Tasks;
 namespace KitchenConnection.BusinessLogic.Services.IServices;
     public interface IRecipeCookBookService
     {
-        Task<List<RecipeCookBook>> GetRecipeCookBooks();
-
-        Task<RecipeCookBook> GetRecipeCookBook(string id);
-
-        Task DeleteRecipeCookBook(string id);
+        Task<List<CookBookRecipe>> GetRecipeCookBooks();
+        Task<CookBookRecipe> GetRecipeCookBook(Guid id);
+        Task<bool> DeleteRecipeCookBook(Guid id);
+        Task<CookBookRecipe> UpdateCookBookRecipe(CookBookRecipe cookBookRecipeToUpdate);
     }

@@ -1,4 +1,4 @@
-﻿using KitchenConnection.DataLayer.Models.Entities;
+using KitchenConnection.DataLayer.Models.Entities;
 using KitchenConnection.Models.Entities;
 using System;
 using System.Collections.Generic;
@@ -6,16 +6,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KitchenConnection.BusinessLogic.Services.IServices;
+namespace KitchenConnection.BusinessLogic.Services.IServices
+{
     public interface ICookBookService
     {
+        Task<CookBook> CreateCookBook(CookBook cookBookToCreate);
         Task<List<CookBook>> GetCookBooks();
 
-        Task<CookBook> GetCookBook(string id);
+        Task<CookBook> GetCookBook(Guid id);
 
-        Task UpdateCookBook(CookBook cookbookToUpdate);
+        Task<CookBook> UpdateCookBook(CookBook cookbookToUpdate);
 
-        Task DeleteCookBook(string id);
-        Task CreateCookBook(CookBook cookBookToCreate);
+        Task<bool> DeleteCookBook(Guid id);
     }
-
+}

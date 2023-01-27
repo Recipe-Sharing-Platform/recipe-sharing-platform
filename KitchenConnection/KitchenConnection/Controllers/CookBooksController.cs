@@ -1,7 +1,5 @@
 ﻿using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.DataLayer.Models.Entities;
-using KitchenConnection.Models.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KitchenConnection.Controllers;
@@ -17,11 +15,20 @@ namespace KitchenConnection.Controllers;
         [HttpGet("GetAllCookBooks")]
         public async Task<IActionResult> GetCookBooks()
         {
-            var CookBooks = await _cookBookService.GetCookBooks();
-            return Ok(CookBooks);
+            var cookBooks = await _cookBookService.GetCookBooks();
+
+            if (cookBooks != null)
+            {
+                return Ok(cookBooks);
+            }
+            else
+            {
+                return NotFound();
+            }
+            
         }
         [HttpGet("GetSingleCookBook")]
-        public async Task<IActionResult> GetCookBook(string id)
+        public async Task<IActionResult> GetCookBook(Guid id)
         {
             var CookBook = await _cookBookService.GetCookBook(id);
             if (CookBook == null)
@@ -34,20 +41,45 @@ namespace KitchenConnection.Controllers;
         [HttpPost("CreateCookBook")]
         public async Task<IActionResult> CreateCookBook(CookBook cookBookToCreate)
         {
-            await _cookBookService.CreateCookBook(cookBookToCreate);
+            var createdCookBook=await _cookBookService.CreateCookBook(cookBookToCreate);
 
-            return Ok("CookBook created successfully!");
+            if (createdCookBook != null)
+            {
+                return Ok(createdCookBook);
+            }
+            else
+            {
+            return BadRequest();
+            }
+            
         }
         [HttpPut("UpdateCookBook")]
         public async Task<IActionResult> UpdateCookBook(CookBook cookbook)
         {
-            await _cookBookService.UpdateCookBook(cookbook);
-            return Ok("CookBook updated Successfully!");
+            var updateCookBook = await _cookBookService.UpdateCookBook(cookbook);
+            if (updateCookBook != null) 
+            {
+                return Ok(updateCookBook);
+            }
+            else
+            {
+                return BadRequest("Couldn't update!");
+            }
+            
         }
         [HttpDelete("DeleteCookBook")]
-        public async Task<IActionResult> DeleteCookBook(string id)
+        public async Task<IActionResult> DeleteCookBook(Guid id)
         {
-            await _cookBookService.DeleteCookBook(id);
-            return Ok("CookBook Deleted Successfully!");
+            var res = await _cookBookService.DeleteCookBook(id);
+
+            if (res)
+            {
+                return Ok("CookBook Deleted Successfully!");
+            }
+            else
+            {
+                return BadRequest("CookBook could not be deleted!");
+            }
         }
+        
     }

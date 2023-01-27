@@ -1,16 +1,13 @@
-﻿
+﻿using KitchenConnection.DataLayer.Models.Entities.Mappings;
 using KitchenConnection.Models.Entities;
-using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace KitchenConnection.DataLayer.Models.Entities; 
+namespace KitchenConnection.DataLayer.Models.Entities;
 public class CookBook : BaseEntity {
     public string Name { get; set; }
-    public int RecipeNumber { get; set; }
     public string Description { get; set; }
-    public string UserId { get; set; }
-    [ForeignKey("UserId")]
+    public int NumberOfRecipes { get; set; }
+    public Guid UserId { get; set; }
     public User User { get; set; }
-    [NotMapped]
-    public List<Recipe> Recipes { get; set; }
+
+    public List<CookBookRecipe> Recipes { get; set; }
 }
