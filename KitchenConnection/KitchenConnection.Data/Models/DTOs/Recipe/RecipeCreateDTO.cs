@@ -1,8 +1,9 @@
-﻿namespace KitchenConnection.Application.Models.DTOs.Recipe
+﻿using KitchenConnection.DataLayer.Models.Entities;
+
+namespace KitchenConnection.Application.Models.DTOs.Recipe
 {
     public class RecipeCreateDTO
-    {
-        public Guid UserId { get; set; }
+    {        
         public string Name { get; set; }
         public string Description { get; set; }
         public List<RecipeIngredientCreateDTO> Ingredients { get; set; }
@@ -17,5 +18,6 @@
         public double Calories { get; set; }
         public string AudioInstructions { get; set; } // Audio Url
         public string VideoInstructions { get; set; } // Video Url
+        public List<Review> Reviews { get; set; } = new List<Review>();
     }
 }

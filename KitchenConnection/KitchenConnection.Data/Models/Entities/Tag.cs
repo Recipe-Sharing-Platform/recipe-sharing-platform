@@ -7,5 +7,5 @@ public class Tag : BaseEntity
 {
     public string Name { get; private set; }
 
-    public List<RecipeTag> Recipes { get; set; }
+    public List<RecipeTag> Recipes { get; set; }=new List<RecipeTag>();
 }

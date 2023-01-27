@@ -1,3 +1,5 @@
+using AutoMapper;
+using KitchenConnection.BusinessLogic.Helpers;
 using KitchenConnection.BusinessLogic.Services;
 using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.DataLayer.Data;
@@ -13,7 +15,6 @@ using System.Globalization;
 using System.Security.Claims;
 using System.Text;
 
-
 using claims = System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,10 +29,20 @@ builder.Services.AddDbContext<KitchenConnectionDbContext>(options => {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddTransient<IRecipeService, RecipeService>();
 builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<ITagService, TagService>();
+builder.Services.AddTransient<ICookBookService, CookBookService>();
+builder.Services.AddTransient<IRecipeIngredientService, RecipeIngredientService>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+
+var config = new AutoMapper.MapperConfiguration(cfg =>
+{
+    cfg.AddProfile(new AutoMapperConfigurations());
+});
+IMapper mapper = config.CreateMapper();
+builder.Services.AddSingleton(mapper);
 
 builder.Services.AddAuthentication(options =>
 {

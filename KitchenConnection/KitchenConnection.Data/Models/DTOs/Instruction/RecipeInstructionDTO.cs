@@ -3,7 +3,8 @@
     public class RecipeInstructionDTO
     {
         public Guid Id { get; set; }
+        public RecipeDTO RecipeDTO { get; set; }
         public int StepNumber { get; set; }
-        public string StepDescription { get; set; }
+        public string? StepDescription { get; set; }
     }
 }

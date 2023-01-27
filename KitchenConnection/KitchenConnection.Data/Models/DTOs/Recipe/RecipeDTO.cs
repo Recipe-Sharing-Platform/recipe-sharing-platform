@@ -1,4 +1,5 @@
 ﻿using KitchenConnection.DataLayer.Models.DTOs;
+using KitchenConnection.DataLayer.Models.Entities;
 
 namespace KitchenConnection.Application.Models.DTOs.Recipe
 {
@@ -20,5 +21,6 @@ namespace KitchenConnection.Application.Models.DTOs.Recipe
         public double Calories { get; set; }
         public string AudioInstructions { get; set; } // Audio Url
         public string VideoInstructions { get; set; } // Video Url
+        public List<Review> Reviews { get; set; } = new List<Review>();
     }
 }
