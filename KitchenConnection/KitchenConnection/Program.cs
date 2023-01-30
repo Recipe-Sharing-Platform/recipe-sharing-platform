@@ -1,4 +1,5 @@
 using AutoMapper;
+using KitchenConnecition.DataLayer.Hubs;
 using KitchenConnection.BusinessLogic.Helpers;
 using KitchenConnection.BusinessLogic.Services;
 using KitchenConnection.BusinessLogic.Services.IServices;
@@ -160,6 +161,7 @@ builder.Services.AddSwaggerGen(c =>
 
     c.OperationFilter<AuthorizeCheckOperationFilter>();
 });
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -179,10 +181,12 @@ if (app.Environment.IsDevelopment()) {
     });
 }
 
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<NotificationHub>("/signalhub");
 
 app.Run();
