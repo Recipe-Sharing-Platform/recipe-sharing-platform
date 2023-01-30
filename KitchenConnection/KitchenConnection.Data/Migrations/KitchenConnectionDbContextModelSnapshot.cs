@@ -339,7 +339,7 @@ namespace KitchenConnection.DataLayer.Migrations
                     b.HasOne("KitchenConnection.DataLayer.Models.Entities.Collection", "Collection")
                         .WithMany("Recipes")
                         .HasForeignKey("CollectionId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("KitchenConnection.Models.Entities.Recipe", "Recipe")

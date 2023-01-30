@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using KitchenConnection.Application.Models.DTOs.Recipe;
 using KitchenConnection.DataLayer.Models.DTOs;
+using KitchenConnection.DataLayer.Models.DTOs.Collection;
 using KitchenConnection.DataLayer.Models.DTOs.CookBook;
 using KitchenConnection.DataLayer.Models.DTOs.Ingredient;
 using KitchenConnection.DataLayer.Models.DTOs.Instruction;
@@ -41,7 +42,11 @@ public class AutoMapperConfigurations : Profile
             CreateMap<CookBookCreateDTO, CookBook>().ForMember(src => src.Recipes, dest => dest.Ignore()).ReverseMap();
             CreateMap<CookBook, CookBookDTO>().ReverseMap();
 
-            CreateMap<User, UserCreateDTO>().ReverseMap();
+        CreateMap<CollectionCreateDTO, Collection>().ForMember(src => src.Recipes, dest => dest.Ignore()).ReverseMap();
+            CreateMap<Collection, CollectionDTO>().ForMember(src => src.Recipes, dest => dest.MapFrom(c => c.Recipes.Select(rc => rc.Recipe)))
+    .ReverseMap();
+
+        CreateMap<User, UserCreateDTO>().ReverseMap();
             CreateMap<User, UserDTO>().ForMember(dest => dest.Name, opt => opt.MapFrom(src => String.Format("{0} {1}", src.FirstName, src.LastName))).ReverseMap();
 
             CreateMap<Review, ReviewCreateDTO>().ReverseMap();

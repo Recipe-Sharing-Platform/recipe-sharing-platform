@@ -43,6 +43,8 @@ public class KitchenConnectionDbContext : DbContext {
         modelBuilder.Entity<Recipe>().HasMany(t => t.Tags).WithMany(r => r.Recipes);
         modelBuilder.Entity<Recipe>().HasOne(c => c.CookBook).WithMany(r => r.Recipes);
         modelBuilder.Entity<CookBook>().HasMany(r => r.Recipes).WithOne(c => c.CookBook).OnDelete(DeleteBehavior.SetNull);
+        modelBuilder.Entity<CollectionRecipe>().HasOne(c=>c.Collection).WithMany(r => r.Recipes);
+        modelBuilder.Entity<Collection>().HasMany(r => r.Recipes).WithOne(c => c.Collection).OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<Tag>().Property(t => t.Id).ValueGeneratedOnAdd();
         modelBuilder.Entity<Tag>().HasIndex(t => t.Name).IsUnique();
