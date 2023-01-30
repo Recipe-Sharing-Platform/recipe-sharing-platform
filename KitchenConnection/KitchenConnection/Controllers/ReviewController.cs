@@ -48,7 +48,7 @@ namespace KitchenConnection.Controllers
             {
                 return BadRequest("Could not add the review!");
             }
-            _hubContext.Clients.All.SendAsync("Receivereview", reviewToCreate);
+            _hubContext.Clients.All.SendAsync("Receivereview", review);
             return Ok(review);
         }
 

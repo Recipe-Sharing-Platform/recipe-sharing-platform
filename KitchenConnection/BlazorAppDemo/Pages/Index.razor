@@ -1,6 +1,6 @@
 ﻿@page "/"
 @using Microsoft.AspNetCore.SignalR.Client
-@using BlazorAppDemo.ModelsDTO
+@using BlazorAppDemo.ModelsDto
 <PageTitle>Index</PageTitle>
 
 <h1>Hello, world!</h1>
@@ -17,8 +17,8 @@ Welcome to your new app.
 <table class="table">
     <thead>
         <tr>
-            <th>UserId</th>
-            <th>RecipeId (C)</th>
+            <th>Id</th>
+            <th>User (C)</th>
             <th>Rating (F)</th>
             <th>Message</th>
         </tr>
@@ -27,8 +27,8 @@ Welcome to your new app.
         @foreach (var emp in empList)
         {
             <tr>
-                <td>@emp.UserId</td>
-                <td>@emp.RecipeId</td>
+                <td>@emp.Id</td>
+                <td>@emp.User.Name</td>
                 <td>@emp.Rating</td>
                 <td>@emp.Message</td>
 
@@ -39,17 +39,17 @@ Welcome to your new app.
 
 @code {
     private HubConnection? hubConnection;
-    public List<ReviewCreateDTO> empList;
+    public List<ReviewDTO> empList;
     public List<string> stringList = new List<string>();
     public string updatedOn;
     protected override async Task OnInitializedAsync()
     {
-        empList = new List<ReviewCreateDTO>();
+        empList = new List<ReviewDTO>();
         hubConnection = new HubConnectionBuilder()
         .WithUrl("http://localhost:12143/signalhub")
         .Build();
 
-        hubConnection.On<ReviewCreateDTO>("Receivereview", async (incomingEmployee) =>
+        hubConnection.On<ReviewDTO>("Receivereview", async (incomingEmployee) =>
         {
             empList.Add(incomingEmployee);
             updatedOn = DateTime.Now.ToLongTimeString();
