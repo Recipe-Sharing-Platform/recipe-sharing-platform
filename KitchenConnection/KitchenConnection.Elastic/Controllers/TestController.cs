@@ -56,7 +56,7 @@ public class TestController : ControllerBase {
         }
         
         var recipe = new Recipe() {
-            UserId = recipeDto.UserId,
+            //UserId = recipeDto.UserId,
             Id = recipeId,
             Name = recipeDto.Name,
             Description = recipeDto.Description,
@@ -66,7 +66,7 @@ public class TestController : ControllerBase {
             CookTime = recipeDto.CookTime,
             Servings = recipeDto.Servings,
             Calories = recipeDto.Calories,
-            CuisineId = recipeDto.CuisineId,
+            //CuisineId = recipeDto.CuisineId,
             Tags = tags,
             AudioInstructions = recipeDto.AudioInstructions,
             TotalTime = recipeDto.TotalTime,

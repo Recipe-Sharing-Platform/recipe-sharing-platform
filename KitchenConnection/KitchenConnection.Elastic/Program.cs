@@ -2,6 +2,8 @@ using Elasticsearch.Net;
 using KitchenConnection.Elastic.BackgroundServices;
 using KitchenConnection.Elastic.MessageHandlers;
 using KitchenConnection.Elastic.Models;
+using KitchenConnection.Elastic.Services;
+using KitchenConnection.Elastic.Services.IServices;
 using Nest;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,7 +16,7 @@ var settings = new ConnectionSettings(pool).DefaultIndex("recipe");
 var client = new ElasticClient(settings);
 builder.Services.AddSingleton((IElasticClient)client);
 
-builder.Services.AddScoped<MessageSender>();
+builder.Services.AddScoped<MessageSender>(); // temp
 
 // add the message handlers
 builder.Services.AddTransient<IMessageHandler<IndexRecipe>, IndexRecipeMessageHandler>();
@@ -23,6 +25,8 @@ builder.Services.AddTransient<IMessageHandler<UpdateRecipe>, UpdateRecipeMessage
 
 
 builder.Services.AddHostedService<Consumer>(); // add the RabbitMQ Consumer as a background service
+
+builder.Services.AddScoped<ISearchService ,SearchService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
