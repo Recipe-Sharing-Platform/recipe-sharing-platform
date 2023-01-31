@@ -76,8 +76,9 @@ namespace KitchenConnection.BusinessLogic.Services
 
             return collectionDTO;
         }
-        public async Task<CollectionDTO> Create(CollectionCreateDTO collectionToCreate)
+        public async Task<CollectionDTO> Create(CollectionCreateRequestDTO collectionToCreateRequest, Guid userId)
         {
+            CollectionCreateDTO collectionToCreate = new CollectionCreateDTO(collectionToCreateRequest, userId);
             var collection = _mapper.Map<Collection>(collectionToCreate);
             collection.Recipes = new List<CollectionRecipe>();
  

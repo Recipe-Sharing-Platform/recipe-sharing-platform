@@ -9,7 +9,7 @@ namespace KitchenConnection.BusinessLogic.Services.IServices
 {
     public interface ICollectionService
     {
-        Task<CollectionDTO> Create(CollectionCreateDTO collectionToCreate);
+        Task<CollectionDTO> Create(CollectionCreateRequestDTO collectionToCreate, Guid userId);
         Task<CollectionDTO> Update(CollectionUpdateDTO collectionToUpdate);
         Task<List<CollectionDTO>> GetAll();
         Task<CollectionDTO> Get(Guid id);

@@ -19,8 +19,9 @@ public class CookBookService : ICookBookService
         _mapper = mapper;
     }
 
-    public async Task<CookBookDTO> Create(CookBookCreateDTO cookBookToCreate)
+    public async Task<CookBookDTO> Create(CookBookCreateRequestDTO cookBookToCreateRequest, Guid userId)
     {
+        CookBookCreateDTO cookBookToCreate = new CookBookCreateDTO(cookBookToCreateRequest, userId);
         var cookBook = _mapper.Map<CookBook>(cookBookToCreate);
         cookBook.Recipes = new List<Recipe>();
         cookBookToCreate.Recipes.ForEach(recipeId =>
@@ -131,4 +132,6 @@ public class CookBookService : ICookBookService
 
         return cookBookDTO;
     }
+    //TODO: Add controller for adding or deleting recipes from a cookbook
 }
+

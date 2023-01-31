@@ -37,10 +37,10 @@ namespace KitchenConnection.Controllers;
             return Ok(collection);
         }
         [HttpPost]
-        public async Task<ActionResult<CollectionDTO>> Create(CollectionCreateDTO collectionToCreate)
+        public async Task<ActionResult<CollectionDTO>> Create(CollectionCreateRequestDTO collectionToCreate)
         {
-            collectionToCreate.UserId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            var collection = await _collectionService.Create(collectionToCreate);
+            var UserId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var collection = await _collectionService.Create(collectionToCreate, UserId);
 
             if (collection == null) return NotFound();
 

@@ -38,10 +38,10 @@ namespace KitchenConnection.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ReviewDTO>> Create(ReviewCreateDTO reviewToCreate)
+        public async Task<ActionResult<ReviewDTO>> Create(ReviewCreateRequestDTO reviewToCreate)
         {
-            reviewToCreate.UserId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            var review = await _reviewService.Create(reviewToCreate);
+            var UserId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var review = await _reviewService.Create(reviewToCreate, UserId);
 
 
             if (review== null)

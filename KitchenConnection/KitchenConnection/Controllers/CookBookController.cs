@@ -21,10 +21,10 @@ public class CookBookController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<CookBookDTO>> Create(CookBookCreateDTO cookBookToCreate)
+    public async Task<ActionResult<CookBookDTO>> Create(CookBookCreateRequestDTO cookBookToCreate)
     {
-        cookBookToCreate.UserId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-        var cookBook = await _cookBookService.Create(cookBookToCreate);
+        var UserId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+        var cookBook = await _cookBookService.Create(cookBookToCreate, UserId);
 
         if (cookBook == null) return NotFound();
 

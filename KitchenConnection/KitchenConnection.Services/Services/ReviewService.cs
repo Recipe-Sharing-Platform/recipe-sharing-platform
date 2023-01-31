@@ -25,8 +25,9 @@ namespace KitchenConnection.BusinessLogic.Services
             _mapper = mapper;
         }
 
-        public async Task<ReviewDTO> Create(ReviewCreateDTO reviewToCreate)
+        public async Task<ReviewDTO> Create(ReviewCreateRequestDTO reviewToRequestCreate, Guid userId)
         {
+            ReviewCreateDTO reviewToCreate = new ReviewCreateDTO(reviewToRequestCreate, userId);
             var review = await _unitOfWork.Repository<Review>().Create(_mapper.Map<Review>(reviewToCreate));
             _unitOfWork.Complete();
 
