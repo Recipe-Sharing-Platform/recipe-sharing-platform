@@ -20,8 +20,9 @@ public class RecipeService : IRecipeService {
         _mapper = mapper;
     }
 
-    public async Task<RecipeDTO> Create(RecipeCreateDTO recipeToCreate)
+    public async Task<RecipeDTO> Create(RecipeCreateRequestDTO recipeRequestedToCreate, Guid userId)
     {
+        RecipeCreateDTO recipeToCreate = new RecipeCreateDTO(recipeRequestedToCreate, userId);
         var recipe = _mapper.Map<Recipe>(recipeToCreate);
 
         var tagsToCheck = new List<Tag>();

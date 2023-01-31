@@ -21,10 +21,10 @@ public class RecipeController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<RecipeDTO>> Create(RecipeCreateDTO recipeToCreate)
+    public async Task<ActionResult<RecipeDTO>> Create(RecipeCreateRequestDTO recipeToCreate)
     {
-        recipeToCreate.UserId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-        var recipe = await _recipeService.Create(recipeToCreate);
+        var UserId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+        var recipe = await _recipeService.Create(recipeToCreate, UserId);
 
         if(recipe == null)
         {
