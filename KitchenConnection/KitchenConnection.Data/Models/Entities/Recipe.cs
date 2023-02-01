@@ -1,7 +1,5 @@
 using KitchenConnection.DataLayer.Models.Entities;
 using KitchenConnection.DataLayer.Models.Entities.Mappings;
-using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace KitchenConnection.Models.Entities;
 public class Recipe : BaseEntity

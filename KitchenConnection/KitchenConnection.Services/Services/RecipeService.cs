@@ -3,11 +3,13 @@ using KitchenConnection.Application.Models.DTOs.Recipe;
 using KitchenConnection.BusinessLogic.Helpers.Extensions;
 using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.DataLayer.Data.UnitOfWork;
+using KitchenConnection.DataLayer.Models.DTOs.Nutrients;
 using KitchenConnection.DataLayer.Models.DTOs.Recipe;
 using KitchenConnection.DataLayer.Models.Entities;
 using KitchenConnection.DataLayer.Models.Entities.Mappings;
 using KitchenConnection.Models.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -15,10 +17,14 @@ namespace KitchenConnection.BusinessLogic.Services;
 public class RecipeService : IRecipeService {
     public readonly IUnitOfWork _unitOfWork;
     public readonly IMapper _mapper;
+
+    public readonly IRecipeNutrientsService _nutrientsService;
     private readonly IRecommendationsService _recommendationsService;
-    public RecipeService(IUnitOfWork unitOfWork, IMapper mapper, IRecommendationsService recommendationsService) {
+    public RecipeService(IUnitOfWork unitOfWork, IMapper mapper, IRecipeNutrientsService nutrientsService, IRecommendationsService recommendationsService)
+    {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
+        _nutrientsService = nutrientsService;
         _recommendationsService = recommendationsService;
     }
 
@@ -57,9 +63,23 @@ public class RecipeService : IRecipeService {
     }
 
     public async Task<List<RecipeDTO>> GetAll() {
-        var recipes = await _unitOfWork.Repository<Recipe>().GetAll().Include(c => c.Cuisine).ToListAsync();
+        var recipes = await _unitOfWork.Repository<Recipe>().GetAll()
+            .Include(u => u.User)
+            .Include(c => c.Cuisine)
+            .Include(t => t.Tags)
+            .Include(i => i.Ingredients)
+            .Include(i => i.Instructions).ToListAsync();
 
         return _mapper.Map<List<RecipeDTO>>(recipes);
+    }
+
+    public async Task<RecipeNutrientsDTO> GetRecipeNutrients(Guid recipeId)
+    {
+        var recipe = await _unitOfWork.Repository<Recipe>().GetByConditionWithIncludes(x => x.Id == recipeId, "User, Ingredients, Instructions, Tags, Cuisine").FirstOrDefaultAsync();
+
+        var nutrients = await _nutrientsService.GetNutrients(_mapper.Map<List<RecipeIngredientDTO>>(recipe.Ingredients));
+        nutrients.RecipeId = recipe.Id;
+        return nutrients;
     }
 
     public async Task<RecipeDTO> Update(RecipeUpdateDTO recipeToUpdate)

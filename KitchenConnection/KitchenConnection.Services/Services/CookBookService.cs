@@ -26,6 +26,7 @@ public class CookBookService : ICookBookService
         cookBook.Recipes = new List<Recipe>();
         cookBookToCreate.Recipes.ForEach(recipeId =>
         {
+            // TODO: Exception Handling when recipe is not added to cookbook
             var recipe = _unitOfWork.Repository<Recipe>().GetByConditionWithIncludes(r => r.Id == recipeId, "User, Cuisine, Tags, Ingredients, Instructions").FirstOrDefault();
             if (recipe != null && recipe.UserId == cookBook.UserId)
             {
@@ -44,6 +45,7 @@ public class CookBookService : ICookBookService
 
     public async Task<List<CookBookDTO>> GetAll()
     {
+        // TODO: Optimize method
         var cookBooks =  await _unitOfWork.Repository<CookBook>().GetAll()
             .Include(r => r.Recipes)
             .ThenInclude(r => r.Cuisine)

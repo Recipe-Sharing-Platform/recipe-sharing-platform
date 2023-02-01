@@ -60,6 +60,14 @@ public class RecipeController : ControllerBase
         return Ok(recipe);
     }
 
+   [HttpGet("{id}/nutrients")]
+   public async Task<IActionResult> GetRecipeNutrients(Guid id)
+    {
+        var result = await _recipeService.GetRecipeNutrients(id);
+
+        return Ok(result);
+    }
+
     [HttpPut]
     public async Task<ActionResult<RecipeDTO>> Update(RecipeUpdateDTO recipeToUpdate)
     {

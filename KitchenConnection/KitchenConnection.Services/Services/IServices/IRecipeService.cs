@@ -1,4 +1,5 @@
 using KitchenConnection.Application.Models.DTOs.Recipe;
+using KitchenConnection.DataLayer.Models.DTOs.Nutrients;
 using KitchenConnection.DataLayer.Models.DTOs.Recipe;
 using KitchenConnection.Models.Entities;
 
@@ -10,4 +11,6 @@ public interface IRecipeService
     Task<List<RecipeDTO>> GetAll();
     Task<RecipeDTO> Update(RecipeUpdateDTO recipeToUpdate);
     Task<RecipeDTO> Delete(Guid id);
+
+    Task<RecipeNutrientsDTO> GetRecipeNutrients(Guid recipeId);
 }
