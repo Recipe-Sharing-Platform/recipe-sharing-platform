@@ -297,6 +297,26 @@ namespace KitchenConnection.DataLayer.Migrations
                     b.ToTable("Recipes");
                 });
 
+            modelBuilder.Entity("KitchenConnection.Models.Entities.RecommendationScore", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Score")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("TagId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RecommendationScore");
+                });
+
             modelBuilder.Entity("RecipeTag", b =>
                 {
                     b.Property<Guid>("RecipesId")

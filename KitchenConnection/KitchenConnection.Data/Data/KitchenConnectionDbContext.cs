@@ -20,6 +20,7 @@ public class KitchenConnectionDbContext : DbContext {
     public DbSet<Collection> Collections { get; set; }
     public DbSet<CollectionRecipe> CollectionRecipes { get; set; }
     public DbSet<Review> Reviews { get; set; }
+    public DbSet<RecommendationScore> RecommendationScore { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -50,6 +51,8 @@ public class KitchenConnectionDbContext : DbContext {
         modelBuilder.Entity<Tag>().HasIndex(t => t.Name).IsUnique();
 
         modelBuilder.Entity<CookBook>().Property(c => c.Id).ValueGeneratedOnAdd();
+
+        modelBuilder.Entity<RecommendationScore>().Property(r => r.Id).ValueGeneratedOnAdd();
 
         // TODO: What to do with the recipes when the user is deleted?
         modelBuilder.Entity<User>().HasMany(r => r.Recipes).WithOne(u => u.User)
