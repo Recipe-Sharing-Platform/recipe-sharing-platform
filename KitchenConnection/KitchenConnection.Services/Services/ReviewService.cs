@@ -18,19 +18,33 @@ namespace KitchenConnection.BusinessLogic.Services
     {
         public readonly IUnitOfWork _unitOfWork;
         public readonly IMapper _mapper;
+        private readonly IRecommendationsService _recommendationsService;
 
-        public ReviewService(IUnitOfWork unitOfWork, IMapper mapper)
+        public ReviewService(IUnitOfWork unitOfWork, IMapper mapper, IRecommendationsService recommendationsService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _recommendationsService = recommendationsService;
         }
 
         public async Task<ReviewDTO> Create(ReviewCreateRequestDTO reviewToRequestCreate, Guid userId)
         {
             ReviewCreateDTO reviewToCreate = new ReviewCreateDTO(reviewToRequestCreate, userId);
             var review = await _unitOfWork.Repository<Review>().Create(_mapper.Map<Review>(reviewToCreate));
-            _unitOfWork.Complete();
 
+            //create recommendation score
+            //first get all recipe tags ids            
+            Expression<Func<Recipe, bool>> expression = x => x.Id == review.RecipeId;
+            var recipe = await _unitOfWork.Repository<Recipe>().GetByConditionWithIncludes(expression, "Tags").FirstOrDefaultAsync();
+
+            //set recommendationScore for each tag
+            foreach (var item in recipe.Tags)
+            {
+                await _recommendationsService.SetScore(review.UserId, item.Id, (int)review.Rating);
+            }
+
+            _unitOfWork.Complete();
+          
             return _mapper.Map<ReviewDTO>(review);
         }
 

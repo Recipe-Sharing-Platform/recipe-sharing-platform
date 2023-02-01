@@ -15,9 +15,11 @@ namespace KitchenConnection.BusinessLogic.Services;
 public class RecipeService : IRecipeService {
     public readonly IUnitOfWork _unitOfWork;
     public readonly IMapper _mapper;
-    public RecipeService(IUnitOfWork unitOfWork, IMapper mapper) {
+    private readonly IRecommendationsService _recommendationsService;
+    public RecipeService(IUnitOfWork unitOfWork, IMapper mapper, IRecommendationsService recommendationsService) {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
+        _recommendationsService = recommendationsService;
     }
 
     public async Task<RecipeDTO> Create(RecipeCreateRequestDTO recipeRequestedToCreate, Guid userId)
@@ -43,6 +45,13 @@ public class RecipeService : IRecipeService {
     {
         Expression<Func<Recipe, bool>> expression = x => x.Id == id;
         var recipe = await _unitOfWork.Repository<Recipe>().GetByConditionWithIncludes(expression, "User, Ingredients, Instructions, Tags, Cuisine").FirstOrDefaultAsync();
+
+        //create a recommendation score for each tag in recipe
+        foreach (Tag t in recipe.Tags)
+        {
+            //create a recommendation score
+            await _recommendationsService.SetScore(recipe.UserId, t.Id);          
+        }
 
         return _mapper.Map<RecipeDTO>(recipe);
     }
@@ -108,11 +117,14 @@ public class RecipeService : IRecipeService {
         existingTags.AddRange(missingTags);
 
         var tagsToAdd = new List<Tag>();
-        existingTags.ForEach(recipeTag =>
+        existingTags.ForEach(async recipeTag =>
         {
             if (tagsToCreate.Contains(recipeTag, new TagNameComparer()))
             {
                 tagsToAdd.Add(recipeTag);
+
+                //create a recommendation score
+                await _recommendationsService.SetScore(recipe.UserId, recipeTag.Id);                
             }
         });
 

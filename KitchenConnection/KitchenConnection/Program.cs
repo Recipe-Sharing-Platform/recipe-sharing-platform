@@ -53,7 +53,9 @@ builder.Services.AddTransient<ITagService, TagService>();
 builder.Services.AddTransient<ICookBookService, CookBookService>();
 builder.Services.AddTransient<IReviewService, ReviewService>();
 builder.Services.AddTransient<ICollectionService, CollectionService>();
+builder.Services.AddTransient<IRecommendationsService, RecommendationsService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
 builder.Services.AddAuthentication(options =>
 {

@@ -51,6 +51,8 @@ public class AutoMapperConfigurations : Profile
 
             CreateMap<Review, ReviewCreateDTO>().ReverseMap();
             CreateMap<Review, ReviewDTO>().ReverseMap();
+
+            CreateMap<RecommendationScore, RecommendationScoreCreateDto>().ReverseMap();
         }
     }
 
