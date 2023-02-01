@@ -1,84 +1,137 @@
+using AutoMapper;
 using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.DataLayer.Data.UnitOfWork;
+using KitchenConnection.DataLayer.Models.DTOs.CookBook;
 using KitchenConnection.DataLayer.Models.Entities;
 using KitchenConnection.Models.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace KitchenConnection.BusinessLogic.Services
+namespace KitchenConnection.BusinessLogic.Services;
+
+public class CookBookService : ICookBookService
 {
-    public class CookBookService : ICookBookService
+    public readonly IUnitOfWork _unitOfWork;
+    public readonly IMapper _mapper;
+
+    public CookBookService(IUnitOfWork unitOfWork, IMapper mapper)
     {
-        public readonly IUnitOfWork _unitOfWork;
-        public CookBookService(IUnitOfWork unitOfWork)
-        {
-            _unitOfWork = unitOfWork;
-        }
-        public async Task<List<CookBook>> GetCookBooks()
-        {
-            return await _unitOfWork.Repository<CookBook>().GetAll().ToListAsync();
-        }
-
-        public async Task<CookBook> GetCookBook(Guid id)
-        {
-
-            Expression<Func<CookBook, bool>> expression = x => x.Id == id;
-            var cookbook = _unitOfWork.Repository<CookBook>().GetById(expression);
-
-            return (CookBook)cookbook;
-        }
-
-        public async Task<CookBook> UpdateCookBook(CookBook cookbookToUpdate)
-        {
-            CookBook? cookBook = await GetCookBook(cookbookToUpdate.Id);
-
-            cookBook.Name = cookbookToUpdate.Name;
-            cookBook.Description = cookbookToUpdate.Description;
-            
-
-            _unitOfWork.Repository<CookBook>().Update(cookBook);
-
-            var res=_unitOfWork.Complete();
-
-            if (res)
-            {
-                return cookBook;//return updated cookbook
-            }
-
-            else
-            {
-                return null;//couldn't update
-            }
-        }
-
-        public async Task<bool> DeleteCookBook(Guid id)
-        {
-            var cookBook = await GetCookBook(id);
-
-            _unitOfWork.Repository<CookBook>().Delete(cookBook);
-
-            return _unitOfWork.Complete();
-        }
-
-        public async Task<CookBook> CreateCookBook(CookBook cookBookToCreate) 
-        {
-            await _unitOfWork.Repository<CookBook>().Create(cookBookToCreate);
-            
-            var res=_unitOfWork.Complete();
-
-            if (res)
-            {
-                return cookBookToCreate;
-            }
-            else
-            {
-                return null;
-            }
-        }
+        _unitOfWork = unitOfWork;
+        _mapper = mapper;
     }
+
+    public async Task<CookBookDTO> Create(CookBookCreateRequestDTO cookBookToCreateRequest, Guid userId)
+    {
+        CookBookCreateDTO cookBookToCreate = new CookBookCreateDTO(cookBookToCreateRequest, userId);
+        var cookBook = _mapper.Map<CookBook>(cookBookToCreate);
+        cookBook.Recipes = new List<Recipe>();
+        cookBookToCreate.Recipes.ForEach(recipeId =>
+        {
+            var recipe = _unitOfWork.Repository<Recipe>().GetByConditionWithIncludes(r => r.Id == recipeId, "User, Cuisine, Tags, Ingredients, Instructions").FirstOrDefault();
+            if (recipe != null && recipe.UserId == cookBook.UserId)
+            {
+                cookBook.Recipes.Add(recipe);
+            }
+        });
+
+        cookBook = await _unitOfWork.Repository<CookBook>().Create(cookBook);
+        _unitOfWork.Complete();
+
+        var cookBookDTO = _mapper.Map<CookBookDTO>(cookBook);
+        cookBookDTO.NumberOfRecipes = cookBook.Recipes.Count();
+
+        return cookBookDTO;
+    }
+
+    public async Task<List<CookBookDTO>> GetAll()
+    {
+        var cookBooks =  await _unitOfWork.Repository<CookBook>().GetAll()
+            .Include(r => r.Recipes)
+            .ThenInclude(r => r.Cuisine)
+            .Include(r => r.Recipes)
+            .ThenInclude(r => r.Tags)
+            .Include(r => r.Recipes)
+            .ThenInclude(r => r.Ingredients)
+            .Include(r => r.Recipes)
+            .ThenInclude(r => r.Instructions).ToListAsync();
+
+        if (cookBooks == null) return null;
+        
+        var cookBooksDTO = _mapper.Map<List<CookBookDTO>>(cookBooks);
+        cookBooksDTO.ForEach(cookBook =>
+        {
+            cookBook.NumberOfRecipes = cookBook.Recipes.Count();
+        });
+
+        return cookBooksDTO;
+    }
+
+    public async Task<CookBookDTO> Get(Guid id)
+    {
+        var cookBook = await _unitOfWork.Repository<CookBook>().GetById(x => x.Id == id)
+            .Include(r => r.Recipes)
+            .ThenInclude(r => r.Cuisine)
+            .Include(r => r.Recipes)
+            .ThenInclude(r => r.Tags)
+            .Include(r => r.Recipes)
+            .ThenInclude(r => r.Ingredients)
+            .Include(r => r.Recipes)
+            .ThenInclude(r => r.Instructions).FirstOrDefaultAsync();
+
+        var cookBookDTO = _mapper.Map<CookBookDTO>(cookBook);
+        cookBookDTO.NumberOfRecipes = cookBook.Recipes.Count();
+
+        return cookBookDTO;
+    }
+
+    public async Task<CookBookDTO> Update(CookBookUpdateDTO cookBookToUpdate)
+    {
+        var cookBook = await _unitOfWork.Repository<CookBook>().GetById(x => x.Id == cookBookToUpdate.Id)
+            .Include(r => r.Recipes)
+            .ThenInclude(r => r.Cuisine)
+            .Include(r => r.Recipes)
+            .ThenInclude(r => r.Tags)
+            .Include(r => r.Recipes)
+            .ThenInclude(r => r.Ingredients)
+            .Include(r => r.Recipes)
+            .ThenInclude(r => r.Instructions).FirstOrDefaultAsync();
+
+        if (cookBook == null) return null;
+        
+        cookBook.Name = cookBookToUpdate.Name;
+        cookBook.Description = cookBookToUpdate.Description;
+        
+
+        _unitOfWork.Repository<CookBook>().Update(cookBook);
+        _unitOfWork.Complete();
+
+        var cookBookDTO = _mapper.Map<CookBookDTO>(cookBook);
+        cookBookDTO.NumberOfRecipes = cookBook.Recipes.Count();
+
+        return cookBookDTO;
+    }
+
+    public async Task<CookBookDTO> Delete(Guid id)
+    {
+        var cookBook = await _unitOfWork.Repository<CookBook>().GetById(x => x.Id == id)
+            .Include(r => r.Recipes)
+            .ThenInclude(r => r.Cuisine)
+            .Include(r => r.Recipes)
+            .ThenInclude(r => r.Tags)
+            .Include(r => r.Recipes)
+            .ThenInclude(r => r.Ingredients)
+            .Include(r => r.Recipes)
+            .ThenInclude(r => r.Instructions).FirstOrDefaultAsync();
+
+        if (cookBook == null) return null;
+        
+        _unitOfWork.Repository<CookBook>().Delete(cookBook);
+        _unitOfWork.Complete();
+
+        var cookBookDTO = _mapper.Map<CookBookDTO>(cookBook);
+        cookBookDTO.NumberOfRecipes = cookBook.Recipes.Count();
+
+        return cookBookDTO;
+    }
+    //TODO: Add controller for adding or deleting recipes from a cookbook
 }
+

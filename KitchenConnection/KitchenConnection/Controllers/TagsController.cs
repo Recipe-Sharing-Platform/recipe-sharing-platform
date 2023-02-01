@@ -1,84 +1,70 @@
-﻿using KitchenConnection.Application.Models.DTOs.Recipe;
+﻿using KitchenConnection.DataLayer.Models.DTOs.Recipe;
 using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.DataLayer.Models.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
-namespace KitchenConnection.Controllers
+namespace KitchenConnection.Controllers;
+
+[ApiController]
+[Route("api/tags")]
+[Authorize(AuthenticationSchemes = "Bearer")]
+public class TagsController : ControllerBase
 {
-    [ApiController]
-    public class TagsController : ControllerBase
+    private readonly ITagService _tagService;
+    public TagsController(ITagService tagService)
     {
-        private readonly ITagService _tagService;
-        public TagsController(ITagService tagService)
-        {
-            _tagService = tagService;
-        }
+        _tagService = tagService;
+    }
 
-        [HttpGet("GetAllTags")]
-        public async Task<IActionResult> GetTags()
-        {
-            var tags = await _tagService.GetTags();
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
+    {
+        var tags = await _tagService.GetAll();
 
-            if (tags != null)
-            {
-                return Ok(tags);
-            }
-            else
-            {
-                return NotFound("Could not be found!");
-            }            
-        }
+        if(tags == null) return NotFound();
+        
+        return Ok(tags);
+    }
 
-        [HttpGet("GetSingleTag")]
-        public async Task<IActionResult> GetTag(Guid id)
-        {
-            var tag = await _tagService.GetTag(id);
-            if(tag == null)
-            {
-                return NotFound("Could not find tag!");
-            }
-            return Ok(tag);
-        }
+    [HttpGet("{id}")]
+    public async Task<IActionResult> Get(Guid id)
+    {
+        var tag = await _tagService.Get(id);
+        
+        if(tag == null) return NotFound();
 
-        [HttpPost("CreateTag")]
-        public async Task<IActionResult> CreateTag(TagCreateDTO TagToCreate)
-        {
-            var createdTag=await _tagService.CreateTag(TagToCreate);
+        return Ok(tag);
+    }
 
-            if (createdTag != null)
-            {
-                return Ok(createdTag);
-            }
+    [HttpPost]
+    public async Task<IActionResult> Create(TagCreateDTO tagToCreate)
+    {
+        var tag = await _tagService.Create(tagToCreate);
 
-            else
-            {
-                return BadRequest("Could not create tag!");
-            }
+        if (tag == null) return BadRequest("Tag could not be created!");
+        
+        return Ok(tag);
+    }
 
-        }
+    [HttpPut]
+    public async Task<IActionResult> Update(TagDTO tagToUpdate) 
+    {
+        var tag = await _tagService.Update(tagToUpdate);
 
-        //NOTE: Service needs to be reviewed
-       /* [HttpPut("UpdateTag")]
-        public async Task<IActionResult> UpdateTag(TagDTO tag) 
-        {
-            await _tagService.UpdateTag(tag);
-            return Ok("Tag updated Successfully!");
-        }*/
+        if (tag == null) return BadRequest("Tag could not be updated!");
 
-        [HttpDelete("DeleteTag")]
-        public async Task<IActionResult> DeleteTag(Guid id)
-        {
-            var res=await _tagService.DeleteTag(id);
+        return Ok(tag);
+    }
 
-            if (res)
-            {
-                return Ok("Tag Deleted Successfully!");
-            }
-            else
-            {
-                return BadRequest("Could not delete tag!");
-            }          
-        }
+    [HttpDelete]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        var tag = await _tagService.Delete(id);
+
+        if (tag == null) return BadRequest("Tag could not be deleted!");
+
+        return Ok(tag);
     }
 }

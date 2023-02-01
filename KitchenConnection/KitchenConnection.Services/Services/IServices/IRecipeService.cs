@@ -1,15 +1,13 @@
 using KitchenConnection.Application.Models.DTOs.Recipe;
+using KitchenConnection.DataLayer.Models.DTOs.Recipe;
 using KitchenConnection.Models.Entities;
 
-namespace KitchenConnection.BusinessLogic.Services.IServices; 
-public interface IRecipeService {
-
-    Task<Recipe> CreateRecipe(RecipeCreateDTO recipeToCreate);
-    Task<List<Recipe>> GetRecipes();
-
-    Task<Recipe> GetRecipe(Guid id);
-
-    Task<Recipe> UpdateRecipe(RecipeDTO recipeToUpdate);
-
-    Task<bool> DeleteRecipe(Guid id);
+namespace KitchenConnection.BusinessLogic.Services.IServices;
+public interface IRecipeService
+{
+    Task<RecipeDTO> Create(RecipeCreateRequestDTO recipeToRequestCreate, Guid userId);
+    Task<RecipeDTO> Get(Guid id);
+    Task<List<RecipeDTO>> GetAll();
+    Task<RecipeDTO> Update(RecipeUpdateDTO recipeToUpdate);
+    Task<RecipeDTO> Delete(Guid id);
 }

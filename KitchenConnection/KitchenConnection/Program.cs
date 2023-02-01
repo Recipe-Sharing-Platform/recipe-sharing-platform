@@ -1,4 +1,5 @@
 using AutoMapper;
+using KitchenConnecition.DataLayer.Hubs;
 using KitchenConnection.BusinessLogic.Helpers;
 using KitchenConnection.BusinessLogic.Services;
 using KitchenConnection.BusinessLogic.Services.IServices;
@@ -9,19 +10,28 @@ using KitchenConnection.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Globalization;
 using System.Security.Claims;
 using System.Text;
-
+using System.Text.Json.Serialization;
 using claims = System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(x =>
+{
+    // serialize enums as strings in api responses
+    x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+
+    // ignore omitted parameters on models to enable optional params
+    x.JsonSerializerOptions.IgnoreNullValues = true;
+});
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
@@ -29,20 +39,23 @@ builder.Services.AddDbContext<KitchenConnectionDbContext>(options => {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+var mapperConfiguration = new MapperConfiguration(
+    mc => mc.AddProfile(new AutoMapperConfigurations()));
+
+IMapper mapper = mapperConfiguration.CreateMapper();
+
+builder.Services.AddSingleton(mapper);
+
+
 builder.Services.AddTransient<IRecipeService, RecipeService>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<ITagService, TagService>();
 builder.Services.AddTransient<ICookBookService, CookBookService>();
-builder.Services.AddTransient<IRecipeIngredientService, RecipeIngredientService>();
+builder.Services.AddTransient<IReviewService, ReviewService>();
+builder.Services.AddTransient<ICollectionService, CollectionService>();
+builder.Services.AddTransient<IRecommendationsService, RecommendationsService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-
-var config = new AutoMapper.MapperConfiguration(cfg =>
-{
-    cfg.AddProfile(new AutoMapperConfigurations());
-});
-IMapper mapper = config.CreateMapper();
-builder.Services.AddSingleton(mapper);
+builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -150,6 +163,7 @@ builder.Services.AddSwaggerGen(c =>
 
     c.OperationFilter<AuthorizeCheckOperationFilter>();
 });
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -169,10 +183,12 @@ if (app.Environment.IsDevelopment()) {
     });
 }
 
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<NotificationHub>("/signalhub");
 
 app.Run();

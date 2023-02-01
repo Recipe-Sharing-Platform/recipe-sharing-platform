@@ -1,15 +1,17 @@
-﻿using KitchenConnection.DataLayer.Models.Entities.Mappings;
+﻿using KitchenConnection.DataLayer.Models.Entities;
+using KitchenConnection.DataLayer.Models.Entities.Mappings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace KitchenConnecition.Infrastructure.Data.Configurations
 {
-    public class CookBookRecipeEntityTypeConfiguration : IEntityTypeConfiguration<CookBookRecipe>
-    {
-        public void Configure(EntityTypeBuilder<CookBookRecipe> builder)
-        {
-            //builder.HasKey(k => new {k.CookBookId, k.RecipeId});
-            builder.HasOne(c => c.CookBook).WithMany(r => r.Recipes).HasForeignKey(x => x.CookBookId).OnDelete(DeleteBehavior.NoAction);
-        }
-    }
+    //public class CookBookRecipeEntityTypeConfiguration : IEntityTypeConfiguration<CookBook>
+    //{
+    //    public void Configure(EntityTypeBuilder<CookBook> builder)
+    //    {
+    //        builder.HasKey(k => k.Id);
+    //        builder.Property(i => i.Id).ValueGeneratedOnAdd();
+    //        builder.HasMany(r => r.Recipes).WithOne(c => c.CookBook).OnDelete(DeleteBehavior.NoAction);
+    //    }
+    //}
 }

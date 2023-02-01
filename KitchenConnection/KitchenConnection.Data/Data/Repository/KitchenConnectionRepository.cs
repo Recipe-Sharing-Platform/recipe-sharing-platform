@@ -65,7 +65,7 @@ public class KitchenConnectionRepository<Tentity> : IKitchenConnectionRepository
         var query = _dbContext.Set<Tentity>().Where(expression);
 
         if (!string.IsNullOrEmpty(includeRelations)) {
-            var relations = includeRelations.Split(",");
+            var relations = includeRelations.Split(", ");
 
             foreach (var relation in relations) {
                 query = query.Include(relation);

@@ -1,5 +1,4 @@
-﻿using KitchenConnection.Application.Models.DTOs.Recipe;
-using KitchenConnection.Models.Entities;
+﻿using KitchenConnection.Models.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

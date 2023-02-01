@@ -2,6 +2,6 @@
 {
     public class CuisineCreateDTO
     {
-        public Guid CuisineId { get; set; }
+        public string Name { get; set; }
     }
 }

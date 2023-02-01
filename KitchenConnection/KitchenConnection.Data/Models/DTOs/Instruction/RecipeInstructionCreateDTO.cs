@@ -1,4 +1,4 @@
-﻿namespace KitchenConnection.Application.Models.DTOs.Recipe
+﻿namespace KitchenConnection.DataLayer.Models.DTOs.Recipe
 {
     public class RecipeInstructionCreateDTO
     {
