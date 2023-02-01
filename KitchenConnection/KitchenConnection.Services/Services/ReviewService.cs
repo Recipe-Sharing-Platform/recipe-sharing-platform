@@ -3,7 +3,9 @@ using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.DataLayer.Data.UnitOfWork;
 using KitchenConnection.DataLayer.Models.DTOs.Review;
 using KitchenConnection.DataLayer.Models.Entities;
+using KitchenConnection.Models.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace KitchenConnection.BusinessLogic.Services
 {
