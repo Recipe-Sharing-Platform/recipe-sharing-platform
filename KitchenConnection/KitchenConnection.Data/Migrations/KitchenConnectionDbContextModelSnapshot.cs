@@ -215,7 +215,7 @@ namespace KitchenConnection.DataLayer.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("ShoppingListId")
+                    b.Property<Guid?>("ShoppingListId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Unit")
@@ -470,13 +470,9 @@ namespace KitchenConnection.DataLayer.Migrations
 
             modelBuilder.Entity("KitchenConnection.DataLayer.Models.Entities.ShoppingListItem", b =>
                 {
-                    b.HasOne("KitchenConnection.DataLayer.Models.Entities.ShoppingList", "ShoppingList")
+                    b.HasOne("KitchenConnection.DataLayer.Models.Entities.ShoppingList", null)
                         .WithMany("ShoppingListItems")
-                        .HasForeignKey("ShoppingListId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ShoppingList");
+                        .HasForeignKey("ShoppingListId");
                 });
 
             modelBuilder.Entity("KitchenConnection.Models.Entities.Recipe", b =>

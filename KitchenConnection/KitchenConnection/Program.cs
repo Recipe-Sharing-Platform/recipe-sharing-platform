@@ -57,6 +57,8 @@ builder.Services.AddTransient<IRecommendationsService, RecommendationsService>()
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddTransient<IRecipeNutrientsService, RecipeNutrientsService>();
 builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddTransient<IShoppingListService, ShoppingListService>();
+
 
 builder.Services.AddAuthentication(options =>
 {

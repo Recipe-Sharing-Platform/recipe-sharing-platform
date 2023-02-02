@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using KitchenConnection.DataLayer.Models.DTOs.ShoppingCart;
 
 namespace KitchenConnection.Controllers;
 
@@ -93,4 +94,5 @@ public class RecipeController : ControllerBase
 
         return Ok(recipe);
     }
+
 }

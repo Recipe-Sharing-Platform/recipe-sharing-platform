@@ -8,6 +8,7 @@ using KitchenConnection.DataLayer.Models.DTOs.Instruction;
 using KitchenConnection.DataLayer.Models.DTOs.Recipe;
 using KitchenConnection.DataLayer.Models.DTOs.RecipeTag;
 using KitchenConnection.DataLayer.Models.DTOs.Review;
+using KitchenConnection.DataLayer.Models.DTOs.ShoppingCart;
 using KitchenConnection.DataLayer.Models.Entities;
 using KitchenConnection.DataLayer.Models.Entities.Mappings;
 using KitchenConnection.Models.Entities;
@@ -53,8 +54,11 @@ public class AutoMapperConfigurations : Profile
             CreateMap<Review, ReviewDTO>().ReverseMap();
 
             CreateMap<RecommendationScore, RecommendationScoreCreateDto>().ReverseMap();
-        }
+        CreateMap<ShoppingListCreateDTO, ShoppingList>().ReverseMap();
+        CreateMap<ShoppingListItemDTO, ShoppingListItem>().ReverseMap();
+
     }
+}
 
 /*public class UserCustomResolver : IValueResolver<User, UserDTO, string>
 {

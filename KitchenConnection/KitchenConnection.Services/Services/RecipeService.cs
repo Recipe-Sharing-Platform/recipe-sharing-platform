@@ -5,11 +5,14 @@ using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.DataLayer.Data.UnitOfWork;
 using KitchenConnection.DataLayer.Models.DTOs.Nutrients;
 using KitchenConnection.DataLayer.Models.DTOs.Recipe;
+using KitchenConnection.DataLayer.Models.DTOs.ShoppingCart;
 using KitchenConnection.DataLayer.Models.Entities;
 using KitchenConnection.DataLayer.Models.Entities.Mappings;
 using KitchenConnection.Models.Entities;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
+using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -150,4 +153,12 @@ public class RecipeService : IRecipeService {
 
         return tagsToAdd;
     }
+    public async Task<List<ShoppingList>> GetUserShoppingLists(Guid userId)
+    {
+        
+        if (userId == null) return null;
+
+        return await _unitOfWork.Repository<ShoppingList>().GetByCondition(x => x.UserId == userId).ToListAsync();
+    }
+ 
 }
