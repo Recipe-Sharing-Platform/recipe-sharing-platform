@@ -41,8 +41,22 @@ namespace KitchenConnection.BusinessLogic.Services
             _unitOfWork.Complete();
 
             var itemsToCheck = new List<ShoppingListItemDTO>();
-            shoppingList.ShoppingListItems.ForEach(t => itemsToCheck.Add(new ShoppingListItemDTO { Name = t.Name }));
-            await AddShoppingListItems(itemsToCheck);
+            shoppingList.ShoppingListItems.ForEach(t =>
+            {
+                t.ShoppingListId = shoppingList.Id;
+                itemsToCheck.Add(_mapper.Map<ShoppingListItemDTO>(t));
+            });
+
+            foreach (var item in itemsToCheck)
+            {
+                var existingItem = await _unitOfWork.Repository<ShoppingListItem>().GetByCondition(x => x.Name == item.Name && x.ShoppingListId == shoppingList.Id).FirstOrDefaultAsync();
+                if (existingItem == null)
+                {
+                    var shoppingItem = _mapper.Map<ShoppingListItem>(item);
+                    await _unitOfWork.Repository<ShoppingListItem>().Create(shoppingItem);
+                }
+            }
+            _unitOfWork.Complete();
 
             return _mapper.Map<ShoppingListCreateDTO>(shoppingList);
         }
@@ -53,7 +67,6 @@ namespace KitchenConnection.BusinessLogic.Services
                 var shoppingItem = _mapper.Map<ShoppingListItem>(item);
                 await _unitOfWork.Repository<ShoppingListItem>().Create(shoppingItem);
             }
-            _unitOfWork.Complete();
         }
     }
 }

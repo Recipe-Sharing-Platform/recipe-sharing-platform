@@ -10,6 +10,8 @@ namespace KitchenConnection.DataLayer.Models.Entities
 {
     public class ShoppingListItem:BaseEntity
     {
+        public Guid ShoppingListId { get; set; }
+        public ShoppingList ShoppingList { get; set; }
         public string Name { get; set; }
         public int Quantity { get; set; }
         public Unit Unit { get; set; }
