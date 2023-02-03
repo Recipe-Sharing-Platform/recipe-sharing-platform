@@ -1,4 +1,4 @@
-﻿using KitchenConnection.BusinessLogic.Services;
+﻿﻿using KitchenConnection.BusinessLogic.Services;
 using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.DataLayer.Models.DTOs.Recipe;
 using KitchenConnection.DataLayer.Models.DTOs.ShoppingCart;
@@ -52,7 +52,7 @@ namespace KitchenConnection.Controllers
         }
 
         [HttpGet]
-        [Route("item/{shoppingListItemId}")]
+        [Route("{shoppingListItemId}")]
         public async Task<ActionResult<ShoppingListItemDTO>> GetShoppingListItem(Guid shoppingListItemId)
         {
             var userId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
@@ -73,7 +73,7 @@ namespace KitchenConnection.Controllers
             try
             {
                 var finalUrl = await _shoppingListService.GetShoppingListItemUrl(userId, shoppingListItemId);
-                return Ok(finalUrl);
+                return Redirect(finalUrl);
             }
             catch (Exception ex)
             {
@@ -87,21 +87,6 @@ namespace KitchenConnection.Controllers
         {
             var userId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             var shoppingList = await _shoppingListService.GetShoppingListForUser(userId);
-
-            if (shoppingList == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(shoppingList);
-        }
-
-        [HttpGet]
-        [Route("getlinkforitems")]
-        public async Task<ActionResult<List<ShoppingListItemWithUrlDTO>>> GetShoppingListWithUrls()
-        {
-            var userId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            var shoppingList = await _shoppingListService.GetShoppingListWithUrlForUser(userId);
 
             if (shoppingList == null)
             {
