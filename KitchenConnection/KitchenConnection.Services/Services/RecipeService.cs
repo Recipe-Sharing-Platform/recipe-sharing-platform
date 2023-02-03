@@ -153,12 +153,5 @@ public class RecipeService : IRecipeService {
 
         return tagsToAdd;
     }
-    public async Task<List<ShoppingList>> GetUserShoppingLists(Guid userId)
-    {
-        
-        if (userId == null) return null;
-
-        return await _unitOfWork.Repository<ShoppingList>().GetByCondition(x => x.UserId == userId).ToListAsync();
-    }
  
 }

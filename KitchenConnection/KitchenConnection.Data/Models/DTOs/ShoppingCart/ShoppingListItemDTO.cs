@@ -7,10 +7,19 @@ using System.Threading.Tasks;
 
 namespace KitchenConnection.DataLayer.Models.DTOs.ShoppingCart
 {
-    public class ShoppingListItemDTO
+    public class ShoppingListItemDTO: ShoppingListItemCreateDTO
+    {
+        public Guid UserId { get; set; }
+        public ShoppingListItemDTO(Guid userId, ShoppingListItemCreateDTO item)
+        {
+            UserId = userId;
+            Name = item.Name;
+            Quantity = item.Quantity;
+        }
+    }
+    public class ShoppingListItemCreateDTO
     {
         public string Name { get; set; }
         public int Quantity { get; set; }
-        public Unit Unit { get; set; }
     }
 }

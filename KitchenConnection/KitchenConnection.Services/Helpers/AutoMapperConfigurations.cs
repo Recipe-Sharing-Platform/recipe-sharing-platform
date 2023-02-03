@@ -54,8 +54,10 @@ public class AutoMapperConfigurations : Profile
             CreateMap<Review, ReviewDTO>().ReverseMap();
 
             CreateMap<RecommendationScore, RecommendationScoreCreateDto>().ReverseMap();
-        CreateMap<ShoppingListCreateDTO, ShoppingList>().ReverseMap();
-        CreateMap<ShoppingListItemDTO, ShoppingListItem>().ReverseMap();
+            CreateMap<ShoppingListItemDTO, ShoppingListItem>().ReverseMap();
+             CreateMap<ShoppingListItemCreateDTO, ShoppingListItem>().ReverseMap();
+
+
 
     }
 }

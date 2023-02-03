@@ -11,6 +11,4 @@ public class User : BaseEntity
     public string PhoneNumber { get; set; }
     public List<Recipe> Recipes { get; set; }
     public List<Review> Reviews { get; set; }
-    public ShoppingList? ShoppingList { get; set; }
-
 }

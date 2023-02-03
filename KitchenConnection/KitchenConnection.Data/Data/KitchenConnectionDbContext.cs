@@ -22,7 +22,6 @@ public class KitchenConnectionDbContext : DbContext {
     public DbSet<Review> Reviews { get; set; }
     public DbSet<RecommendationScore> RecommendationScore { get; set; }
     public DbSet<ShoppingListItem> ShoppingListItem { get; set; }
-    public DbSet<ShoppingList> ShoppingList { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -66,9 +65,7 @@ public class KitchenConnectionDbContext : DbContext {
             .HasForeignKey(u => u.UserId).OnDelete(DeleteBehavior.NoAction);
         modelBuilder.Entity<Recipe>().HasMany(r => r.Reviews).WithOne(r => r.Recipe)
             .HasForeignKey(r => r.RecipeId).OnDelete(DeleteBehavior.Cascade);
-        modelBuilder.Entity<ShoppingListItem>().HasKey(k => k.Id);
-        modelBuilder.Entity<ShoppingList>().HasKey(k => k.Id);
-        modelBuilder.Entity<User>().HasOne(sh => sh.ShoppingList).WithOne(u => u.User);
-        modelBuilder.Entity<ShoppingList>().HasMany(sh => sh.ShoppingListItems).WithOne(sh => sh.ShoppingList);
+        modelBuilder.Entity<ShoppingListItem>().HasKey(e => new { e.Id, e.UserId, e.Name });
+        modelBuilder.Entity<ShoppingListItem>().Property(r => r.Id).ValueGeneratedOnAdd();
     }
 }

@@ -185,7 +185,7 @@ namespace KitchenConnection.DataLayer.Migrations
                     b.ToTable("Reviews");
                 });
 
-            modelBuilder.Entity("KitchenConnection.DataLayer.Models.Entities.ShoppingList", b =>
+            modelBuilder.Entity("KitchenConnection.DataLayer.Models.Entities.ShoppingListItem", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -194,36 +194,15 @@ namespace KitchenConnection.DataLayer.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("ShoppingList");
-                });
-
-            modelBuilder.Entity("KitchenConnection.DataLayer.Models.Entities.ShoppingListItem", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("ShoppingListId")
-                        .HasColumnType("uniqueidentifier");
+                    b.HasKey("Id", "UserId", "Name");
 
-                    b.Property<int>("Unit")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ShoppingListId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("ShoppingListItem");
                 });
@@ -457,26 +436,15 @@ namespace KitchenConnection.DataLayer.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("KitchenConnection.DataLayer.Models.Entities.ShoppingList", b =>
+            modelBuilder.Entity("KitchenConnection.DataLayer.Models.Entities.ShoppingListItem", b =>
                 {
                     b.HasOne("KitchenConnection.DataLayer.Models.Entities.User", "User")
-                        .WithOne("ShoppingList")
-                        .HasForeignKey("KitchenConnection.DataLayer.Models.Entities.ShoppingList", "UserId")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("KitchenConnection.DataLayer.Models.Entities.ShoppingListItem", b =>
-                {
-                    b.HasOne("KitchenConnection.DataLayer.Models.Entities.ShoppingList", "ShoppingList")
-                        .WithMany("ShoppingListItems")
-                        .HasForeignKey("ShoppingListId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ShoppingList");
                 });
 
             modelBuilder.Entity("KitchenConnection.Models.Entities.Recipe", b =>
@@ -535,18 +503,11 @@ namespace KitchenConnection.DataLayer.Migrations
                     b.Navigation("Recipes");
                 });
 
-            modelBuilder.Entity("KitchenConnection.DataLayer.Models.Entities.ShoppingList", b =>
-                {
-                    b.Navigation("ShoppingListItems");
-                });
-
             modelBuilder.Entity("KitchenConnection.DataLayer.Models.Entities.User", b =>
                 {
                     b.Navigation("Recipes");
 
                     b.Navigation("Reviews");
-
-                    b.Navigation("ShoppingList");
                 });
 
             modelBuilder.Entity("KitchenConnection.Models.Entities.Recipe", b =>
