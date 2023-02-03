@@ -128,6 +128,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -180,11 +181,45 @@ namespace KitchenConnection.BusinessLogic.Services
 
             return shoppingListItem;
         }
+
+        public async Task<ShoppingListItemWithUrlDTO> GetShoppingListItemUrl(Guid userId, Guid shoppingListItemId)
+        {
+            var shoppingListItem = await _unitOfWork.Repository<ShoppingListItem>().GetByCondition(x => x.Id == shoppingListItemId && x.UserId == userId).FirstOrDefaultAsync();
+
+            if (shoppingListItem == null)
+            {
+                throw new Exception("No shopping list item found with the specified id for the given user.");
+            }
+
+            string groceryShopUrl = "http://www.walmart.com/search?q=";
+            string itemName = shoppingListItem.Name;
+            string[] itemNameWords = itemName.Split(' ');
+            string encodedItemName = WebUtility.UrlEncode(string.Join("+", itemNameWords));
+            string finalUrl = groceryShopUrl + encodedItemName;
+            var finalShoppingItem = new ShoppingListItemWithUrlDTO
+            {
+                Name = itemName,
+                Url = finalUrl
+            };
+
+            return finalShoppingItem;
+        }
         public async Task<List<ShoppingListItem>> GetShoppingListForUser(Guid userId)
         {
             return await _unitOfWork.Repository<ShoppingListItem>().GetByCondition(x => x.UserId == userId).ToListAsync();
         }
 
+        public async Task<List<ShoppingListItemWithUrlDTO>> GetShoppingListWithUrlForUser(Guid userId)
+        {
+            var shoppingList = await _unitOfWork.Repository<ShoppingListItem>().GetByCondition(x => x.UserId == userId).ToListAsync();
+            var shoppingListDto = new List<ShoppingListItemWithUrlDTO>();
+            foreach (var item in shoppingList)
+            {
+                var itemUrl = await GetShoppingListItemUrl(userId, item.Id);
+               shoppingListDto.Add(itemUrl);
+            }
+            return shoppingListDto;
+        }
 
     }
 }

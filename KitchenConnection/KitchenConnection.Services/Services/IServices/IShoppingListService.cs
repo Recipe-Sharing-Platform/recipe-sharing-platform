@@ -8,7 +8,9 @@ namespace KitchenConnection.BusinessLogic.Services.IServices
        Task<List<ShoppingListItemCreateDTO>> AddToShoppingList(Guid userId, List<ShoppingListItemCreateDTO> shoppingList);
         Task<bool> DeleteFromShoppingList(Guid userId, Guid shoppingListItemIds);
         Task<ShoppingListItem> GetShoppingListItemById(Guid userId, Guid shoppingListItemId);
+        Task<ShoppingListItemWithUrlDTO> GetShoppingListItemUrl(Guid userId, Guid shoppingListItemId);
         Task<List<ShoppingListItem>> GetShoppingListForUser(Guid userId);
+        Task<List<ShoppingListItemWithUrlDTO>> GetShoppingListWithUrlForUser(Guid userId);
 
 
     }

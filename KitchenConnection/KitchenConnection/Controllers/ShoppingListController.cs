@@ -52,7 +52,7 @@ namespace KitchenConnection.Controllers
         }
 
         [HttpGet]
-        [Route("{shoppingListItemId}")]
+        [Route("item/{shoppingListItemId}")]
         public async Task<ActionResult<ShoppingListItemDTO>> GetShoppingListItem(Guid shoppingListItemId)
         {
             var userId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
@@ -65,6 +65,22 @@ namespace KitchenConnection.Controllers
 
             return Ok(shoppingListItem);
         }
+        [HttpGet]
+        [Route("getlink/{shoppingListItemId}")]
+        public async Task<IActionResult> GetShoppingListItemLink(Guid shoppingListItemId)
+        {
+            var userId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            try
+            {
+                var finalUrl = await _shoppingListService.GetShoppingListItemUrl(userId, shoppingListItemId);
+                return Ok(finalUrl);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
 
         [HttpGet]
         public async Task<ActionResult<List<ShoppingListItemDTO>>> GetShoppingList()
@@ -80,5 +96,19 @@ namespace KitchenConnection.Controllers
             return Ok(shoppingList);
         }
 
+        [HttpGet]
+        [Route("getlinkforitems")]
+        public async Task<ActionResult<List<ShoppingListItemWithUrlDTO>>> GetShoppingListWithUrls()
+        {
+            var userId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var shoppingList = await _shoppingListService.GetShoppingListWithUrlForUser(userId);
+
+            if (shoppingList == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(shoppingList);
+        }
     }
 }
