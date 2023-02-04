@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace KitchenConnection.DataLayer.Migrations
 {
     /// <inheritdoc />
-    public partial class test : Migration
+    public partial class FirstMigrationToPostgres : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,8 +15,8 @@ namespace KitchenConnection.DataLayer.Migrations
                 name: "Cuisines",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -24,11 +24,25 @@ namespace KitchenConnection.DataLayer.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "RecommendationScore",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    TagId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Score = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RecommendationScore", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Tags",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -39,13 +53,13 @@ namespace KitchenConnection.DataLayer.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Gender = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    FirstName = table.Column<string>(type: "text", nullable: false),
+                    LastName = table.Column<string>(type: "text", nullable: false),
+                    Gender = table.Column<string>(type: "text", nullable: false),
+                    DateOfBirth = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Email = table.Column<string>(type: "text", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -56,11 +70,11 @@ namespace KitchenConnection.DataLayer.Migrations
                 name: "Collections",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    NumberOfRecipes = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: false),
+                    NumberOfRecipes = table.Column<int>(type: "integer", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -77,10 +91,10 @@ namespace KitchenConnection.DataLayer.Migrations
                 name: "CookBook",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -94,23 +108,43 @@ namespace KitchenConnection.DataLayer.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ShoppingListItem",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Quantity = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ShoppingListItem", x => new { x.Id, x.UserId, x.Name });
+                    table.ForeignKey(
+                        name: "FK_ShoppingListItem_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Recipes",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CuisineId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    PrepTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CookTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TotalTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Servings = table.Column<int>(type: "int", nullable: false),
-                    Yield = table.Column<int>(type: "int", nullable: false),
-                    Calories = table.Column<double>(type: "float", nullable: false),
-                    AudioInstructions = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    VideoInstructions = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CookBookId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: false),
+                    CuisineId = table.Column<Guid>(type: "uuid", nullable: false),
+                    PrepTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CookTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    TotalTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Servings = table.Column<int>(type: "integer", nullable: false),
+                    Yield = table.Column<int>(type: "integer", nullable: false),
+                    Calories = table.Column<double>(type: "double precision", nullable: false),
+                    AudioInstructions = table.Column<string>(type: "text", nullable: false),
+                    VideoInstructions = table.Column<string>(type: "text", nullable: false),
+                    CookBookId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -119,7 +153,8 @@ namespace KitchenConnection.DataLayer.Migrations
                         name: "FK_Recipes_CookBook_CookBookId",
                         column: x => x.CookBookId,
                         principalTable: "CookBook",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_Recipes_Cuisines_CuisineId",
                         column: x => x.CuisineId,
@@ -137,9 +172,9 @@ namespace KitchenConnection.DataLayer.Migrations
                 name: "CollectionRecipes",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CollectionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    RecipeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    CollectionId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RecipeId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -148,7 +183,8 @@ namespace KitchenConnection.DataLayer.Migrations
                         name: "FK_CollectionRecipes_Collections_CollectionId",
                         column: x => x.CollectionId,
                         principalTable: "Collections",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_CollectionRecipes_Recipes_RecipeId",
                         column: x => x.RecipeId,
@@ -161,10 +197,10 @@ namespace KitchenConnection.DataLayer.Migrations
                 name: "InstructionSteps",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    RecipeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    StepNumber = table.Column<int>(type: "int", nullable: false),
-                    StepDescription = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    RecipeId = table.Column<Guid>(type: "uuid", nullable: false),
+                    StepNumber = table.Column<int>(type: "integer", nullable: false),
+                    StepDescription = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -181,11 +217,11 @@ namespace KitchenConnection.DataLayer.Migrations
                 name: "RecipeIngredients",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    RecipeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Amount = table.Column<double>(type: "float", nullable: false),
-                    Unit = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    RecipeId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Amount = table.Column<double>(type: "double precision", nullable: false),
+                    Unit = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -202,8 +238,8 @@ namespace KitchenConnection.DataLayer.Migrations
                 name: "RecipeTag",
                 columns: table => new
                 {
-                    RecipesId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TagsId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    RecipesId = table.Column<Guid>(type: "uuid", nullable: false),
+                    TagsId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -226,11 +262,11 @@ namespace KitchenConnection.DataLayer.Migrations
                 name: "Reviews",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    RecipeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Rating = table.Column<double>(type: "float", nullable: false),
-                    Message = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RecipeId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Rating = table.Column<double>(type: "double precision", nullable: false),
+                    Message = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -309,6 +345,11 @@ namespace KitchenConnection.DataLayer.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ShoppingListItem_UserId",
+                table: "ShoppingListItem",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Tags_Name",
                 table: "Tags",
                 column: "Name",
@@ -331,7 +372,13 @@ namespace KitchenConnection.DataLayer.Migrations
                 name: "RecipeTag");
 
             migrationBuilder.DropTable(
+                name: "RecommendationScore");
+
+            migrationBuilder.DropTable(
                 name: "Reviews");
+
+            migrationBuilder.DropTable(
+                name: "ShoppingListItem");
 
             migrationBuilder.DropTable(
                 name: "Collections");

@@ -1,19 +1,14 @@
 using AutoMapper;
-using KitchenConnection.Application.Models.DTOs.Recipe;
+using KitchenConnection.BusinessLogic.Helpers;
 using KitchenConnection.BusinessLogic.Helpers.Extensions;
 using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.DataLayer.Data.UnitOfWork;
 using KitchenConnection.DataLayer.Models.DTOs.Nutrients;
 using KitchenConnection.DataLayer.Models.DTOs.Recipe;
-using KitchenConnection.DataLayer.Models.DTOs.ShoppingCart;
 using KitchenConnection.DataLayer.Models.Entities;
 using KitchenConnection.DataLayer.Models.Entities.Mappings;
 using KitchenConnection.Models.Entities;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
-using Microsoft.Extensions.DependencyInjection;
-using System.Linq;
 using System.Linq.Expressions;
 
 namespace KitchenConnection.BusinessLogic.Services;

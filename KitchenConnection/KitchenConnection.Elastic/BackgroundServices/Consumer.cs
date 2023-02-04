@@ -1,32 +1,32 @@
-﻿using System.Reflection;
-using System.Text;
+﻿using KitchenConnection.DataLayer.Helpers;
 using KitchenConnection.Elastic.Dispatcher;
-using KitchenConnection.Elastic.MessageHandlers;
 using KitchenConnection.Elastic.Models;
-using KitchenConnection.Models.Entities;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using System.Text;
 
 namespace KitchenConnection.Elastic.BackgroundServices;
 public class Consumer : BackgroundService {
     private readonly ILogger<Consumer> _logger;
     private readonly IServiceProvider _serviceProvider;
+    private readonly RabbitMqConfig _rabbitMqConfig;
     private IModel _channel; 
     private IConnection _connection;
 
-    public Consumer(ILogger<Consumer> logger, IServiceProvider serviceProvider) {
+    public Consumer(ILogger<Consumer> logger, IServiceProvider serviceProvider, RabbitMqConfig rabbitMqConfig) {
         _logger = logger;
         _serviceProvider = serviceProvider;
+        _rabbitMqConfig = rabbitMqConfig;
     }
 
     protected override Task ExecuteAsync(CancellationToken stoppingToken) {
         stoppingToken.ThrowIfCancellationRequested();
 
         var factory = new ConnectionFactory() {
-            HostName = "localhost",
-            UserName = "user",
-            Password = "password",
+            HostName = _rabbitMqConfig.HostName,
+            UserName = _rabbitMqConfig.UserName,
+            Password = _rabbitMqConfig.Password,
         };
         _connection = factory.CreateConnection();
         try {

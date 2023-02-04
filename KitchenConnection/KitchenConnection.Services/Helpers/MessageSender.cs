@@ -1,18 +1,17 @@
-
-
-using System.Text;
-using System.Text.Json;
+using KitchenConnection.DataLayer.Helpers;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
+using System.Text;
 
+namespace KitchenConnection.BusinessLogic.Helpers;
 public class MessageSender {
     private readonly ConnectionFactory _factory;
 
-    public MessageSender() {
+    public MessageSender(RabbitMqConfig rabbitMqConfig) {
         _factory = new ConnectionFactory() {
-            HostName = "localhost",
-            UserName = "user",
-            Password = "password",
+            HostName = rabbitMqConfig.HostName,
+            UserName = rabbitMqConfig.UserName,
+            Password = rabbitMqConfig.Password,
         };
     }
 

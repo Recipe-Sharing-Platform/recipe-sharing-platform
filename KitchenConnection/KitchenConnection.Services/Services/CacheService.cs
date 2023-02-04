@@ -1,20 +1,14 @@
-﻿using StackExchange.Redis;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Microsoft.Extensions.Configuration;
+using StackExchange.Redis;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace KitchenConnection.BusinessLogic.Services.IServices
 {
     public class CacheService : ICacheService
     {
         private IDatabase _cacheDb;
-
-        public CacheService()
-        {
-            var redis = ConnectionMultiplexer.Connect("localhost:6379");
+        public CacheService(IConfiguration configuration) {
+            var redis = ConnectionMultiplexer.Connect(configuration.GetConnectionString("redis"));
             _cacheDb = redis.GetDatabase();
         }
         public T GetData<T>(string key)

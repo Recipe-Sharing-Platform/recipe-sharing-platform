@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KitchenConnection.BusinessL
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KitchenConnection.Notifier", "KitchenConnection.Notifier\KitchenConnection.Notifier.csproj", "{7A774BFD-FFE0-45EA-9AC6-6BAE8DBFE9C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorAppDemo", "BlazorAppDemo\BlazorAppDemo.csproj", "{78180A55-4754-4D9B-AF68-402655CC4DC9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorAppDemo", "BlazorAppDemo\BlazorAppDemo.csproj", "{78180A55-4754-4D9B-AF68-402655CC4DC9}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{6BAD4EE2-0147-493C-B72B-998AC39B1971}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{78180A55-4754-4D9B-AF68-402655CC4DC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{78180A55-4754-4D9B-AF68-402655CC4DC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{78180A55-4754-4D9B-AF68-402655CC4DC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BAD4EE2-0147-493C-B72B-998AC39B1971}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BAD4EE2-0147-493C-B72B-998AC39B1971}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BAD4EE2-0147-493C-B72B-998AC39B1971}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BAD4EE2-0147-493C-B72B-998AC39B1971}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

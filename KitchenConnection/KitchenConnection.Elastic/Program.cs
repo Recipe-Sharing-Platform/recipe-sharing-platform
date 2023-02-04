@@ -1,4 +1,5 @@
 using Elasticsearch.Net;
+using KitchenConnection.DataLayer.Helpers;
 using KitchenConnection.Elastic.BackgroundServices;
 using KitchenConnection.Elastic.MessageHandlers;
 using KitchenConnection.Elastic.Models;
@@ -11,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 // add the elastic connection
-var pool = new SingleNodeConnectionPool(new Uri("http://localhost:9200"));
+var pool = new SingleNodeConnectionPool(new Uri(builder.Configuration.GetConnectionString("elasticSearch")!));
 var settings = new ConnectionSettings(pool).DefaultIndex("recipe");
 var client = new ElasticClient(settings);
 builder.Services.AddSingleton((IElasticClient)client);
@@ -21,6 +22,8 @@ builder.Services.AddTransient<IMessageHandler<IndexRecipe>, IndexRecipeMessageHa
 builder.Services.AddTransient<IMessageHandler<DeleteRecipe>, DeleteRecipeMessageHandler>();
 builder.Services.AddTransient<IMessageHandler<UpdateRecipe>, UpdateRecipeMessageHandler>();
 
+RabbitMqConfig rabbitMqConfig = builder.Configuration.GetSection(nameof(RabbitMqConfig)).Get<RabbitMqConfig>()!;
+builder.Services.AddSingleton(rabbitMqConfig);
 
 builder.Services.AddHostedService<Consumer>(); // add the RabbitMQ Consumer as a background service
 
@@ -34,9 +37,9 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment()) {
-    app.UseSwagger();
-    app.UseSwaggerUI();
 }
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 

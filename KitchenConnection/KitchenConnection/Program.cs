@@ -5,6 +5,7 @@ using KitchenConnection.BusinessLogic.Services;
 using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.DataLayer.Data;
 using KitchenConnection.DataLayer.Data.UnitOfWork;
+using KitchenConnection.DataLayer.Helpers;
 using KitchenConnection.DataLayer.Models.Entities;
 using KitchenConnection.Helpers;
 using KitchenConnection.Models.Entities;
@@ -37,8 +38,12 @@ builder.Services.AddControllers().AddJsonOptions(x =>
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddDbContext<KitchenConnectionDbContext>(options => {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
+// run migrations on startup
+//builder.Services.BuildServiceProvider().GetService<KitchenConnectionDbContext>().Database.Migrate();
+
 
 var mapperConfiguration = new MapperConfiguration(
     mc => mc.AddProfile(new AutoMapperConfigurations()));
@@ -60,6 +65,9 @@ builder.Services.AddScoped<ICacheService,CacheService>();
 builder.Services.AddTransient<IRecipeNutrientsService, RecipeNutrientsService>();
 builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddTransient<IShoppingListService, ShoppingListService>();
+
+RabbitMqConfig rabbitMqConfig = builder.Configuration.GetSection(nameof(RabbitMqConfig)).Get<RabbitMqConfig>()!;
+builder.Services.AddSingleton(rabbitMqConfig);
 builder.Services.AddSingleton<MessageSender>();
 
 
@@ -175,20 +183,27 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment()) {
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.DisplayRequestDuration();
-        c.DefaultModelExpandDepth(0);
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "KitchenConnection");
-        c.OAuthClientId("9b6b8081-d9bf-4b3d-ba76-dd01132330bf");
-        c.OAuthClientSecret("e9872cad-4992-46f6-9de7-908b796387be");
-        c.OAuthAppName("Recipe Sharing Platform");
-        c.OAuthUsePkce();
-        c.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
-    });
 }
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.DisplayRequestDuration();
+    c.DefaultModelExpandDepth(0);
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "KitchenConnection");
+    c.OAuthClientId("9b6b8081-d9bf-4b3d-ba76-dd01132330bf");
+    c.OAuthClientSecret("e9872cad-4992-46f6-9de7-908b796387be");
+    c.OAuthAppName("Recipe Sharing Platform");
+    c.OAuthUsePkce();
+    c.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
+});
 
+// run migrations
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<KitchenConnectionDbContext>();
+    context.Database.Migrate();
+}
 
 app.UseHttpsRedirection();
 
