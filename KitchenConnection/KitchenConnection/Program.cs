@@ -7,6 +7,7 @@ using KitchenConnection.DataLayer.Data;
 using KitchenConnection.DataLayer.Data.UnitOfWork;
 using KitchenConnection.DataLayer.Models.Entities;
 using KitchenConnection.Helpers;
+using KitchenConnection.Models.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -58,6 +59,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddTransient<IRecipeNutrientsService, RecipeNutrientsService>();
 builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddTransient<IShoppingListService, ShoppingListService>();
+builder.Services.AddSingleton<MessageSender>();
 
 
 builder.Services.AddAuthentication(options =>
@@ -146,7 +148,7 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Life Ecommerce", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Kitchen Connection - Recipe Sharing Platform", Version = "v1" });
     c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
     c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
     {

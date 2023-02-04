@@ -16,8 +16,6 @@ var settings = new ConnectionSettings(pool).DefaultIndex("recipe");
 var client = new ElasticClient(settings);
 builder.Services.AddSingleton((IElasticClient)client);
 
-builder.Services.AddScoped<MessageSender>(); // temp
-
 // add the message handlers
 builder.Services.AddTransient<IMessageHandler<IndexRecipe>, IndexRecipeMessageHandler>();
 builder.Services.AddTransient<IMessageHandler<DeleteRecipe>, DeleteRecipeMessageHandler>();

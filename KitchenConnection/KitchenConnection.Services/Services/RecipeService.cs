@@ -23,12 +23,13 @@ public class RecipeService : IRecipeService {
 
     public readonly IRecipeNutrientsService _nutrientsService;
     private readonly IRecommendationsService _recommendationsService;
-    public RecipeService(IUnitOfWork unitOfWork, IMapper mapper, IRecipeNutrientsService nutrientsService, IRecommendationsService recommendationsService)
-    {
+    private readonly MessageSender _messageSender;
+    public RecipeService(IUnitOfWork unitOfWork, IMapper mapper, IRecipeNutrientsService nutrientsService, IRecommendationsService recommendationsService, MessageSender messageSender) {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
         _nutrientsService = nutrientsService;
         _recommendationsService = recommendationsService;
+        _messageSender = messageSender;
     }
 
     public async Task<RecipeDTO> Create(RecipeCreateRequestDTO recipeRequestedToCreate, Guid userId)
@@ -43,6 +44,8 @@ public class RecipeService : IRecipeService {
         recipe.Instructions.ForEach(x => x.RecipeId = recipe.Id);
         recipe.Tags = await AddTagsToRecipe(recipe, tagsToCheck);
         recipe.Cuisine = await _unitOfWork.Repository<Cuisine>().GetById(x => x.Id == recipe.CuisineId).FirstOrDefaultAsync();
+
+        _messageSender.SendMessage(recipe, "index-recipes");
 
         recipe = await _unitOfWork.Repository<Recipe>().Create(recipe);
         _unitOfWork.Complete();
