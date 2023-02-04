@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
+using KitchenConnecition.DataLayer.Hubs;
 using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.DataLayer.Data.UnitOfWork;
 using KitchenConnection.DataLayer.Models.DTOs.Review;
 using KitchenConnection.DataLayer.Models.Entities;
 using KitchenConnection.Models.Entities;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using System.Text.RegularExpressions;
 
 namespace KitchenConnection.BusinessLogic.Services
 {
@@ -14,12 +17,18 @@ namespace KitchenConnection.BusinessLogic.Services
         public readonly IUnitOfWork _unitOfWork;
         public readonly IMapper _mapper;
         private readonly IRecommendationsService _recommendationsService;
+        private readonly IRecipeService _recipeService;
+        private readonly IHubContext<NotificationHub> _hubContext;
 
-        public ReviewService(IUnitOfWork unitOfWork, IMapper mapper, IRecommendationsService recommendationsService)
+
+
+        public ReviewService(IUnitOfWork unitOfWork, IMapper mapper, IRecommendationsService recommendationsService, IRecipeService recipeService,IHubContext<NotificationHub> hubContext)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _recommendationsService = recommendationsService;
+            _recipeService = recipeService;
+            _hubContext = hubContext;
         }
 
         public async Task<ReviewDTO> Create(ReviewCreateRequestDTO reviewToRequestCreate, Guid userId)
@@ -39,7 +48,12 @@ namespace KitchenConnection.BusinessLogic.Services
             }
 
             _unitOfWork.Complete();
-          
+
+            var recipeId = review.RecipeId;
+            var recipeCreatorId = await _recipeService.GetRecipeCreatorId(recipeId);
+
+            await _hubContext.Clients.Group(recipeCreatorId.ToString()).SendAsync("Receivereview", review);
+
             return _mapper.Map<ReviewDTO>(review);
         }
 

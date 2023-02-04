@@ -15,4 +15,5 @@ public interface IRecipeService
     Task<RecipeDTO> Delete(Guid id);
 
     Task<RecipeNutrientsDTO> GetRecipeNutrients(Guid recipeId);
+    Task<Guid> GetRecipeCreatorId(Guid recipeId);
 }

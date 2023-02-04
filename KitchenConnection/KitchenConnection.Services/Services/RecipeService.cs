@@ -153,5 +153,13 @@ public class RecipeService : IRecipeService {
 
         return tagsToAdd;
     }
- 
+    public async Task<Guid> GetRecipeCreatorId(Guid id)
+    {
+        var recipe = await _unitOfWork.Repository<Recipe>().GetByCondition(x => x.Id == id).FirstOrDefaultAsync();
+
+        return recipe.UserId;
+    }
+
+
+
 }

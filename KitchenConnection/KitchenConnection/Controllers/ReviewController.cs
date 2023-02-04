@@ -1,7 +1,9 @@
 ﻿using KitchenConnecition.DataLayer.Hubs;
 using KitchenConnection.BusinessLogic.Services;
 using KitchenConnection.BusinessLogic.Services.IServices;
+using KitchenConnection.DataLayer.Data.UnitOfWork;
 using KitchenConnection.DataLayer.Models.DTOs.Review;
+using KitchenConnection.Models.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +19,6 @@ namespace KitchenConnection.Controllers
     {
         public readonly IReviewService _reviewService;
         private readonly IHubContext<NotificationHub> _hubContext;
-
         public ReviewController(IReviewService reviewService, IHubContext<NotificationHub> hubContext)
         {
             _reviewService = reviewService;
@@ -43,12 +44,10 @@ namespace KitchenConnection.Controllers
             var UserId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             var review = await _reviewService.Create(reviewToCreate, UserId);
 
-
             if (review== null)
             {
                 return BadRequest("Could not add the review!");
-            }
-            _hubContext.Clients.All.SendAsync("Receivereview", review);
+            }           
             return Ok(review);
         }
 
