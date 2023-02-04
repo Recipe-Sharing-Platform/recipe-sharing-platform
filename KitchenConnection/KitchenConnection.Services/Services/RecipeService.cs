@@ -20,16 +20,18 @@ namespace KitchenConnection.BusinessLogic.Services;
 public class RecipeService : IRecipeService {
     public readonly IUnitOfWork _unitOfWork;
     public readonly IMapper _mapper;
-
+    public readonly ICacheService _cacheService;
     public readonly IRecipeNutrientsService _nutrientsService;
     private readonly IRecommendationsService _recommendationsService;
     private readonly MessageSender _messageSender;
-    public RecipeService(IUnitOfWork unitOfWork, IMapper mapper, IRecipeNutrientsService nutrientsService, IRecommendationsService recommendationsService, MessageSender messageSender) {
+    public RecipeService(IUnitOfWork unitOfWork, IMapper mapper, IRecipeNutrientsService nutrientsService, IRecommendationsService recommendationsService, MessageSender messageSender, ICacheService cacheService)
+    {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
         _nutrientsService = nutrientsService;
         _recommendationsService = recommendationsService;
         _messageSender = messageSender;
+        _cacheService = cacheService;
     }
 
     public async Task<RecipeDTO> Create(RecipeCreateRequestDTO recipeRequestedToCreate, Guid userId)
@@ -57,12 +59,22 @@ public class RecipeService : IRecipeService {
         recipe.User.Recipes = null!;
 
         _messageSender.SendMessage(recipe, "index-recipes"); // send to queue for indexing
+        _cacheService.RemoveData("recipes");
+        var recipeDTO = _mapper.Map<RecipeDTO>(recipe);
 
-        return _mapper.Map<RecipeDTO>(recipe);
+        var expirationTime = DateTimeOffset.Now.AddDays(1);
+
+        _cacheService.SetData<RecipeDTO>($"recipe-{recipe.Id}", recipeDTO, expirationTime);
+
+        return recipeDTO;
     }
 
     public async Task<RecipeDTO> Get(Guid id)
     {
+        var singleRecipe = _cacheService.GetData<RecipeDTO>($"recipe-{id}");
+        if (singleRecipe != null)
+            return singleRecipe;
+
         Expression<Func<Recipe, bool>> expression = x => x.Id == id;
         var recipe = await _unitOfWork.Repository<Recipe>().GetByConditionWithIncludes(expression, "User, Ingredients, Instructions, Tags, Cuisine").FirstOrDefaultAsync();
 
@@ -72,27 +84,50 @@ public class RecipeService : IRecipeService {
             //create a recommendation score
             await _recommendationsService.SetScore(recipe.UserId, t.Id);          
         }
+        var expirationTime = DateTimeOffset.Now.AddDays(1);
 
-        return _mapper.Map<RecipeDTO>(recipe);
+        singleRecipe = _mapper.Map<RecipeDTO>(recipe);
+
+        _cacheService.SetData<RecipeDTO>($"recipe-{recipe.Id}", singleRecipe, expirationTime);
+
+        return singleRecipe;
     }
 
     public async Task<List<RecipeDTO>> GetAll() {
-        var recipes = await _unitOfWork.Repository<Recipe>().GetAll()
-            .Include(u => u.User)
-            .Include(c => c.Cuisine)
-            .Include(t => t.Tags)
-            .Include(i => i.Ingredients)
-            .Include(i => i.Instructions).ToListAsync();
+        var recipeToReturn = _cacheService.GetData<List<RecipeDTO>>("recipes");
 
-        return _mapper.Map<List<RecipeDTO>>(recipes);
+        if (recipeToReturn != null && recipeToReturn.Count > 0)
+            return recipeToReturn;
+
+        var recipes = await _unitOfWork.Repository<Recipe>().GetAll()
+           .Include(u => u.User)
+           .Include(c => c.Cuisine)
+           .Include(t => t.Tags)
+           .Include(i => i.Ingredients)
+           .Include(i => i.Instructions).ToListAsync();
+
+        recipeToReturn = _mapper.Map<List<RecipeDTO>>(recipes);
+
+        var expiryTime = DateTimeOffset.Now.AddDays(1);
+
+        _cacheService.SetData<List<RecipeDTO>>("recipes", recipeToReturn, expiryTime);
+
+        return recipeToReturn;
     }
 
     public async Task<RecipeNutrientsDTO> GetRecipeNutrients(Guid recipeId)
     {
+        var nutrients = _cacheService.GetData<RecipeNutrientsDTO>($"nutrients-{recipeId}");
+        if (nutrients != null)
+            return nutrients;
+
         var recipe = await _unitOfWork.Repository<Recipe>().GetByConditionWithIncludes(x => x.Id == recipeId, "User, Ingredients, Instructions, Tags, Cuisine").FirstOrDefaultAsync();
 
-        var nutrients = await _nutrientsService.GetNutrients(_mapper.Map<List<RecipeIngredientDTO>>(recipe.Ingredients));
+        nutrients = await _nutrientsService.GetNutrients(_mapper.Map<List<RecipeIngredientDTO>>(recipe.Ingredients));
         nutrients.RecipeId = recipe.Id;
+
+        var expiryTime = DateTimeOffset.Now.AddDays(1);
+        _cacheService.SetData<RecipeNutrientsDTO>($"nutrients-{recipeId}", nutrients, expiryTime);
         return nutrients;
     }
 
@@ -129,7 +164,13 @@ public class RecipeService : IRecipeService {
         
         _messageSender.SendMessage(recipe, "update-recipes"); // send to queue
 
-        return _mapper.Map<RecipeDTO>(recipe);
+        var updatedRecipe = _mapper.Map<RecipeDTO>(recipe);
+        _cacheService.RemoveData("recipes");
+        _cacheService.RemoveData($"recipe-{recipe.Id}");
+        _cacheService.RemoveData($"nutrients-{recipe.Id}");
+        var expiryTime = DateTimeOffset.Now.AddDays(1);
+        _cacheService.SetData<RecipeDTO>($"recipe-{recipe.Id}", updatedRecipe, expiryTime);
+        return updatedRecipe;
     }
 
     public async Task<RecipeDTO> Delete(Guid id)
@@ -141,6 +182,10 @@ public class RecipeService : IRecipeService {
         _unitOfWork.Repository<Recipe>().Delete(recipe);
         _messageSender.SendMessage(new { RecipeId = recipe.Id }, "delete-recipes");
         _unitOfWork.Complete();
+
+        _cacheService.RemoveData("recipes");
+        _cacheService.RemoveData($"recipe-{id}");
+        _cacheService.RemoveData($"nutrients-{id}");
 
         return _mapper.Map<RecipeDTO>(recipe);
     }
