@@ -45,10 +45,18 @@ public class RecipeService : IRecipeService {
         recipe.Tags = await AddTagsToRecipe(recipe, tagsToCheck);
         recipe.Cuisine = await _unitOfWork.Repository<Cuisine>().GetById(x => x.Id == recipe.CuisineId).FirstOrDefaultAsync();
 
-        _messageSender.SendMessage(recipe, "index-recipes");
 
         recipe = await _unitOfWork.Repository<Recipe>().Create(recipe);
         _unitOfWork.Complete();
+
+        // remove self referencing loops that cause big json values
+        recipe.Cuisine.Recipes = null!;
+        recipe.Ingredients.ForEach(x => x.Recipe = null!);
+        recipe.Tags.ForEach(x => x.Recipes = null!);
+        recipe.Instructions.ForEach(x => x.Recipe = null!);
+        recipe.User.Recipes = null!;
+
+        _messageSender.SendMessage(recipe, "index-recipes"); // send to queue for indexing
 
         return _mapper.Map<RecipeDTO>(recipe);
     }
@@ -112,6 +120,15 @@ public class RecipeService : IRecipeService {
         _unitOfWork.Repository<Recipe>().Update(recipe);
         _unitOfWork.Complete();
 
+        // remove self referencing loops that cause big json values
+        recipe.User.Recipes = null!;
+        recipe.Ingredients.ForEach(x => x.Recipe = null!);
+        recipe.Instructions.ForEach(x => x.Recipe = null!);
+        recipe.Tags.ForEach(x => x.Recipes = null!);
+        recipe.Cuisine.Recipes = null!;
+        
+        _messageSender.SendMessage(recipe, "update-recipes"); // send to queue
+
         return _mapper.Map<RecipeDTO>(recipe);
     }
 
@@ -122,6 +139,7 @@ public class RecipeService : IRecipeService {
         if (recipe == null) return null;
 
         _unitOfWork.Repository<Recipe>().Delete(recipe);
+        _messageSender.SendMessage(new { RecipeId = recipe.Id }, "delete-recipes");
         _unitOfWork.Complete();
 
         return _mapper.Map<RecipeDTO>(recipe);
