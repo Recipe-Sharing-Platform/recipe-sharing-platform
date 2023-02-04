@@ -43,4 +43,29 @@ public class SearchService : ISearchService {
         return searchResponse.Documents.ToList();
 
     }
+
+    public async Task<List<Recipe>> SearchRecipesWithAnotherQuery(string query) {
+
+        var searchResponse = await _elasticClient.SearchAsync<Recipe>(s => s
+            .Index("recipe")
+            .Query(q => q
+                .MultiMatch(mm => mm
+                    .Fields(f => f
+                        .Field(p => p.User.FirstName, 1.6)
+                        .Field(p => p.User.LastName, 1.6)
+                        .Field(p => p.Name, 1.2)
+                        .Field(p => p.Description)
+                    )
+                    .Query(query)
+                    .TieBreaker(0.3)
+                    .Fuzziness(Fuzziness.EditDistance(3))
+                )
+            ));
+
+
+        // var mappingResponse = _elasticClient.Indices.GetMapping(new GetMappingRequest("recipe"));
+
+        return searchResponse.Documents.ToList();
+
+    }
 }
