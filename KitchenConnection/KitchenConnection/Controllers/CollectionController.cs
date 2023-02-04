@@ -22,9 +22,18 @@ namespace KitchenConnection.Controllers;
         }
 
         [HttpGet]  
-        public async Task<List<CollectionDTO>> GetAll()
+        public async Task<ActionResult<List<CollectionDTO>>> GetAll()
         {
-        return await _collectionService.GetAll();
+            var res=await _collectionService.GetAll();
+
+            if (res != null)
+            {
+                return Ok(res);
+            }
+            else
+            {
+                return NotFound();
+            }
         }
 
         [HttpGet("{id}")]
@@ -59,7 +68,7 @@ namespace KitchenConnection.Controllers;
 
 
     [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<ActionResult<CollectionDTO>> Delete(Guid id)
         {
             var cookBook = await _collectionService.Delete(id);
 

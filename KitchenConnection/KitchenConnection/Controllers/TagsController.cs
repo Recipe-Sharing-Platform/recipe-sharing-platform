@@ -19,7 +19,7 @@ public class TagsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<ActionResult<List<TagDTO>>> GetAll()
     {
         var tags = await _tagService.GetAll();
 
@@ -29,7 +29,7 @@ public class TagsController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> Get(Guid id)
+    public async Task<ActionResult<TagDTO>> Get(Guid id)
     {
         var tag = await _tagService.Get(id);
         
@@ -39,7 +39,7 @@ public class TagsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(TagCreateDTO tagToCreate)
+    public async Task<ActionResult<TagDTO>> Create(TagCreateDTO tagToCreate)
     {
         var tag = await _tagService.Create(tagToCreate);
 
@@ -49,7 +49,7 @@ public class TagsController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update(TagDTO tagToUpdate) 
+    public async Task<ActionResult<TagDTO>> Update(TagDTO tagToUpdate) 
     {
         var tag = await _tagService.Update(tagToUpdate);
 
@@ -59,7 +59,7 @@ public class TagsController : ControllerBase
     }
 
     [HttpDelete]
-    public async Task<IActionResult> Delete(Guid id)
+    public async Task<ActionResult<TagDTO>> Delete(Guid id)
     {
         var tag = await _tagService.Delete(id);
 

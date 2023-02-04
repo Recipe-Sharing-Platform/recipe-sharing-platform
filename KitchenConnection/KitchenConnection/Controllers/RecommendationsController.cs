@@ -1,4 +1,5 @@
 ﻿using KitchenConnection.BusinessLogic.Services.IServices;
+using KitchenConnection.Models.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -19,7 +20,7 @@ namespace KitchenConnection.Controllers
         }
 
         [HttpGet("GetSingleRecommendation")]
-        public async Task<IActionResult> GetSingleRecommendation()
+        public async Task<ActionResult<Recipe>> GetSingleRecommendation()
         {
             string? userIdString = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -51,7 +52,7 @@ namespace KitchenConnection.Controllers
         }
 
         [HttpGet("GetCollectionRecommendation")]
-        public async Task<IActionResult> GetCollectionRecommendations()
+        public async Task<ActionResult<List<Recipe>>> GetCollectionRecommendations()
         {
             string? userIdString = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
                         

@@ -62,7 +62,7 @@ public class CookBookController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(Guid id)
+    public async Task<ActionResult<CookBookDTO>> Delete(Guid id)
     {
         var cookBook = await _cookBookService.Delete(id);
 
