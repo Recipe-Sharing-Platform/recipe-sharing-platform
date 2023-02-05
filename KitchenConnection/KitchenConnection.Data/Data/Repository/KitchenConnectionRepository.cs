@@ -1,6 +1,7 @@
 ﻿using KitchenConnection.DataLayer.Data.Repository.IRepository;
 using KitchenConnection.Models.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace KitchenConnection.DataLayer.Data.Repository;
@@ -27,6 +28,16 @@ public class KitchenConnectionRepository<Tentity> : IKitchenConnectionRepository
         // It is necessary sort items before it
         query = orderByDescending ? query.OrderByDescending(orderBy) : query.OrderBy(orderBy);
         return query.Skip((page - 1) * pageSize).Take(pageSize);
+    }
+
+    public IQueryable<Tentity> GetPaginated(int page, int pageSize) {
+        const int defaultPageNumber = 1;
+        const int defaultPageSize = 10;
+
+        if( page <= 0 ) page = defaultPageNumber;
+        if( pageSize <= 0 ) pageSize = defaultPageSize;
+
+        return _dbContext.Set<Tentity>().Skip((page - 1) * pageSize).Take(pageSize);
     }
 
     public IQueryable<Tentity> GetAll() =>
