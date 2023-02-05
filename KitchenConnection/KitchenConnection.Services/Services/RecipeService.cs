@@ -58,6 +58,7 @@ public class RecipeService : IRecipeService {
         recipe.User.Recipes = null!;
 
         _messageSender.SendMessage(recipe, "index-recipes"); // send to queue for indexing
+        _messageSender.SendMessage(recipe, "created-recipe-email");
         _cacheService.RemoveData("recipes");
         var recipeDTO = _mapper.Map<RecipeDTO>(recipe);
 

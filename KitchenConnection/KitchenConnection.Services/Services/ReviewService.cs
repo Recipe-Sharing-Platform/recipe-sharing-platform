@@ -1,14 +1,13 @@
 ﻿using AutoMapper;
+using KitchenConnection.BusinessLogic.Helpers;
 using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.DataLayer.Data.UnitOfWork;
 using KitchenConnection.DataLayer.Hubs;
 using KitchenConnection.Models.DTOs.Review;
 using KitchenConnection.Models.Entities;
-using KitchenConnection.Models.Entities;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-using System.Text.RegularExpressions;
 
 namespace KitchenConnection.BusinessLogic.Services {
     public class ReviewService : IReviewService
@@ -18,16 +17,16 @@ namespace KitchenConnection.BusinessLogic.Services {
         private readonly IRecommendationsService _recommendationsService;
         private readonly IRecipeService _recipeService;
         private readonly IHubContext<NotificationHub> _hubContext;
+        private readonly MessageSender _messageSender;
 
 
-
-        public ReviewService(IUnitOfWork unitOfWork, IMapper mapper, IRecommendationsService recommendationsService, IRecipeService recipeService,IHubContext<NotificationHub> hubContext)
-        {
+        public ReviewService(IUnitOfWork unitOfWork, IMapper mapper, IRecommendationsService recommendationsService, IRecipeService recipeService, IHubContext<NotificationHub> hubContext, MessageSender messageSender) {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _recommendationsService = recommendationsService;
             _recipeService = recipeService;
             _hubContext = hubContext;
+            _messageSender = messageSender;
         }
 
         public async Task<ReviewDTO> Create(ReviewCreateRequestDTO reviewToRequestCreate, Guid userId)
@@ -50,6 +49,13 @@ namespace KitchenConnection.BusinessLogic.Services {
 
             var recipeId = review.RecipeId;
             var recipeCreatorId = await _recipeService.GetRecipeCreatorId(recipeId);
+
+            review.User.Recipes = null;
+            review.Recipe.Reviews = null;
+            review.Recipe.Tags = null;
+            review.Recipe.User = null;
+            review.User.Reviews = null;
+            _messageSender.SendMessage(new { User = review.User, Recipe = review.Recipe, Review = review }, "created-review-email");
 
             await _hubContext.Clients.Group(recipeCreatorId.ToString()).SendAsync("Receivereview", review);
 
