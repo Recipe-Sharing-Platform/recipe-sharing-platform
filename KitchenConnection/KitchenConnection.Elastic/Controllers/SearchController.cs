@@ -13,8 +13,16 @@ public class SearchController : ControllerBase {
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<Recipe>>> SearchRecipes(string? query) {
+    [Route("searchOnName")]
+    public async Task<ActionResult<List<Recipe>>> SearchRecipes(string query) {
         var recipesFound = await _searchService.SearchRecipes(query);
+        return Ok(recipesFound);
+    }
+
+    [HttpGet]
+    [Route("searchWithUser")]
+    public async Task<ActionResult<List<Recipe>>> SearchRecipesWithUser(string query) {
+        var recipesFound = await _searchService.SearchRecipesWithAnotherQuery(query);
         return Ok(recipesFound);
     }
 }

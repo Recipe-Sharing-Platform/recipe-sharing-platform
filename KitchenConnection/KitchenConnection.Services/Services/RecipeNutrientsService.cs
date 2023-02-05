@@ -1,6 +1,7 @@
 ﻿using KitchenConnection.BusinessLogic.Services.IServices;
-using KitchenConnection.DataLayer.Models.DTOs.Nutrients;
-using KitchenConnection.DataLayer.Models.DTOs.Recipe;
+using KitchenConnection.Models.DTOs.Ingredient;
+using KitchenConnection.Models.DTOs.Nutrients;
+using KitchenConnection.Models.DTOs.Recipe;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

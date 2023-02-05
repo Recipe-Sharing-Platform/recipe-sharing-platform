@@ -1,12 +1,6 @@
-﻿using KitchenConnection.DataLayer.Models.DTOs.Collection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using KitchenConnection.Models.DTOs.Collection;
 
-namespace KitchenConnection.BusinessLogic.Services.IServices
-{
+namespace KitchenConnection.BusinessLogic.Services.IServices {
     public interface ICollectionService
     {
         Task<CollectionDTO> Create(CollectionCreateRequestDTO collectionToCreate, Guid userId);

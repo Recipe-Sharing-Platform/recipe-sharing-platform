@@ -1,17 +1,12 @@
-﻿using KitchenConnecition.DataLayer.Hubs;
-using KitchenConnection.BusinessLogic.Services;
-using KitchenConnection.BusinessLogic.Services.IServices;
-using KitchenConnection.DataLayer.Data.UnitOfWork;
-using KitchenConnection.DataLayer.Models.DTOs.Review;
-using KitchenConnection.Models.Entities;
+﻿using KitchenConnection.BusinessLogic.Services.IServices;
+using KitchenConnection.DataLayer.Hubs;
+using KitchenConnection.Models.DTOs.Review;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
 
-namespace KitchenConnection.Controllers
-{
+namespace KitchenConnection.Controllers {
     [ApiController]
     [Route("api/reviews")]
     [Authorize(AuthenticationSchemes = "Bearer")]

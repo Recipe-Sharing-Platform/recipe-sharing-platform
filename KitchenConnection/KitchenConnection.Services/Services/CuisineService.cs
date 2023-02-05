@@ -1,14 +1,8 @@
 ﻿using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.DataLayer.Data.UnitOfWork;
-using KitchenConnection.DataLayer.Models.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using KitchenConnection.Models.Entities;
 
-namespace KitchenConnection.BusinessLogic.Services
-{
+namespace KitchenConnection.BusinessLogic.Services {
     public class CuisineService : ICuisineService
     {
         private readonly IUnitOfWork _unitOfWork;

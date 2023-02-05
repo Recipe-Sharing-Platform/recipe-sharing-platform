@@ -1,20 +1,12 @@
 ﻿using AutoMapper;
 using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.DataLayer.Data.UnitOfWork;
-using KitchenConnection.DataLayer.Models.DTOs.Collection;
-using KitchenConnection.DataLayer.Models.DTOs.CookBook;
-using KitchenConnection.DataLayer.Models.Entities;
-using KitchenConnection.DataLayer.Models.Entities.Mappings;
+using KitchenConnection.Models.DTOs.Collection;
 using KitchenConnection.Models.Entities;
+using KitchenConnection.Models.Entities.Mappings;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace KitchenConnection.BusinessLogic.Services
-{
+namespace KitchenConnection.BusinessLogic.Services {
     public class CollectionService : ICollectionService
     {
         public readonly IUnitOfWork _unitOfWork;

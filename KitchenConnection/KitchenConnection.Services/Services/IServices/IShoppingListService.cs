@@ -1,8 +1,7 @@
-﻿﻿using KitchenConnection.DataLayer.Models.DTOs.ShoppingCart;
-using KitchenConnection.DataLayer.Models.Entities;
+﻿using KitchenConnection.Models.DTOs.ShoppingCart;
+using KitchenConnection.Models.Entities;
 
-namespace KitchenConnection.BusinessLogic.Services.IServices
-{
+namespace KitchenConnection.BusinessLogic.Services.IServices {
     public interface IShoppingListService
     {
         Task<List<ShoppingListItemCreateDTO>> AddToShoppingList(Guid userId, List<ShoppingListItemCreateDTO> shoppingList);

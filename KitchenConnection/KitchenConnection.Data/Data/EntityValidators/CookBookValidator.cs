@@ -1,14 +1,7 @@
 ﻿using FluentValidation;
-using KitchenConnection.DataLayer.Models.DTOs.CookBook;
-using KitchenConnection.DataLayer.Models.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using KitchenConnection.Models.DTOs.CookBook;
 
-namespace KitchenConnection.DataLayer.Data.EntityValidators
-{
+namespace KitchenConnection.DataLayer.Data.EntityValidators {
     public class CookBookValidator : AbstractValidator<CookBookCreateDTO>
     {
         public CookBookValidator()

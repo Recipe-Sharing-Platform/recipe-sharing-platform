@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\KitchenConnection.Data\KitchenConnection.DataLayer.csproj" />
+    <ProjectReference Include="..\KitchenConnection.Models\KitchenConnection.Models.csproj" />
   </ItemGroup>
 
   <ItemGroup>

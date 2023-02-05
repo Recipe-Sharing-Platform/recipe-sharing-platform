@@ -1,5 +1,5 @@
 ﻿using KitchenConnection.BusinessLogic.Services.IServices;
-using KitchenConnection.DataLayer.Models.Entities;
+using KitchenConnection.Models.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

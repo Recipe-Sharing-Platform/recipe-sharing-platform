@@ -4,13 +4,14 @@ using KitchenConnection.BusinessLogic.Helpers.Exceptions.RecipeExceptions;
 using KitchenConnection.BusinessLogic.Helpers.Extensions;
 using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.DataLayer.Data.UnitOfWork;
-using KitchenConnection.DataLayer.Models.DTOs.Nutrients;
-using KitchenConnection.DataLayer.Models.DTOs.Recipe;
-using KitchenConnection.DataLayer.Models.Entities;
-using KitchenConnection.DataLayer.Models.Entities.Mappings;
+using KitchenConnection.Models.DTOs.Nutrients;
+using KitchenConnection.Models.DTOs.Recipe;
+using KitchenConnection.Models.Entities;
+using KitchenConnection.Models.Entities.Mappings;
 using KitchenConnection.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using KitchenConnection.Models.DTOs.Ingredient;
 
 namespace KitchenConnection.BusinessLogic.Services;
 public class RecipeService : IRecipeService {

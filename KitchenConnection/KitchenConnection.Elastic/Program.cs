@@ -1,5 +1,5 @@
 using Elasticsearch.Net;
-using KitchenConnection.DataLayer.Helpers;
+using KitchenConnection.Models.HelperModels;
 using KitchenConnection.Elastic.BackgroundServices;
 using KitchenConnection.Elastic.MessageHandlers;
 using KitchenConnection.Elastic.Models;

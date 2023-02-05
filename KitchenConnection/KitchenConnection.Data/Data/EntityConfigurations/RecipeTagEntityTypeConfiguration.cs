@@ -1,8 +1,8 @@
-﻿using KitchenConnection.DataLayer.Models.Entities.Mappings;
+﻿using KitchenConnection.Models.Entities.Mappings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace KitchenConnecition.Infrastructure.Data.Configurations;
+namespace KitchenConnection.DataLayer.Data.EntityConfigurations;
 
 //public class RecipeTagEntityTypeConfiguration : IEntityTypeConfiguration<RecipeTag>
 //{

@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using KitchenConnection.DataLayer.Models.DTOs.Recipe;
+using KitchenConnection.Models.DTOs.Recipe;
 using System;
 using System.Collections.Generic;
 using System.Linq;

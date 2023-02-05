@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
-using KitchenConnection.DataLayer.Models.DTOs.Recipe;
-using KitchenConnection.DataLayer.Models.Entities;
+using KitchenConnection.Models.DTOs.Recipe;
+using KitchenConnection.Models.DTOs.Tag;
+using KitchenConnection.Models.Entities;
 
 namespace KitchenConnection.DataLayer.Data.EntityValidators;
 

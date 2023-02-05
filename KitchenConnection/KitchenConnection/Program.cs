@@ -1,29 +1,15 @@
 using AutoMapper;
-using FluentValidation;
 using FluentValidation.AspNetCore;
-using KitchenConnecition.DataLayer.Hubs;
 using KitchenConnection.BusinessLogic.Helpers;
 using KitchenConnection.BusinessLogic.Helpers.FluentValidationMiddleware;
-using KitchenConnection.BusinessLogic.Services;
-using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.DataLayer.Data;
-using KitchenConnection.DataLayer.Data.UnitOfWork;
-using KitchenConnection.DataLayer.Helpers;
-using KitchenConnection.DataLayer.Models.Entities;
+using KitchenConnection.DataLayer.Hubs;
 using KitchenConnection.Helpers;
-using KitchenConnection.Models.Entities;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using KitchenConnection.Models.HelperModels;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
-using System.Globalization;
-using System.Security.Claims;
-using System.Text;
 using System.Text.Json.Serialization;
-using claims = System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 

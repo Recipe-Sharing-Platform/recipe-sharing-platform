@@ -1,16 +1,11 @@
-﻿﻿using KitchenConnection.BusinessLogic.Services;
-using KitchenConnection.BusinessLogic.Services.IServices;
-using KitchenConnection.DataLayer.Models.DTOs.Recipe;
-using KitchenConnection.DataLayer.Models.DTOs.ShoppingCart;
-using KitchenConnection.DataLayer.Models.Entities;
-using KitchenConnection.Models.Entities;
+﻿using KitchenConnection.BusinessLogic.Services.IServices;
+using KitchenConnection.Models.DTOs.Recipe;
+using KitchenConnection.Models.DTOs.ShoppingCart;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
-namespace KitchenConnection.Controllers
-{
+namespace KitchenConnection.Controllers {
     [ApiController]
     [Route("api/ShoppingList")]
     [Authorize(AuthenticationSchemes = "Bearer")]

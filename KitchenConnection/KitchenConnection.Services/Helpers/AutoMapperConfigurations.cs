@@ -1,17 +1,17 @@
 ﻿using AutoMapper;
-using KitchenConnection.Application.Models.DTOs.Recipe;
-using KitchenConnection.DataLayer.Models.DTOs;
-using KitchenConnection.DataLayer.Models.DTOs.Collection;
-using KitchenConnection.DataLayer.Models.DTOs.CookBook;
-using KitchenConnection.DataLayer.Models.DTOs.Ingredient;
-using KitchenConnection.DataLayer.Models.DTOs.Instruction;
-using KitchenConnection.DataLayer.Models.DTOs.Recipe;
-using KitchenConnection.DataLayer.Models.DTOs.RecipeTag;
-using KitchenConnection.DataLayer.Models.DTOs.Review;
-using KitchenConnection.DataLayer.Models.DTOs.ShoppingCart;
-using KitchenConnection.DataLayer.Models.Entities;
-using KitchenConnection.DataLayer.Models.Entities.Mappings;
+using KitchenConnection.Models.DTOs;
+using KitchenConnection.Models.DTOs.Collection;
+using KitchenConnection.Models.DTOs.CookBook;
+using KitchenConnection.Models.DTOs.Cuisine;
+using KitchenConnection.Models.DTOs.Ingredient;
+using KitchenConnection.Models.DTOs.Instruction;
+using KitchenConnection.Models.DTOs.Recipe;
+using KitchenConnection.Models.DTOs.RecipeTag;
+using KitchenConnection.Models.DTOs.Review;
+using KitchenConnection.Models.DTOs.ShoppingCart;
+using KitchenConnection.Models.DTOs.Tag;
 using KitchenConnection.Models.Entities;
+using KitchenConnection.Models.Entities.Mappings;
 
 namespace KitchenConnection.BusinessLogic.Helpers;
 

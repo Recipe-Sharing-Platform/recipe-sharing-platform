@@ -1,6 +1,6 @@
-﻿using KitchenConnection.DataLayer.Helpers;
-using KitchenConnection.Elastic.Dispatcher;
+﻿using KitchenConnection.Elastic.Dispatcher;
 using KitchenConnection.Elastic.Models;
+using KitchenConnection.Models.HelperModels;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -46,20 +46,16 @@ public class Consumer : BackgroundService {
                 var body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
 
-                using (var fw = File.AppendText("messages.txt")) {
-                    await fw.WriteAsync(message);
-                }
-
                 var dispatcher = new MessageDispatcher(_serviceProvider);
 
                 if (ea.RoutingKey == "index-recipes") {
-                    IndexRecipe indexRecipeMessage = JsonConvert.DeserializeObject<IndexRecipe>(message);
+                    var indexRecipeMessage = JsonConvert.DeserializeObject<IndexRecipe>(message)!;
                     await dispatcher.DispatchAsync<IndexRecipe>(indexRecipeMessage);
                 } else if(ea.RoutingKey == "delete-recipes") {
-                    DeleteRecipe deleteRecipeMessage = JsonConvert.DeserializeObject<DeleteRecipe>(message);
+                    var deleteRecipeMessage = JsonConvert.DeserializeObject<DeleteRecipe>(message)!;
                     await dispatcher.DispatchAsync<DeleteRecipe>(deleteRecipeMessage);
                 } else if(ea.RoutingKey == "update-recipes") {
-                    UpdateRecipe updateRecipeMessage = JsonConvert.DeserializeObject<UpdateRecipe>(message);
+                    var updateRecipeMessage = JsonConvert.DeserializeObject<UpdateRecipe>(message)!;
                     await dispatcher.DispatchAsync<UpdateRecipe>(updateRecipeMessage);
                 }
                 

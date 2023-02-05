@@ -22,4 +22,8 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\KitchenConnection.Models\KitchenConnection.Models.csproj" />
+  </ItemGroup>
+
 </Project>

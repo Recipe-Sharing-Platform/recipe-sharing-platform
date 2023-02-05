@@ -1,15 +1,12 @@
-﻿using KitchenConnection.BusinessLogic.Services;
-using KitchenConnection.BusinessLogic.Services.IServices;
-using KitchenConnection.DataLayer.Models.DTOs.Collection;
-using KitchenConnection.DataLayer.Models.DTOs.CookBook;
+﻿using KitchenConnection.BusinessLogic.Services.IServices;
+using KitchenConnection.Models.DTOs.Collection;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections;
 using System.Security.Claims;
 
 namespace KitchenConnection.Controllers;
 
-    [ApiController]
+[ApiController]
     [Route("api/collections")]
     [Authorize(AuthenticationSchemes = "Bearer")]
     public class CollectionController : ControllerBase

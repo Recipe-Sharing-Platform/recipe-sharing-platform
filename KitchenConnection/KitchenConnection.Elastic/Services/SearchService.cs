@@ -12,7 +12,7 @@ public class SearchService : ISearchService {
         _logger = logger;
     }
 
-    public async Task<List<Recipe>> SearchRecipes(string? query) {
+    public async Task<List<Recipe>> SearchRecipes(string query) {
 
         var searchResponse = await _elasticClient.SearchAsync<Recipe>(s => s
             .Index("recipe")
@@ -24,7 +24,7 @@ public class SearchService : ISearchService {
                                 .Field(p => p.Name)
                                 .Field(p => p.Description)
                             )
-                            .Query(query ?? "")
+                            .Query(query)
                             .Fuzziness(Fuzziness.Auto)
                             .Fuzziness(Fuzziness.EditDistance(3))
                         )

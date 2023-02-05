@@ -1,14 +1,13 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using KitchenConnection.DataLayer.Data.UnitOfWork;
+using KitchenConnection.Models.Entities;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using System.Globalization;
+using System.Security.Claims;
 using System.Text;
 using claims = System.Security.Claims;
-using System.Security.Claims;
-using KitchenConnection.DataLayer.Data.UnitOfWork;
-using KitchenConnection.DataLayer.Models.Entities;
-using System.Globalization;
 
-namespace KitchenConnection.Helpers
-{
+namespace KitchenConnection.Helpers {
     public static class StartupHelper
     {
         public static void AddPorta(this IServiceCollection services)

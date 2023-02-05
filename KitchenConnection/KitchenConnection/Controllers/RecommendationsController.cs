@@ -3,8 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
-namespace KitchenConnection.Controllers
-{
+namespace KitchenConnection.Controllers {
     [ApiController]
     [Authorize(AuthenticationSchemes = "Bearer")]
 

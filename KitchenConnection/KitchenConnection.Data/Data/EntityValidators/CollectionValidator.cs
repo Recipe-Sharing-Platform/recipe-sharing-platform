@@ -1,9 +1,7 @@
 ﻿using FluentValidation;
-using KitchenConnection.DataLayer.Models.DTOs.Collection;
-using KitchenConnection.DataLayer.Models.Entities;
+using KitchenConnection.Models.DTOs.Collection;
 
-namespace KitchenConnection.DataLayer.Data.EntityValidators
-{
+namespace KitchenConnection.DataLayer.Data.EntityValidators {
     public class CollectionValidator : AbstractValidator<CollectionCreateDTO>
     {
         public CollectionValidator()

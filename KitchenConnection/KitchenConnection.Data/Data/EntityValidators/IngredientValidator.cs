@@ -1,9 +1,7 @@
 ﻿using FluentValidation;
-using KitchenConnection.DataLayer.Models.DTOs.Recipe;
-using KitchenConnection.DataLayer.Models.Entities.Mappings;
+using KitchenConnection.Models.DTOs.Ingredient;
 
-namespace KitchenConnection.DataLayer.Data.EntityValidators
-{
+namespace KitchenConnection.DataLayer.Data.EntityValidators {
     public class IngredientValidator : AbstractValidator<RecipeIngredientCreateDTO>
     {
         public IngredientValidator()

@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.DataLayer.Data.UnitOfWork;
-using KitchenConnection.DataLayer.Models.DTOs;
-using KitchenConnection.DataLayer.Models.Entities;
+using KitchenConnection.Models.DTOs;
+using KitchenConnection.Models.Entities;
 using KitchenConnection.Models.Entities;
 using Microsoft.AspNetCore.Components.Forms;
 using System;

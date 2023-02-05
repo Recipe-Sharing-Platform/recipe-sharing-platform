@@ -1,12 +1,8 @@
-﻿using KitchenConnection.DataLayer.Models.DTOs.Recipe;
-using KitchenConnection.BusinessLogic.Services.IServices;
-using KitchenConnection.DataLayer.Models.Entities;
-using KitchenConnection.Models.Entities;
+﻿using KitchenConnection.BusinessLogic.Services.IServices;
+using KitchenConnection.Models.DTOs.Recipe;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using KitchenConnection.DataLayer.Models.DTOs.ShoppingCart;
 
 namespace KitchenConnection.Controllers;
 

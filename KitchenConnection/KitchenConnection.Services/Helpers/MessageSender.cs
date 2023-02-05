@@ -1,4 +1,4 @@
-using KitchenConnection.DataLayer.Helpers;
+using KitchenConnection.Models.HelperModels;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using System.Text;

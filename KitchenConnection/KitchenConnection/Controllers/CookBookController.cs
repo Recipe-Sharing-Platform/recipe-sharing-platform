@@ -1,9 +1,6 @@
 ﻿using KitchenConnection.BusinessLogic.Services.IServices;
-using KitchenConnection.DataLayer.Models.DTOs.CookBook;
-using KitchenConnection.DataLayer.Models.Entities;
-using KitchenConnection.Models.Entities;
+using KitchenConnection.Models.DTOs.CookBook;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 

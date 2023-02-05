@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace KitchenConnection.BusinessLogic.Helpers.Exceptions.RecipeExceptions
-{
+﻿namespace KitchenConnection.BusinessLogic.Helpers.Exceptions.RecipeExceptions {
     public class RecipeNotFoundException : Exception
     {
         public RecipeNotFoundException(Guid recipeId) : base($"Recipe not found: {recipeId}") {}

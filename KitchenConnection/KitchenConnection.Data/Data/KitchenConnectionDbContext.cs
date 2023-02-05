@@ -1,8 +1,7 @@
-﻿using KitchenConnecition.Infrastructure.Data.Configurations;
-using KitchenConnection.DataLayer.Models.Entities;
-using KitchenConnection.DataLayer.Models.Entities.Mappings;
-using KitchenConnection.Models.Entities;
+﻿using KitchenConnection.Models.Entities;
+using KitchenConnection.Models.Entities.Mappings;
 using Microsoft.EntityFrameworkCore;
+using KitchenConnection.DataLayer.Data.EntityConfigurations;
 
 namespace KitchenConnection.DataLayer.Data;
 
