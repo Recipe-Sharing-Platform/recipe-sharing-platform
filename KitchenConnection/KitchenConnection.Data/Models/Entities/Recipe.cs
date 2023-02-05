@@ -13,9 +13,8 @@ public class Recipe : BaseEntity
     public List<Tag>? Tags { get; set; }
     public Guid CuisineId { get; set; }
     public Cuisine Cuisine { get; set; }
-    public DateTime PrepTime { get; set; }
-    public DateTime CookTime { get; set; }
-    public DateTime TotalTime { get; set; }
+    public int PrepTime { get; set; }
+    public int CookTime { get; set; }
     public int Servings { get; set; }
     public int Yield { get; set; }
     public double Calories { get; set; }

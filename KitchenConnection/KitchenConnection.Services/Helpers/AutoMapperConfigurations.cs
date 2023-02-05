@@ -16,49 +16,43 @@ using KitchenConnection.Models.Entities;
 namespace KitchenConnection.BusinessLogic.Helpers;
 
 public class AutoMapperConfigurations : Profile
-    {
-        public AutoMapperConfigurations()
-        {
-            //CreateMap<Recipe, RecipeCreateDTO>().ReverseMap();
+{
+    public AutoMapperConfigurations()
+    {        
+        CreateMap<RecipeCreateDTO, Recipe>().ForMember(src => src.Tags, dest => dest.Ignore());
+        CreateMap<Recipe, RecipeDTO>().ForMember(src => src.TotalTime, dest => dest.MapFrom(x => x.PrepTime + x.CookTime));
+        CreateMap<Recipe, RecipeUpdateDTO>().ReverseMap();
+
+        CreateMap<RecipeIngredient, RecipeIngredientCreateDTO>().ReverseMap();
+        CreateMap<RecipeIngredient, RecipeIngredientDTO>().ReverseMap();
+        CreateMap<RecipeIngredient, RecipeIngredientUpdateDTO>().ReverseMap();
+
+        CreateMap<RecipeInstruction, RecipeInstructionCreateDTO>().ReverseMap();
+        CreateMap<RecipeInstruction, RecipeInstructionDTO>().ReverseMap();
+        CreateMap<RecipeInstruction, RecipeInstructionUpdateDTO>().ReverseMap();
+
+        CreateMap<Tag, TagCreateDTO>().ReverseMap();
+        CreateMap<Tag, TagDTO>().ReverseMap();
+        CreateMap<Tag, RecipeTagUpdateDTO>().ReverseMap();
         
-            CreateMap<RecipeCreateDTO, Recipe>().ForMember(src => src.Tags, dest => dest.Ignore());
-            CreateMap<Recipe, RecipeDTO>().ReverseMap();
-            CreateMap<Recipe, RecipeUpdateDTO>().ReverseMap();
+        CreateMap<Cuisine, CuisineCreateDTO>().ReverseMap();
+        CreateMap<Cuisine, CuisineDTO>().ReverseMap();
 
-            CreateMap<RecipeIngredient, RecipeIngredientCreateDTO>().ReverseMap();
-            CreateMap<RecipeIngredient, RecipeIngredientDTO>().ReverseMap();
-            CreateMap<RecipeIngredient, RecipeIngredientUpdateDTO>().ReverseMap();
-
-            CreateMap<RecipeInstruction, RecipeInstructionCreateDTO>().ReverseMap();
-            CreateMap<RecipeInstruction, RecipeInstructionDTO>().ReverseMap();
-            CreateMap<RecipeInstruction, RecipeInstructionUpdateDTO>().ReverseMap();
-
-            CreateMap<Tag, TagCreateDTO>().ReverseMap();
-            CreateMap<Tag, TagDTO>().ReverseMap();
-            CreateMap<Tag, RecipeTagUpdateDTO>().ReverseMap();
-        
-            CreateMap<Cuisine, CuisineCreateDTO>().ReverseMap();
-            CreateMap<Cuisine, CuisineDTO>().ReverseMap();
-
-            CreateMap<CookBookCreateDTO, CookBook>().ForMember(src => src.Recipes, dest => dest.Ignore()).ReverseMap();
-            CreateMap<CookBook, CookBookDTO>().ReverseMap();
+        CreateMap<CookBookCreateDTO, CookBook>().ForMember(src => src.Recipes, dest => dest.Ignore()).ReverseMap();
+        CreateMap<CookBook, CookBookDTO>().ReverseMap();
 
         CreateMap<CollectionCreateDTO, Collection>().ForMember(src => src.Recipes, dest => dest.Ignore()).ReverseMap();
-            CreateMap<Collection, CollectionDTO>().ForMember(src => src.Recipes, dest => dest.MapFrom(c => c.Recipes.Select(rc => rc.Recipe)))
-    .ReverseMap();
+        CreateMap<Collection, CollectionDTO>().ForMember(src => src.Recipes, dest => dest.MapFrom(c => c.Recipes.Select(rc => rc.Recipe))).ReverseMap();
 
         CreateMap<User, UserCreateDTO>().ReverseMap();
-            CreateMap<User, UserDTO>().ForMember(dest => dest.Name, opt => opt.MapFrom(src => String.Format("{0} {1}", src.FirstName, src.LastName))).ReverseMap();
+        CreateMap<User, UserDTO>().ForMember(dest => dest.Name, opt => opt.MapFrom(src => String.Format("{0} {1}", src.FirstName, src.LastName))).ReverseMap();
 
-            CreateMap<Review, ReviewCreateDTO>().ReverseMap();
-            CreateMap<Review, ReviewDTO>().ReverseMap();
+        CreateMap<Review, ReviewCreateDTO>().ReverseMap();
+        CreateMap<Review, ReviewDTO>().ReverseMap();
 
-            CreateMap<RecommendationScore, RecommendationScoreCreateDto>().ReverseMap();
-            CreateMap<ShoppingListItemDTO, ShoppingListItem>().ReverseMap();
-             CreateMap<ShoppingListItemCreateDTO, ShoppingListItem>().ReverseMap();
-
-
-
+        CreateMap<RecommendationScore, RecommendationScoreCreateDto>().ReverseMap();
+        CreateMap<ShoppingListItemDTO, ShoppingListItem>().ReverseMap();
+        CreateMap<ShoppingListItemCreateDTO, ShoppingListItem>().ReverseMap();
     }
 }
 

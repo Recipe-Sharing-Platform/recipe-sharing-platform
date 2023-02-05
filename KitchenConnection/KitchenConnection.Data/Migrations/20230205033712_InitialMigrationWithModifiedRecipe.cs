@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace KitchenConnection.DataLayer.Migrations
 {
     /// <inheritdoc />
-    public partial class FirstMigrationToPostgres : Migration
+    public partial class InitialMigrationWithModifiedRecipe : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -136,9 +136,8 @@ namespace KitchenConnection.DataLayer.Migrations
                     Name = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
                     CuisineId = table.Column<Guid>(type: "uuid", nullable: false),
-                    PrepTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CookTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    TotalTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    PrepTime = table.Column<int>(type: "integer", nullable: false),
+                    CookTime = table.Column<int>(type: "integer", nullable: false),
                     Servings = table.Column<int>(type: "integer", nullable: false),
                     Yield = table.Column<int>(type: "integer", nullable: false),
                     Calories = table.Column<double>(type: "double precision", nullable: false),

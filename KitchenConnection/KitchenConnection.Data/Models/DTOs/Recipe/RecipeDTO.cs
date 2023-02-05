@@ -11,9 +11,9 @@ public class RecipeDTO
     public string Description { get; set; }
     public CuisineDTO Cuisine { get; set; }
     public List<TagDTO> Tags { get; set; }
-    public DateTime PrepTime { get; set; }
-    public DateTime CookTime { get; set; }
-    public DateTime TotalTime { get; set; }
+    public int PrepTime { get; set; }
+    public int CookTime { get; set; }
+    public int TotalTime { get; set; }
     public List<RecipeIngredientDTO> Ingredients { get; set; }
     public List<RecipeInstructionDTO> Instructions { get; set; }
     public int Servings { get; set; }

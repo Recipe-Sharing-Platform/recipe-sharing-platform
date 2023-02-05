@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace KitchenConnection.DataLayer.Migrations
 {
     [DbContext(typeof(KitchenConnectionDbContext))]
-    [Migration("20230204194235_FirstMigrationToPostgres")]
-    partial class FirstMigrationToPostgres
+    [Migration("20230205033712_InitialMigrationWithModifiedRecipe")]
+    partial class InitialMigrationWithModifiedRecipe
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -278,8 +278,8 @@ namespace KitchenConnection.DataLayer.Migrations
                     b.Property<Guid?>("CookBookId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("CookTime")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<int>("CookTime")
+                        .HasColumnType("integer");
 
                     b.Property<Guid>("CuisineId")
                         .HasColumnType("uuid");
@@ -292,14 +292,11 @@ namespace KitchenConnection.DataLayer.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("PrepTime")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<int>("PrepTime")
+                        .HasColumnType("integer");
 
                     b.Property<int>("Servings")
                         .HasColumnType("integer");
-
-                    b.Property<DateTime>("TotalTime")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");

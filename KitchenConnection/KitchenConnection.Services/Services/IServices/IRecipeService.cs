@@ -8,11 +8,11 @@ using KitchenConnection.Models.Entities;
 namespace KitchenConnection.BusinessLogic.Services.IServices;
 public interface IRecipeService
 {
-    Task<RecipeDTO> Create(RecipeCreateRequestDTO recipeToRequestCreate, Guid userId);
-    Task<RecipeDTO> Get(Guid id);
+    Task<RecipeDTO> Create(Guid userId, RecipeCreateDTO recipeToCreate);
+    Task<RecipeDTO> Get(Guid recipeId);
     Task<List<RecipeDTO>> GetAll();
     Task<RecipeDTO> Update(RecipeUpdateDTO recipeToUpdate);
-    Task<RecipeDTO> Delete(Guid id);
+    Task<RecipeDTO> Delete(Guid recipeId);
 
     Task<RecipeNutrientsDTO> GetRecipeNutrients(Guid recipeId);
     Task<Guid> GetRecipeCreatorId(Guid recipeId);

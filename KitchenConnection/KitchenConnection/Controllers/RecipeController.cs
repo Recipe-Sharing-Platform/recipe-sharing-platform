@@ -16,49 +16,60 @@ namespace KitchenConnection.Controllers;
 public class RecipeController : ControllerBase
 {
     private readonly IRecipeService _recipeService;
-    public RecipeController(IRecipeService recipeService)
+    private readonly ILogger<RecipeController> _logger;
+    public RecipeController(IRecipeService recipeService, ILogger<RecipeController> logger)
     {
         _recipeService = recipeService;
+        _logger = logger;
     }
 
     [HttpPost]
-    public async Task<ActionResult<RecipeDTO>> Create(RecipeCreateRequestDTO recipeToCreate)
+    public async Task<ActionResult<RecipeDTO>> Create(RecipeCreateDTO recipeToCreate)
     {
-        var UserId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-        var recipe = await _recipeService.Create(recipeToCreate, UserId);
-
-        if(recipe == null)
+        try
         {
-            return BadRequest("Recipe could not be created!");
-        }
+            var userId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var recipe = await _recipeService.Create(userId, recipeToCreate);
 
-        return Ok(recipe);
+            return Ok(recipe);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError($"Error at Class: {nameof(RecipeController)}, Method: {nameof(Create)}, Exception: {ex}");
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpGet]
     public async Task<ActionResult<List<RecipeDTO>>> GetAll()
     {
-        var recipes = await _recipeService.GetAll();
-
-        if(recipes == null)
+        try
         {
-            return NotFound();
-        }
+            var recipes = await _recipeService.GetAll();
 
-        return Ok(recipes);
+            return Ok(recipes);
+        }catch(Exception ex)
+        {
+            _logger.LogError($"Error at Class: {nameof(RecipeController)}, Method: {nameof(Create)}, Exception: {ex}");
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<RecipeDTO>> Get(Guid id)
     {
-        var recipe = await _recipeService.Get(id);
-        
-        if (recipe == null)
+        try
         {
-            return NotFound();
+            var recipe = await _recipeService.Get(id);
+
+            return Ok(recipe);
         }
-        
-        return Ok(recipe);
+        catch (Exception ex)
+        {
+
+            _logger.LogError($"Error at Class: {nameof(RecipeController)}, Method: {nameof(Create)}, Exception: {ex}");
+            return BadRequest(ex.Message);
+        }
     }
 
    [HttpGet("{id}/nutrients")]
