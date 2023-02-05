@@ -1,4 +1,7 @@
-﻿using KitchenConnection.BusinessLogic.Services.IServices;
+﻿using KitchenConnection.BusinessLogic.Helpers.Exceptions.CollectionExceptions;
+using KitchenConnection.BusinessLogic.Helpers.Exceptions.CookBookExceptions;
+using KitchenConnection.BusinessLogic.Helpers.Exceptions.RecipeExceptions;
+using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.Models.DTOs.CookBook;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,60 +14,98 @@ namespace KitchenConnection.Controllers;
 public class CookBookController : ControllerBase
 {
     private readonly ICookBookService _cookBookService;
+    private readonly ILogger<RecipeController> _logger;
 
-    public CookBookController(ICookBookService cookBookService)
+
+    public CookBookController(ICookBookService cookBookService, ILogger<RecipeController> logger)
     {
         _cookBookService = cookBookService;
+        _logger = logger;
+
     }
 
     [HttpPost]
     public async Task<ActionResult<CookBookDTO>> Create(CookBookCreateRequestDTO cookBookToCreate)
     {
-        var UserId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-        var cookBook = await _cookBookService.Create(cookBookToCreate, UserId);
-
-        if (cookBook == null) return NotFound();
-
-        return Ok(cookBook);
+        try
+        {
+            var UserId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var cookBook = await _cookBookService.Create(cookBookToCreate, UserId);
+            return Ok(cookBook);
+        }
+        catch (CookBookCouldNotBeCreatedException ex)
+        {
+            _logger.LogError($"Error at Class: {nameof(CookBookController)}, Method: {nameof(Create)}, Exception: {ex}");
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpGet]
     public async Task<ActionResult<List<CookBookDTO>>> GetAll()
     {
-        var cookBooks = await _cookBookService.GetAll();
-
-        if (cookBooks == null) return NotFound();
-
-        return Ok(cookBooks);
+        try
+        {
+            var cookBooks = await _cookBookService.GetAll();
+            return Ok(cookBooks);
+        }
+        catch (CollectionsNotFoundException ex)
+        {
+            _logger.LogError($"Error at Class: {nameof(CookBookController)}, Method: {nameof(Create)}, Exception: {ex}");
+            return NotFound(ex.Message);
+        }
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<CookBookDTO>> Get(Guid id)
     {
-        var cookBook = await _cookBookService.Get(id);
-        
-        if (cookBook == null) return NotFound();
-        
-        return Ok(cookBook);
+        try
+        {
+            var cookBook = await _cookBookService.Get(id);
+            return Ok(cookBook);
+        }
+        catch (CookBookNotFoundException ex)
+        {
+            _logger.LogError($"Error at Class: {nameof(CookBookController)}, Method: {nameof(Create)}, Exception: {ex}");
+            return NotFound(ex.Message);
+        }
     }
 
     [HttpPut]
     public async Task<ActionResult<CookBookDTO>> UpdateCookBook(CookBookUpdateDTO cookBookToUpdate)
     {
-        var cookBook = await _cookBookService.Update(cookBookToUpdate);
+        try
+        {
+            var UserId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var cookBook = await _cookBookService.Update(UserId, cookBookToUpdate);
+            return Ok(cookBook);
+        }
+        catch (CookBookNotFoundException ex)
+        {
+            _logger.LogError($"Error at Class: {nameof(CookBookController)}, Method: {nameof(Create)}, Exception: {ex}");
+            return NotFound(ex.Message);
 
-        if (cookBook == null) return NotFound();
-
-        return Ok(cookBook);
+        }
+        catch (CookBookCouldNotBeUpdatedException ex)
+        {
+            _logger.LogError($"Error at Class: {nameof(CookBookController)}, Method: {nameof(Create)}, Exception: {ex}");
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var cookBook = await _cookBookService.Delete(id);
+        try
+        {
+            var UserId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var cookBook = await _cookBookService.Delete(UserId, id);
+            return Ok(cookBook);
+        }
 
-        if (cookBook == null) return NotFound();
-
-        return Ok(cookBook);
+        catch (CookBookNotFoundException ex)
+        {
+            _logger.LogError($"Error at Class: {nameof(CookBookController)}, Method: {nameof(Create)}, Exception: {ex}");
+            return NotFound(ex.Message);
+        }
     }
 }
