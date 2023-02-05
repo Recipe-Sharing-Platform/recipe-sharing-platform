@@ -1,5 +1,6 @@
 ﻿using KitchenConnection.Elastic.Models;
 using KitchenConnection.Models.Entities;
+using KitchenConnection.Models.Dispatcher;
 using Nest;
 
 namespace KitchenConnection.Elastic.MessageHandlers;

@@ -6,6 +6,7 @@ using KitchenConnection.Elastic.Models;
 using KitchenConnection.Elastic.Services;
 using KitchenConnection.Elastic.Services.IServices;
 using Nest;
+using KitchenConnection.Models.Dispatcher;
 
 var builder = WebApplication.CreateBuilder(args);
 

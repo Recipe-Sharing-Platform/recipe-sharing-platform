@@ -1,4 +1,4 @@
-﻿using KitchenConnection.Elastic.Dispatcher;
+﻿using KitchenConnection.Models.Dispatcher;
 using KitchenConnection.Elastic.Models;
 using KitchenConnection.Models.HelperModels;
 using Newtonsoft.Json;
