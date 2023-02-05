@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using KitchenConnection.BusinessLogic.Helpers.Exceptions.RecipeExceptions;
+using KitchenConnection.BusinessLogic.Helpers.Exceptions.ReviewExceptions;
 using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.DataLayer.Data.UnitOfWork;
 using KitchenConnection.DataLayer.Hubs;
@@ -19,8 +21,6 @@ namespace KitchenConnection.BusinessLogic.Services {
         private readonly IRecipeService _recipeService;
         private readonly IHubContext<NotificationHub> _hubContext;
 
-
-
         public ReviewService(IUnitOfWork unitOfWork, IMapper mapper, IRecommendationsService recommendationsService, IRecipeService recipeService,IHubContext<NotificationHub> hubContext)
         {
             _unitOfWork = unitOfWork;
@@ -30,26 +30,31 @@ namespace KitchenConnection.BusinessLogic.Services {
             _hubContext = hubContext;
         }
 
-        public async Task<ReviewDTO> Create(ReviewCreateRequestDTO reviewToRequestCreate, Guid userId)
+        public async Task<ReviewDTO> Create(Guid userId, ReviewCreateDTO reviewToCreate)
         {
-            ReviewCreateDTO reviewToCreate = new ReviewCreateDTO(reviewToRequestCreate, userId);
-            var review = await _unitOfWork.Repository<Review>().Create(_mapper.Map<Review>(reviewToCreate));
+            var review = _mapper.Map<Review>(reviewToCreate);
+            review.UserId = userId;
+
+            var recipe = await _unitOfWork.Repository<Recipe>().GetById(recipe => recipe.Id == reviewToCreate.RecipeId).Include(recipe => recipe.Tags).FirstOrDefaultAsync();
+
+            if(recipe is null) throw new RecipeNotFoundException(reviewToCreate.RecipeId);
+            if (recipe.Tags is null || recipe.Tags.Count == 0) throw new RecipeNotFoundException("Recipe Tags could not be found!");
+
+            review = await _unitOfWork.Repository<Review>().Create(review);
+
+            if (review is null) throw new ReviewCouldNotBeCreatedException("Review could not be created!");
 
             //create recommendation score
-            //first get all recipe tags ids            
-            Expression<Func<Recipe, bool>> expression = x => x.Id == review.RecipeId;
-            var recipe = await _unitOfWork.Repository<Recipe>().GetByConditionWithIncludes(expression, "Tags").FirstOrDefaultAsync();
-
+            if (recipe.Tags is null || recipe.Tags.Count == 0) throw new RecipeNotFoundException("Recipe Tags could not be found!");
             //set recommendationScore for each tag
-            foreach (var item in recipe.Tags)
+            foreach (var tag in recipe.Tags)
             {
-                await _recommendationsService.SetScore(review.UserId, item.Id, (int)review.Rating);
+                await _recommendationsService.SetScore(review.UserId, tag.Id, (int)review.Rating);
             }
 
             _unitOfWork.Complete();
 
-            var recipeId = review.RecipeId;
-            var recipeCreatorId = await _recipeService.GetRecipeCreatorId(recipeId);
+            var recipeCreatorId = await _recipeService.GetRecipeCreatorId(review.RecipeId);
 
             await _hubContext.Clients.Group(recipeCreatorId.ToString()).SendAsync("Receivereview", review);
 
@@ -58,14 +63,18 @@ namespace KitchenConnection.BusinessLogic.Services {
 
         public async Task<List<ReviewDTO>> GetRecipeReviews(Guid recipeId)
         {
-           var reviews = await _unitOfWork.Repository<Review>().GetByConditionWithIncludes(x => x.RecipeId == recipeId, "User, Recipe").ToListAsync();
-           
-           return _mapper.Map<List<ReviewDTO>>(reviews);
+            var reviews = await _unitOfWork.Repository<Review>().GetByConditionWithIncludes(x => x.RecipeId == recipeId, "User, Recipe").ToListAsync();
+
+            if (reviews is null || reviews.Count == 0) throw new RecipeReviewsNotFoundException(recipeId);
+
+            return _mapper.Map<List<ReviewDTO>>(reviews);
         }
 
         public async Task<ReviewDTO> Update(ReviewUpdateDTO reviewToUpdate)
         {
             var review = await _unitOfWork.Repository<Review>().GetById(x => x.Id == reviewToUpdate.Id).FirstOrDefaultAsync();
+
+            if (review is null) throw new ReviewNotFoundException(reviewToUpdate.Id);
 
             review.Rating = reviewToUpdate.Rating;
             review.Message = reviewToUpdate.Message;
@@ -76,11 +85,11 @@ namespace KitchenConnection.BusinessLogic.Services {
             return _mapper.Map<ReviewDTO>(review);
         }
 
-        public async Task<ReviewDTO> Delete(Guid id)
+        public async Task<ReviewDTO> Delete(Guid reviewId)
         {
-            var review = await _unitOfWork.Repository<Review>().GetById(x => x.Id == id).FirstOrDefaultAsync();
+            var review = await _unitOfWork.Repository<Review>().GetById(x => x.Id == reviewId).FirstOrDefaultAsync();
 
-            if (review == null) return null;
+            if (review == null) throw new ReviewNotFoundException(reviewId);
 
             _unitOfWork.Repository<Review>().Delete(review);
             _unitOfWork.Complete();

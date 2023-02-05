@@ -8,7 +8,6 @@ using KitchenConnection.Models.DTOs.Nutrients;
 using KitchenConnection.Models.DTOs.Recipe;
 using KitchenConnection.Models.Entities;
 using KitchenConnection.Models.Entities.Mappings;
-using KitchenConnection.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using KitchenConnection.Models.DTOs.Ingredient;
@@ -42,8 +41,9 @@ public class RecipeService : IRecipeService {
         recipe.Ingredients.ForEach(x => x.RecipeId = recipe.Id);
         recipe.Instructions.ForEach(x => x.RecipeId = recipe.Id);
         recipe.Tags = await AddTagsToRecipe(recipe, tagsToCheck);
+        
         recipe.Cuisine = await _unitOfWork.Repository<Cuisine>().GetById(x => x.Id == recipe.CuisineId).FirstOrDefaultAsync();
-        if (recipe.Cuisine is null) throw new RecipeCouldNotBeCreatedException("Recipe could not be created! Cuisine not found!");
+        if (recipe.Cuisine is null) throw new RecipeCouldNotBeCreatedException("Cuisine not found!");
 
         recipe = await _unitOfWork.Repository<Recipe>().Create(recipe);
         _unitOfWork.Complete();
@@ -58,7 +58,9 @@ public class RecipeService : IRecipeService {
         recipe.User.Recipes = null!;
 
         _messageSender.SendMessage(recipe, "index-recipes"); // send to queue for indexing
+        
         _cacheService.RemoveData("recipes");
+        
         var recipeDTO = _mapper.Map<RecipeDTO>(recipe);
 
         var expirationTime = DateTimeOffset.Now.AddDays(1);
@@ -140,10 +142,9 @@ public class RecipeService : IRecipeService {
 
     public async Task<RecipeDTO> Update(RecipeUpdateDTO recipeToUpdate)
     {
-        Expression<Func<Recipe, bool>> expression = x => x.Id == recipeToUpdate.Id;
-        var recipe = await _unitOfWork.Repository<Recipe>().GetByConditionWithIncludes(expression, "User, Ingredients, Instructions, Tags, Cuisine").FirstOrDefaultAsync();
+        var recipe = await _unitOfWork.Repository<Recipe>().GetByConditionWithIncludes(x => x.Id == recipeToUpdate.Id, "User, Ingredients, Instructions, Tags, Cuisine").FirstOrDefaultAsync();
 
-        if (recipe == null) return null;
+        if (recipe == null) throw new RecipeNotFoundException(recipeToUpdate.Id);
 
         recipe.Name = recipeToUpdate.Name;
         recipe.Description = recipeToUpdate.Description;
@@ -182,19 +183,19 @@ public class RecipeService : IRecipeService {
         return updatedRecipe;
     }
 
-    public async Task<RecipeDTO> Delete(Guid id)
+    public async Task<RecipeDTO> Delete(Guid recipeId)
     {
-        var recipe = await _unitOfWork.Repository<Recipe>().GetById(r => r.Id == id).FirstOrDefaultAsync();
+        var recipe = await _unitOfWork.Repository<Recipe>().GetById(r => r.Id == recipeId).FirstOrDefaultAsync();
 
-        if (recipe == null) return null;
+        if (recipe == null) throw new RecipeNotFoundException(recipeId);
 
         _unitOfWork.Repository<Recipe>().Delete(recipe);
         _messageSender.SendMessage(new { RecipeId = recipe.Id }, "delete-recipes");
         _unitOfWork.Complete();
 
         _cacheService.RemoveData("recipes");
-        _cacheService.RemoveData($"recipe-{id}");
-        _cacheService.RemoveData($"nutrients-{id}");
+        _cacheService.RemoveData($"recipe-{recipeId}");
+        _cacheService.RemoveData($"nutrients-{recipeId}");
 
         return _mapper.Map<RecipeDTO>(recipe);
     }
@@ -228,9 +229,12 @@ public class RecipeService : IRecipeService {
 
         return tagsToAdd;
     }
+
     public async Task<Guid> GetRecipeCreatorId(Guid id)
     {
         var recipe = await _unitOfWork.Repository<Recipe>().GetByCondition(x => x.Id == id).FirstOrDefaultAsync();
+
+        if (recipe is null) throw new RecipeNotFoundException(id);
 
         return recipe.UserId;
     }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using KitchenConnection.BusinessLogic.Helpers.Exceptions.RecommendationExceptions;
 using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.DataLayer.Data.UnitOfWork;
 using KitchenConnection.Models.DTOs;
@@ -26,75 +27,67 @@ namespace KitchenConnection.BusinessLogic.Services
 
         public async Task<List<Recipe>> GetCollectionRecommendations(Guid? userId, int length)
         {
-            var recipeCollRecos=new List<Recipe>();
+            var recipeCollectionRecommendation = new List<Recipe>();
 
-            if (userId != null && userId != Guid.Empty)
+
+            if (userId is null || userId == Guid.Empty)
             {
-                Expression<Func<RecommendationScore, bool>> expression = x => x.UserId == userId;
-                var highestScoreTagRowsList = _unitOfWork.Repository<RecommendationScore>().GetByCondition(expression).OrderByDescending(x => x.Score).Take(length).ToList();
+                throw new RecommendationNotFoundException("Could not make a recommendation! User not found!");
+            }
 
-                if (highestScoreTagRowsList.Count>0)
-                {                  
-                    foreach(RecommendationScore recommendationScore in highestScoreTagRowsList)
-                    {
-                        var highestScoreTag = recommendationScore.TagId;
-                        //get a random recipe with highestScoreTag tag from a different user
-                        Expression<Func<Recipe, bool>> expression2 = x => x.UserId!=userId && x.Tags.Any(y => y.Id == highestScoreTag);                       
-                        var randomRecipe = _unitOfWork.Repository<Recipe>().GetByCondition(expression2).OrderBy(x=> Guid.NewGuid()).FirstOrDefault();//random order by new unique Guid
-                        if (randomRecipe != null && !recipeCollRecos.Contains(randomRecipe))
-                        {
-                            recipeCollRecos.Add(randomRecipe);
-                        }                        
-                    }
-                    
-                    return recipeCollRecos;
-                }
-                else
+            var highestScoreTagRowsList = _unitOfWork.Repository<RecommendationScore>().GetByCondition(user => user.UserId == userId).OrderByDescending(x => x.Score).Take(length).ToList();
+
+            if(highestScoreTagRowsList is null || highestScoreTagRowsList.Count == 0)
+            {
+                throw new RecommendationCollectionNotFound($"Highest Tag Scores not found for User {userId}");
+            }
+
+            foreach (RecommendationScore recommendationScore in highestScoreTagRowsList)
+            {
+                var highestScoreTag = recommendationScore.TagId;
+                //get a random recipe with highestScoreTag tag from a different user
+                var randomRecipe = _unitOfWork.Repository<Recipe>()
+                    .GetByCondition(x => x.UserId != userId && x.Tags.Any(y => y.Id == highestScoreTag))
+                    .OrderBy(x => Guid.NewGuid()).FirstOrDefault();//random order by new unique Guid
+                if (randomRecipe != null && !recipeCollectionRecommendation.Contains(randomRecipe))
                 {
-                    return null;
+                    recipeCollectionRecommendation.Add(randomRecipe);
                 }
+            }
 
-            }
-            else
-            {
-                return null;
-            }
+            if(recipeCollectionRecommendation is null || recipeCollectionRecommendation.Count == 0) throw new RecommendationCollectionNotFound($"Could not make a proper Collection Recommendation for User {userId}");
+
+            return recipeCollectionRecommendation;
         }
 
         public async Task<Recipe> GetSingleRecommendation(Guid? userId)
         {
-            if(userId != null && userId != Guid.Empty)
+            if(userId is null || userId == Guid.Empty)
             {
-                Expression<Func<RecommendationScore,bool>> expression=x=>x.UserId==userId;
-                var highestScoreTagRow= _unitOfWork.Repository<RecommendationScore>().GetByCondition(expression).OrderByDescending(x => x.Score).Take(1).FirstOrDefault();
-                
-                if(highestScoreTagRow!=null)
-                {
-                    var highestScoreTag = highestScoreTagRow.TagId;
-                    //get a random recipe with highestScoreTag tag from a different user
-                    Expression<Func<Recipe, bool>> expression2 = x =>x.UserId!=userId && x.Tags.Any(y=>y.Id==highestScoreTag);
-                    return _unitOfWork.Repository<Recipe>().GetByCondition(expression2).OrderBy(x => Guid.NewGuid()).FirstOrDefault();//random order by new unique Guid
-                                                                           
-                }
-                else
-                {
-                    return null;
-                }
-                
+                throw new RecommendationNotFoundException("Could not make a recommendation! User not found!");
             }
-            else
-            {
-                return null;
-            }
+
+            var highestScoreTagRow = _unitOfWork.Repository<RecommendationScore>().GetByCondition(user => user.UserId == userId).OrderByDescending(x => x.Score).Take(1).FirstOrDefault();
+
+            if (highestScoreTagRow is null) throw new RecommendationNotFoundException($"Highest Tag Score not found for User: {userId}");
+
+            //get a random recipe with highestScoreTag tag from a different user
+            var recommendation = _unitOfWork.Repository<Recipe>()
+                .GetByCondition(x => x.UserId != userId && x.Tags.Any(y => y.Id == highestScoreTagRow.TagId))
+                .OrderBy(x => Guid.NewGuid()).FirstOrDefault(); //random order by new unique Guid
+
+            if (recommendation is null) throw new RecommendationNotFoundException($"Could not make a proper Recommendation for User: {userId} with the Tag: {highestScoreTagRow.TagId}");
+
+            return recommendation;
         }
+
         public async Task<bool> SetScore(Guid? userId, Guid? tagId)
         {
-            if ((userId != null && userId != Guid.Empty) && (tagId != null && tagId != Guid.Empty))
+            if ((userId is not null && userId != Guid.Empty) && (tagId is not null && tagId != Guid.Empty))
             {
-                Expression<Func<RecommendationScore, bool>> expression = x => x.UserId == userId && x.TagId == tagId;
-                var existingRow = _unitOfWork.Repository<RecommendationScore>().GetByCondition(expression).FirstOrDefault();
+                var existingRow = _unitOfWork.Repository<RecommendationScore>().GetByCondition(row => row.UserId == userId && row.TagId == tagId).FirstOrDefault();
 
-                if (existingRow != null)
+                if (existingRow is not null)
                 {
                     existingRow.Score += 1;
 
@@ -102,16 +95,15 @@ namespace KitchenConnection.BusinessLogic.Services
                 }
                 else
                 {
-                    RecommendationScoreCreateDto recommendationScoreCreateDto = new RecommendationScoreCreateDto();
-                    recommendationScoreCreateDto.UserId = (Guid)userId;
-                    recommendationScoreCreateDto.TagId = (Guid)tagId;
-                    recommendationScoreCreateDto.Score = 1;                  
-
-                    RecommendationScore recommendationScore = _mapper.Map<RecommendationScore>(recommendationScoreCreateDto);
+                    RecommendationScore recommendationScore = new RecommendationScore();
+                    recommendationScore.UserId = (Guid)userId;
+                    recommendationScore.TagId = (Guid)tagId;
+                    recommendationScore.Score = 1;
 
                     await _unitOfWork.Repository<RecommendationScore>().Create(recommendationScore);
                 }
-                var res = _unitOfWork.Complete();
+                _unitOfWork.Complete();
+                
                 return true;
 
             }
@@ -154,10 +146,10 @@ namespace KitchenConnection.BusinessLogic.Services
                 }
                 else
                 {
-                    RecommendationScoreCreateDto recommendationScoreCreateDto = new RecommendationScoreCreateDto();
-                    recommendationScoreCreateDto.UserId = (Guid)userId;
-                    recommendationScoreCreateDto.TagId = (Guid)tagId;
-                    recommendationScoreCreateDto.Score = 1;
+                    RecommendationScore recommendationScore = new RecommendationScore();
+                    recommendationScore.UserId = (Guid)userId;
+                    recommendationScore.TagId = (Guid)tagId;
+                    recommendationScore.Score = 1;
 
                     //check if setScore was called from reviewService
                     if (score != null)
@@ -165,16 +157,14 @@ namespace KitchenConnection.BusinessLogic.Services
                         //1-5 stars review
                         if (score < 3)
                         {
-                            recommendationScoreCreateDto.Score -= 1;
+                            recommendationScore.Score -= 1;
                         }
                         else if (score > 3)
                         {
-                            recommendationScoreCreateDto.Score += 1;
+                            recommendationScore.Score += 1;
                         }
                         //if score==3 do nothing   
                     }
-
-                    RecommendationScore recommendationScore = _mapper.Map<RecommendationScore>(recommendationScoreCreateDto);
 
                     await _unitOfWork.Repository<RecommendationScore>().Create(recommendationScore);                  
                 }
