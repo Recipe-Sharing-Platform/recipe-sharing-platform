@@ -1,3 +1,11 @@
+# https://localhost:53967 KitchenConnection API
+# https://localhost:9300 KitchenConnection Elastic API
+# http://localhost:8000 pgAdmin
+# http://localhost:8081 Redis Commander
+# http://localhost:5601 Kibana
+# http://localhost:15672 RabbitMQ Management
+
+
 version: '3.4'
 x-kitchen-connection: &kitchen-connection KitchenConnection
 services:
@@ -9,8 +17,7 @@ services:
     networks:
       - kitchen-connection
     ports:
-      - "80:80"
-      - "443:443"
+      - "44304:80"
     depends_on:
       postgres:
         condition: service_started
@@ -111,7 +118,7 @@ services:
       - RABBITMQ_DEFAULT_PASS=kitchenconnection
     healthcheck:
       test: rabbitmq-diagnostics check_port_connectivity
-      interval: 1s
+      interval: 2s
       timeout: 3s
       retries: 30
   elasticsearch:
