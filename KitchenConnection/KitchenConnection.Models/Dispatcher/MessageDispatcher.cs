@@ -1,7 +1,6 @@
-﻿using KitchenConnection.Elastic.MessageHandlers;
-using KitchenConnection.Elastic.Models;
+﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace KitchenConnection.Elastic.Dispatcher;
+namespace KitchenConnection.Models.Dispatcher;
 public class MessageDispatcher : IMessageDispatcher {
     private readonly IServiceProvider _serviceProvider;
     public MessageDispatcher(IServiceProvider serviceProvider) {

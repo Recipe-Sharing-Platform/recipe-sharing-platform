@@ -50,6 +50,22 @@ services:
       - RabbitMqConfig__HostName=host.docker.internal
       - RabbitMqConfig__UserName=kitchenconnection
       - RabbitMqConfig__Password=kitchenconnection
+  kitchenconnection.notifier:
+    image: ${DOCKER_REGISTRY-}kitchenconnectionnotifier
+    build:
+      context: .
+      dockerfile: KitchenConnection.Notifier/Dockerfile
+    networks:
+      - kitchen-connection
+    ports:
+      - "35000:80"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      - RabbitMqConfig__HostName=host.docker.internal
+      - RabbitMqConfig__UserName=kitchenconnection
+      - RabbitMqConfig__Password=kitchenconnection  
   postgres:
     image: postgres:latest
     container_name: postgres

@@ -1,4 +1,5 @@
-﻿using KitchenConnection.Elastic.Models;
+﻿using KitchenConnection.Models.Dispatcher;
+using KitchenConnection.Elastic.Models;
 using KitchenConnection.Models.Entities;
 using Nest;
 
