@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace KitchenConnection.BusinessLogic.Helpers.Exceptions.CookBookExceptions
-{
-        public class CookBookNotFoundException : Exception
+﻿namespace KitchenConnection.BusinessLogic.Helpers.Exceptions.CookBookExceptions {
+    public class CookBookNotFoundException : Exception
         {
             public CookBookNotFoundException(Guid collectionId) : base($"No cookbook with id: {collectionId} found") { }
 

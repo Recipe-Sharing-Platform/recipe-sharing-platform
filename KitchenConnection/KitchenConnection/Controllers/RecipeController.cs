@@ -45,6 +45,7 @@ public class RecipeController : ControllerBase
     }
 
     [HttpGet]
+    [Route("getAll")]
     public async Task<ActionResult<List<RecipeDTO>>> GetAll()
     {
         try
