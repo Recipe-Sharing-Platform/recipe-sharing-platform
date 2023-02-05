@@ -37,6 +37,13 @@ public class RecipeController : ControllerBase
         }
     }
 
+    [HttpGet] 
+    public async Task<ActionResult<List<RecipeDTO>>> GetPaginated(int page, int pageSize) {
+        List<RecipeDTO> recipes = await _recipeService.GetPaginated(page, pageSize);
+
+        return recipes;
+    }
+
     [HttpGet]
     public async Task<ActionResult<List<RecipeDTO>>> GetAll()
     {

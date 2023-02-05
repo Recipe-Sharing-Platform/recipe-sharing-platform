@@ -238,4 +238,14 @@ public class RecipeService : IRecipeService {
 
         return recipe.UserId;
     }
+
+    public async Task<List<RecipeDTO>> GetPaginated(int page, int pageSize) {
+        var recipes = await _unitOfWork.Repository<Recipe>().GetPaginated(page, pageSize)
+           .Include(u => u.User)
+           .Include(c => c.Cuisine)
+           .Include(t => t.Tags)
+           .Include(i => i.Ingredients)
+           .Include(i => i.Instructions).ToListAsync();
+        return _mapper.Map<List<RecipeDTO>>(recipes);
+    }
 }

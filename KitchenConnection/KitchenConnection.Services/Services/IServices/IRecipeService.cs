@@ -12,4 +12,5 @@ public interface IRecipeService
 
     Task<RecipeNutrientsDTO> GetRecipeNutrients(Guid recipeId);
     Task<Guid> GetRecipeCreatorId(Guid recipeId);
+    Task<List<RecipeDTO>> GetPaginated(int page, int pageSize);
 }

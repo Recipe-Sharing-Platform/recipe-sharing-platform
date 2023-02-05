@@ -9,7 +9,7 @@ public interface IKitchenConnectionRepository<Tentity> where Tentity : BaseEntit
 
     IQueryable<Tentity> GetByConditionPaginated(Expression<Func<Tentity, bool>> expression, Expression<Func<Tentity, object>> orderBy, int page, int pageSize, bool orderByDescending = true);
 
-
+    IQueryable<Tentity> GetPaginated(int page, int pageSize);
     IQueryable<Tentity> GetAll();
 
     IQueryable<Tentity> GetById(Expression<Func<Tentity, bool>> expression);
