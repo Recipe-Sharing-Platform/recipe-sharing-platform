@@ -1,4 +1,5 @@
-﻿using KitchenConnection.BusinessLogic.Services.IServices;
+﻿using KitchenConnection.BusinessLogic.Helpers.Exceptions.RecipeExceptions;
+using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.Models.DTOs.Recipe;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +30,7 @@ public class RecipeController : ControllerBase
 
             return Ok(recipe);
         }
-        catch(Exception ex)
+        catch(RecipeCouldNotBeCreatedException ex)
         {
             _logger.LogError($"Error at Class: {nameof(RecipeController)}, Method: {nameof(Create)}, Exception: {ex}");
             return BadRequest(ex.Message);
@@ -44,10 +45,11 @@ public class RecipeController : ControllerBase
             var recipes = await _recipeService.GetAll();
 
             return Ok(recipes);
-        }catch(Exception ex)
+        }
+        catch(RecipesNotFoundException ex)
         {
             _logger.LogError($"Error at Class: {nameof(RecipeController)}, Method: {nameof(Create)}, Exception: {ex}");
-            return BadRequest(ex.Message);
+            return NotFound(ex.Message);
         }
     }
 
@@ -60,46 +62,64 @@ public class RecipeController : ControllerBase
 
             return Ok(recipe);
         }
-        catch (Exception ex)
+        catch (RecipeNotFoundException ex)
         {
-
             _logger.LogError($"Error at Class: {nameof(RecipeController)}, Method: {nameof(Create)}, Exception: {ex}");
-            return BadRequest(ex.Message);
+            return NotFound(ex.Message);
         }
     }
 
    [HttpGet("{id}/nutrients")]
    public async Task<IActionResult> GetRecipeNutrients(Guid id)
     {
-        var result = await _recipeService.GetRecipeNutrients(id);
+        try
+        {
+            var result = await _recipeService.GetRecipeNutrients(id);
 
-        return Ok(result);
+            return Ok(result);
+        }
+        catch(RecipeNotFoundException ex)
+        {
+            _logger.LogError($"Error at Class: {nameof(RecipeController)}, Method: {nameof(Create)}, Exception: {ex}");
+            return NotFound(ex.Message);
+        }
+        catch (RecipeNutrientsNotFoundException ex)
+        {
+            _logger.LogError($"Error at Class: {nameof(RecipeController)}, Method: {nameof(Create)}, Exception: {ex}");
+            return NotFound(ex.Message);
+        }
     }
 
     [HttpPut]
     public async Task<ActionResult<RecipeDTO>> Update(RecipeUpdateDTO recipeToUpdate)
     {
-        var recipe = await _recipeService.Update(recipeToUpdate);
-
-        if(recipe == null)
+        try
         {
-            return BadRequest("Recipe could not be updated!");
-        }
+            var recipe = await _recipeService.Update(recipeToUpdate);
 
-        return Ok(recipe);
+            return Ok(recipe);
+        }
+        catch (RecipeCouldNotBeUpdatedException ex)
+        {
+            _logger.LogError($"Error at Class: {nameof(RecipeController)}, Method: {nameof(Create)}, Exception: {ex}");
+            return NotFound(ex.Message);
+        }
     }
 
     [HttpDelete("{id}")]
     public async Task<ActionResult<RecipeDTO>> Delete(Guid id)
     {
-        var recipe = await _recipeService.Delete(id);
-
-        if(recipe == null)
+        try
         {
-            return BadRequest("Recipe could not be deleted!");
-        }
+            var recipe = await _recipeService.Delete(id);
 
-        return Ok(recipe);
+            return Ok(recipe);
+        }
+        catch (RecipeNotFoundException ex)
+        {
+            _logger.LogError($"Error at Class: {nameof(RecipeController)}, Method: {nameof(Create)}, Exception: {ex}");
+            return NotFound(ex.Message);
+        }
     }
 
 }

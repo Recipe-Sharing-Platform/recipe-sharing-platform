@@ -1,4 +1,6 @@
-﻿using KitchenConnection.BusinessLogic.Services.IServices;
+﻿using KitchenConnection.BusinessLogic.Helpers.Exceptions.RecipeExceptions;
+using KitchenConnection.BusinessLogic.Helpers.Exceptions.ReviewExceptions;
+using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.DataLayer.Hubs;
 using KitchenConnection.Models.DTOs.Review;
 using Microsoft.AspNetCore.Authorization;
@@ -13,50 +15,84 @@ namespace KitchenConnection.Controllers {
     public class ReviewController : ControllerBase
     {
         public readonly IReviewService _reviewService;
+        private readonly ILogger<ReviewController> _logger;
         private readonly IHubContext<NotificationHub> _hubContext;
-        public ReviewController(IReviewService reviewService, IHubContext<NotificationHub> hubContext)
+        public ReviewController(IReviewService reviewService, IHubContext<NotificationHub> hubContext, ILogger<ReviewController> logger)
         {
             _reviewService = reviewService;
+            _logger = logger;
             _hubContext = hubContext;
+        }
 
+        [HttpPost]
+        public async Task<ActionResult<ReviewDTO>> Create(ReviewCreateDTO reviewToCreate)
+        {
+            try
+            {
+                var userId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+                var review = await _reviewService.Create(userId, reviewToCreate);
+
+                return Ok(review);
+            }
+            catch (RecipeNotFoundException ex)
+            {
+                _logger.LogError($"Error at Class: {nameof(RecipeController)}, Method: {nameof(Create)}, Exception: {ex}");
+                return NotFound(ex.Message);
+            }
+            catch(ReviewCouldNotBeCreatedException ex)
+            {
+                _logger.LogError($"Error at Class: {nameof(RecipeController)}, Method: {nameof(Create)}, Exception: {ex}");
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet]
         [AllowAnonymous]
         public async Task<ActionResult<List<ReviewDTO>>> GetAll(Guid id)
         {
-            var recipeReviews = await _reviewService.GetRecipeReviews(id);
-            if (recipeReviews == null)
+            try
             {
-                return NotFound();
+                var recipeReviews = await _reviewService.GetRecipeReviews(id);
+
+                return Ok(recipeReviews);
             }
-            return Ok(recipeReviews);
+            catch (RecipeReviewsNotFoundException ex)
+            {
+                _logger.LogError($"Error at Class: {nameof(RecipeController)}, Method: {nameof(Create)}, Exception: {ex}");
+                return NotFound(ex.Message);
+            }
         }
 
-        [HttpPost]
-        public async Task<ActionResult<ReviewDTO>> Create(ReviewCreateRequestDTO reviewToCreate)
+        [HttpPut("{id}")]
+        public async Task<ActionResult<ReviewDTO>> Update(Guid id, ReviewUpdateDTO reviewToUpdate)
         {
-            var UserId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            var review = await _reviewService.Create(reviewToCreate, UserId);
-
-            if (review== null)
+            try
             {
-                return BadRequest("Could not add the review!");
-            }           
-            return Ok(review);
+                var updatedReview = await _reviewService.Update(reviewToUpdate);
+
+                return Ok(updatedReview);
+            }
+            catch(ReviewNotFoundException ex)
+            {
+                _logger.LogError($"Error at Class: {nameof(RecipeController)}, Method: {nameof(Create)}, Exception: {ex}");
+                return NotFound(ex.Message);
+            }
         }
 
         [HttpDelete]
         public async Task<ActionResult<ReviewDTO>> Delete(Guid id)
         {
-            var review = await _reviewService.Delete(id);
-
-            if(review == null)
+            try
             {
-                return BadRequest("Could not delete the review!");
-            }
+                var review = await _reviewService.Delete(id);
 
-            return Ok(review);
+                return Ok(review);
+            }
+            catch (ReviewNotFoundException ex)
+            {
+                _logger.LogError($"Error at Class: {nameof(RecipeController)}, Method: {nameof(Create)}, Exception: {ex}");
+                return NotFound(ex.Message);
+            }
         }
     }
 }
