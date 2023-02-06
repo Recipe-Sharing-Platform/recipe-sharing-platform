@@ -32,7 +32,13 @@ public class CollectionController : ControllerBase
         try
         {
             var UserId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            return await _collectionService.GetAll(UserId);
+
+            var res= await _collectionService.GetAll(UserId);
+            if (res != null)
+            {
+                return Ok(res);
+            }
+            return NotFound();
         }
         catch (CollectionsNotFoundException ex)
         {
@@ -120,7 +126,7 @@ public class CollectionController : ControllerBase
 
     [HttpDelete("{id}")]
     [Authorize(AuthenticationSchemes = "Bearer")]
-    public async Task<IActionResult> Delete(Guid id)
+    public async Task<ActionResult<CollectionDTO>> Delete(Guid id)
     {
         var UserId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
         try

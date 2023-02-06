@@ -101,7 +101,7 @@ public class CookBookController : ControllerBase {
 
     [HttpDelete("{id}")]
     [Authorize(AuthenticationSchemes = "Bearer")]
-    public async Task<IActionResult> Delete(Guid id) {
+    public async Task<ActionResult<CookBookDTO>> Delete(Guid id) {
         var userId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
         CookBookDTO cookBook;
         try {
