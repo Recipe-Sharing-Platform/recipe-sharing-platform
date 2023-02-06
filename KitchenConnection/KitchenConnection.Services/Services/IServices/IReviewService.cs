@@ -1,18 +1,11 @@
-﻿using KitchenConnection.DataLayer.Models.DTOs.Review;
-using KitchenConnection.DataLayer.Models.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using KitchenConnection.Models.DTOs.Review;
 
-namespace KitchenConnection.BusinessLogic.Services.IServices
-{
+namespace KitchenConnection.BusinessLogic.Services.IServices {
     public interface IReviewService
     {
-        Task<ReviewDTO> Create(ReviewCreateRequestDTO reviewToCreate, Guid userId);
+        Task<ReviewDTO> Create(Guid userId, ReviewCreateDTO reviewToCreate);
         Task<List<ReviewDTO>> GetRecipeReviews(Guid recipeId);
         Task<ReviewDTO> Update(ReviewUpdateDTO reviewToUpdate);
-        Task<ReviewDTO> Delete(Guid id);
+        Task<ReviewDTO> Delete(Guid recipeId);
     }
 }

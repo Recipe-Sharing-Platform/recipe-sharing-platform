@@ -1,18 +1,12 @@
-﻿using KitchenConnection.DataLayer.Models.DTOs.Collection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using KitchenConnection.Models.DTOs.Collection;
 
-namespace KitchenConnection.BusinessLogic.Services.IServices
-{
+namespace KitchenConnection.BusinessLogic.Services.IServices {
     public interface ICollectionService
     {
-        Task<CollectionDTO> Create(CollectionCreateRequestDTO collectionToCreate, Guid userId);
-        Task<CollectionDTO> Update(CollectionUpdateDTO collectionToUpdate);
-        Task<List<CollectionDTO>> GetAll();
-        Task<CollectionDTO> Get(Guid id);
-        Task<CollectionDTO> Delete(Guid id);
+        Task<CollectionDTO> Create(Guid userId,CollectionCreateRequestDTO collectionToCreate);
+        Task<CollectionDTO> Update(Guid userId, CollectionUpdateDTO collectionToUpdate);
+        Task<List<CollectionDTO>> GetAll(Guid userId);
+        Task<CollectionDTO> Get(Guid userId,Guid id);
+        Task<CollectionDTO> Delete(Guid userId, Guid id);
     }
 }

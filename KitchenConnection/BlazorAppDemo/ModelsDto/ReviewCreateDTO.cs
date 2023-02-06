@@ -1,4 +1,4 @@
-﻿using KitchenConnection.DataLayer.Models.DTOs;
+﻿using KitchenConnection.Models.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;

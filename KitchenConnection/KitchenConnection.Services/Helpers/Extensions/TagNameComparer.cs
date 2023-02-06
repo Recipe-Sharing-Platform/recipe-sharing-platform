@@ -1,13 +1,6 @@
-﻿using KitchenConnection.DataLayer.Models.Entities;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using KitchenConnection.Models.Entities;
 
-namespace KitchenConnection.BusinessLogic.Helpers.Extensions
-{
+namespace KitchenConnection.BusinessLogic.Helpers.Extensions {
     public class TagNameComparer : IEqualityComparer<Tag>
     {
         public bool Equals(Tag left, Tag right)

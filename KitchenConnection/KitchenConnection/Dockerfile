@@ -1,0 +1,24 @@
+#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
+
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
+WORKDIR /app
+EXPOSE 80
+EXPOSE 443
+
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+WORKDIR /src
+COPY ["KitchenConnection/KitchenConnection.csproj", "KitchenConnection/"]
+COPY ["KitchenConnection.Data/KitchenConnection.DataLayer.csproj", "KitchenConnection.Data/"]
+COPY ["KitchenConnection.Services/KitchenConnection.BusinessLogic.csproj", "KitchenConnection.Services/"]
+RUN dotnet restore "KitchenConnection/KitchenConnection.csproj"
+COPY . .
+WORKDIR "/src/KitchenConnection"
+RUN dotnet build "KitchenConnection.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "KitchenConnection.csproj" -c Release -o /app/publish /p:UseAppHost=false
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "KitchenConnection.dll"]

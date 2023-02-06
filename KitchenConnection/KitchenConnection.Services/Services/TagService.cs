@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.DataLayer.Data.UnitOfWork;
-using KitchenConnection.DataLayer.Models.DTOs.Recipe;
-using KitchenConnection.DataLayer.Models.Entities;
+using KitchenConnection.Models.DTOs.Recipe;
+using KitchenConnection.Models.DTOs.Tag;
+using KitchenConnection.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 

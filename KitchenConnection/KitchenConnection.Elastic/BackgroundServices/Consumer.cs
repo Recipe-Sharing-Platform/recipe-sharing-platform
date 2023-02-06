@@ -1,32 +1,32 @@
-﻿using System.Reflection;
-using System.Text;
-using KitchenConnection.Elastic.Dispatcher;
-using KitchenConnection.Elastic.MessageHandlers;
+﻿using KitchenConnection.Models.Dispatcher;
 using KitchenConnection.Elastic.Models;
-using KitchenConnection.Models.Entities;
+using KitchenConnection.Models.HelperModels;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using System.Text;
 
 namespace KitchenConnection.Elastic.BackgroundServices;
 public class Consumer : BackgroundService {
     private readonly ILogger<Consumer> _logger;
     private readonly IServiceProvider _serviceProvider;
+    private readonly RabbitMqConfig _rabbitMqConfig;
     private IModel _channel; 
     private IConnection _connection;
 
-    public Consumer(ILogger<Consumer> logger, IServiceProvider serviceProvider) {
+    public Consumer(ILogger<Consumer> logger, IServiceProvider serviceProvider, RabbitMqConfig rabbitMqConfig) {
         _logger = logger;
         _serviceProvider = serviceProvider;
+        _rabbitMqConfig = rabbitMqConfig;
     }
 
     protected override Task ExecuteAsync(CancellationToken stoppingToken) {
         stoppingToken.ThrowIfCancellationRequested();
 
         var factory = new ConnectionFactory() {
-            HostName = "localhost",
-            UserName = "user",
-            Password = "password",
+            HostName = _rabbitMqConfig.HostName,
+            UserName = _rabbitMqConfig.UserName,
+            Password = _rabbitMqConfig.Password,
         };
         _connection = factory.CreateConnection();
         try {
@@ -46,20 +46,16 @@ public class Consumer : BackgroundService {
                 var body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
 
-                using (var fw = File.AppendText("messages.txt")) {
-                    await fw.WriteAsync(message);
-                }
-
                 var dispatcher = new MessageDispatcher(_serviceProvider);
 
                 if (ea.RoutingKey == "index-recipes") {
-                    IndexRecipe indexRecipeMessage = JsonConvert.DeserializeObject<IndexRecipe>(message);
+                    var indexRecipeMessage = JsonConvert.DeserializeObject<IndexRecipe>(message)!;
                     await dispatcher.DispatchAsync<IndexRecipe>(indexRecipeMessage);
                 } else if(ea.RoutingKey == "delete-recipes") {
-                    DeleteRecipe deleteRecipeMessage = JsonConvert.DeserializeObject<DeleteRecipe>(message);
+                    var deleteRecipeMessage = JsonConvert.DeserializeObject<DeleteRecipe>(message)!;
                     await dispatcher.DispatchAsync<DeleteRecipe>(deleteRecipeMessage);
                 } else if(ea.RoutingKey == "update-recipes") {
-                    UpdateRecipe updateRecipeMessage = JsonConvert.DeserializeObject<UpdateRecipe>(message);
+                    var updateRecipeMessage = JsonConvert.DeserializeObject<UpdateRecipe>(message)!;
                     await dispatcher.DispatchAsync<UpdateRecipe>(updateRecipeMessage);
                 }
                 

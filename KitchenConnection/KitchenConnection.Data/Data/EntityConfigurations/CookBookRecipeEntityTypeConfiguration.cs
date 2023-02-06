@@ -1,10 +1,9 @@
-﻿using KitchenConnection.DataLayer.Models.Entities;
-using KitchenConnection.DataLayer.Models.Entities.Mappings;
+﻿using KitchenConnection.Models.Entities;
+using KitchenConnection.Models.Entities.Mappings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace KitchenConnecition.Infrastructure.Data.Configurations
-{
+namespace KitchenConnection.DataLayer.Data.EntityConfigurations {
     //public class CookBookRecipeEntityTypeConfiguration : IEntityTypeConfiguration<CookBook>
     //{
     //    public void Configure(EntityTypeBuilder<CookBook> builder)

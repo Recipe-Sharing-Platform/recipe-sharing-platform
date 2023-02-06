@@ -1,88 +1,62 @@
-﻿using KitchenConnection.BusinessLogic.Services.IServices;
+using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.Models.Entities;
+using KitchenConnection.BusinessLogic.Helpers.Exceptions.RecommendationExceptions;
+using KitchenConnection.BusinessLogic.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
-namespace KitchenConnection.Controllers
-{
+namespace KitchenConnection.Controllers {
     [ApiController]
     [Authorize(AuthenticationSchemes = "Bearer")]
 
     public class RecommendationsController:ControllerBase
     {
         private readonly IRecommendationsService _recommendationService;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        public RecommendationsController(IRecommendationsService recommendationsService, IHttpContextAccessor httpContextAccessor)
+        private readonly ILogger<RecommendationsController> _logger;
+        public RecommendationsController(IRecommendationsService recommendationsService, ILogger<RecommendationsController> logger)
         {
-            _recommendationService = recommendationsService;   
-            _httpContextAccessor= httpContextAccessor;
+            _recommendationService = recommendationsService;
+            _logger = logger;
         }
 
         [HttpGet("GetSingleRecommendation")]
         public async Task<ActionResult<Recipe>> GetSingleRecommendation()
         {
-            string? userIdString = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            if (userIdString != null)
+            try
             {
-                Guid? userId = new Guid(userIdString);
-
-                if (userId != null && userId != Guid.Empty)
-                {
-                    var res = await _recommendationService.GetSingleRecommendation(userId);
-                    if (res != null)
-                    {
-                        return Ok(res);
-                    }
-                    else
-                    {
-                        return BadRequest("Could not get recommendation from database!");
-                    }
-                }
-                else
-                {
-                    return BadRequest("Could not get recommendation! User id was null or empty!");
-                }
+                var userId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+                var recommendation = await _recommendationService.GetSingleRecommendation(userId);
+                
+                return Ok(recommendation);
             }
-            else
+            catch(RecommendationNotFoundException ex)
             {
-                return BadRequest("Could not get recommendation! User id was not found! Check authentication!");
+                _logger.LogError($"Error at Class: {nameof(RecipeController)}, Method: {nameof(GetSingleRecommendation)}, Exception: {ex}");
+                return NotFound(ex.Message);
             }
         }
 
         [HttpGet("GetCollectionRecommendation")]
-        public async Task<ActionResult<List<Recipe>>> GetCollectionRecommendations()
+        public async Task<IActionResult> GetCollectionRecommendations(int length)
         {
-            string? userIdString = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-                        
-            if (userIdString != null)
+            try
             {
-                Guid? userId = new Guid(userIdString);
-                if (userId != null && userId != Guid.Empty)
-                {
-                    var res = await _recommendationService.GetCollectionRecommendations(userId, 2);
-                    if (res != null)
-                    {
-                        return Ok(res);
-                    }
-                    else
-                    {
-                        return BadRequest("Could not get collection recommendations from database!");
-                    }
-                }
-                else
-                {
-                    return BadRequest("Could not get collection recommendations! User id was null or empty!");
-                }
-            }
-            else
-            {
-                return BadRequest("Could not get collection recommendations! User id was not found! Check authentication!");
-            }
-           
+                var userId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+                var recommendationCollection = await _recommendationService.GetCollectionRecommendations(userId, length);
 
-           
+                return Ok(recommendationCollection);
+            }
+            catch (RecommendationNotFoundException ex)
+            {
+                _logger.LogError($"Error at Class: {nameof(RecipeController)}, Method: {nameof(GetCollectionRecommendations)}, Exception: {ex}");
+                return NotFound(ex.Message);
+            }
+            catch (RecommendationCollectionNotFound ex)
+            {
+                _logger.LogError($"Error at Class: {nameof(RecipeController)}, Method: {nameof(GetCollectionRecommendations)}, Exception: {ex}");
+                return NotFound(ex.Message);
+            }
         }
 
     }

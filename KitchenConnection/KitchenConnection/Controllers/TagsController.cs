@@ -1,9 +1,7 @@
-﻿using KitchenConnection.DataLayer.Models.DTOs.Recipe;
-using KitchenConnection.BusinessLogic.Services.IServices;
-using KitchenConnection.DataLayer.Models.Entities;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using KitchenConnection.BusinessLogic.Services.IServices;
+using KitchenConnection.Models.DTOs.Tag;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace KitchenConnection.Controllers;
 
