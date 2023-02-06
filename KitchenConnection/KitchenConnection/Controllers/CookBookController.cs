@@ -1,5 +1,6 @@
 using KitchenConnection.BusinessLogic.Helpers.Exceptions.CollectionExceptions;
 using KitchenConnection.BusinessLogic.Helpers.Exceptions.CookBookExceptions;
+using KitchenConnection.BusinessLogic.Helpers.Exceptions.RecipeExceptions;
 using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.Models.DTOs.CookBook;
 using Microsoft.AspNetCore.Authorization;
@@ -39,7 +40,7 @@ public class CookBookController : ControllerBase {
         }
     }
 
-    [HttpGet]
+    [HttpGet("all")]
     public async Task<ActionResult<List<CookBookDTO>>> GetAll()
     {
         try
@@ -111,5 +112,59 @@ public class CookBookController : ControllerBase {
         }
 
         return Ok(cookBook);
+    }
+
+    [HttpPut("addRecipe")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    public async Task<IActionResult> AddRecipeToCookBook(Guid cookBookId, Guid recipeId)
+    {
+        try
+        {
+            var userId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var cookBook = await _cookBookService.AddRecipeToCookBook(userId, cookBookId, recipeId);
+            return Ok(cookBookId);
+        }
+        catch (RecipeNotFoundException ex)
+        {
+            _logger.LogError($"Error at Class: {nameof(CookBookController)}, Method: {nameof(AddRecipeToCookBook)}, Exception: {ex}");
+            return NotFound(ex.Message);
+        }
+        catch (CookBookNotFoundException ex)
+        {
+            _logger.LogError($"Error at Class: {nameof(CookBookController)}, Method: {nameof(AddRecipeToCookBook)}, Exception: {ex}");
+            return NotFound(ex.Message);
+        }
+        catch (CookBookCouldNotBeCreatedException ex)
+        {
+            _logger.LogError($"Error at Class: {nameof(CookBookController)}, Method: {nameof(AddRecipeToCookBook)}, Exception: {ex}");
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpPut("removeRecipe")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    public async Task<IActionResult> RemoveRecipeFromCookBook(Guid cookBookId, Guid recipeId)
+    {
+        try
+        {
+            var userId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var cookBook = await _cookBookService.RemoveRecipeFromCookBook(userId, cookBookId, recipeId);
+            return Ok(cookBookId);
+        }
+        catch (RecipeNotFoundException ex)
+        {
+            _logger.LogError($"Error at Class: {nameof(CookBookController)}, Method: {nameof(RemoveRecipeFromCookBook)}, Exception: {ex}");
+            return NotFound(ex.Message);
+        }
+        catch (CookBookNotFoundException ex)
+        {
+            _logger.LogError($"Error at Class: {nameof(CookBookController)}, Method: {nameof(RemoveRecipeFromCookBook)}, Exception: {ex}");
+            return NotFound(ex.Message);
+        }
+        catch (CookBookCouldNotBeCreatedException ex)
+        {
+            _logger.LogError($"Error at Class: {nameof(CookBookController)}, Method: {nameof(RemoveRecipeFromCookBook)}, Exception: {ex}");
+            return BadRequest(ex.Message);
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using KitchenConnection.BusinessLogic.Helpers.Exceptions.CollectionExceptions;
+using KitchenConnection.BusinessLogic.Helpers.Exceptions.CookBookExceptions;
 using KitchenConnection.BusinessLogic.Helpers.Exceptions.RecipeExceptions;
 using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.DataLayer.Data.UnitOfWork;
@@ -152,9 +153,66 @@ namespace KitchenConnection.BusinessLogic.Services
             return collectionDTO;
         }
 
+        public async Task<CollectionDTO> AddRecipeToCollection(Guid userId, Guid collectionId, Guid recipeId)
+        {
+            var collection = await _unitOfWork.Repository<Collection>().GetByConditionWithIncludes(c => c.Id == collectionId && c.UserId == userId, "Recipes").FirstOrDefaultAsync();
+
+            if (collection is null) throw new CollectionNotFoundException($"Collection not found: {collectionId}");
+
+            var recipe = await _unitOfWork.Repository<Recipe>().GetByCondition(r => r.Id == recipeId ).FirstOrDefaultAsync();
+            if (recipe is null) throw new RecipeNotFoundException(recipeId);
+
+            var collectionRecipe = new CollectionRecipe
+            {
+                CollectionId = collectionId,
+                Collection = collection,
+                RecipeId = recipeId,
+                Recipe = recipe,
+            };
+
+            if (collection.Recipes.Contains(collectionRecipe))
+                throw new CollectionCouldNotBeUpdatedException($"Recipe already exists in collection: {recipeId}");
+
+            collection.Recipes.Add(collectionRecipe);
+
+            collection = _unitOfWork.Repository<Collection>().Update(collection);
+            _unitOfWork.Complete();
+
+            if (collection is null) throw new CollectionCouldNotBeCreatedException($"Could not add recipe to collection: {recipeId}");
+
+            return _mapper.Map<CollectionDTO>(collection);
+
+        }
+
+        public async Task<CollectionDTO> RemoveRecipeFromCollection(Guid userId, Guid collectionId, Guid recipeId)
+        {
+            var collection = await _unitOfWork.Repository<Collection>().GetByConditionWithIncludes(c => c.Id == collectionId && c.UserId == userId, "Recipes").FirstOrDefaultAsync();
+
+            if (collection is null) throw new CollectionNotFoundException($"Collection not found: {collectionId}");
+
+            var recipeIndex = collection.Recipes.FindIndex(x => x.Id == recipeId);
+
+            if (recipeIndex == -1)
+            {
+                throw new RecipeNotFoundException(recipeId);
+            }
+            else
+            {
+                collection.Recipes.RemoveAt(recipeIndex);
+            }
+
+            collection = _unitOfWork.Repository<Collection>().Update(collection);
+            _unitOfWork.Complete();
+
+            if (collection is null) throw new CollectionCouldNotBeUpdatedException($"Could not remove recipe from collection: {recipeId}");
+
+            return _mapper.Map<CollectionDTO>(collection);
+
+        }
+
         public async Task<List<CollectionDTO>> GetPaginated(int page, int pageSize, Guid userId)
         {
-            var recipes = await _unitOfWork.Repository<Collection>().GetByConditionPaginated(x => x.UserId == userId, x => x.Id, pageSize, pageSize)
+            var recipes = await _unitOfWork.Repository<Collection>().GetByConditionPaginated(x => x.UserId == userId, x => x.Id, page, pageSize)
                 .Include(u => u.User).Include(r => r.Recipes).ToListAsync();
 
             return _mapper.Map<List<CollectionDTO>>(recipes);

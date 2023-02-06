@@ -5,6 +5,7 @@ using KitchenConnection.DataLayer.Data.EntityValidators;
 using KitchenConnection.DataLayer.Data.UnitOfWork;
 using KitchenConnection.Models.DTOs.Collection;
 using KitchenConnection.Models.DTOs.CookBook;
+using KitchenConnection.Models.DTOs.Cuisine;
 using KitchenConnection.Models.DTOs.Ingredient;
 using KitchenConnection.Models.DTOs.Instruction;
 using KitchenConnection.Models.DTOs.Recipe;
@@ -23,6 +24,7 @@ namespace KitchenConnection.BusinessLogic.Helpers {
             services.AddScoped<IValidator<TagCreateDTO>, TagValidator>();
             services.AddScoped<IValidator<CookBookCreateDTO>, CookBookValidator>();
             services.AddScoped<IValidator<CollectionCreateDTO>, CollectionValidator>();
+            services.AddScoped<IValidator<CuisineCreateDTO>, CuisineValidator>();
         }
 
         public static void AddServices(this IServiceCollection services)

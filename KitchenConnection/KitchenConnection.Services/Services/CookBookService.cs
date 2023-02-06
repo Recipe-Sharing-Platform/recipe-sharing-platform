@@ -139,5 +139,52 @@ public class CookBookService : ICookBookService
         return _mapper.Map<List<CookBookDTO>>(recipes);
     }
 
-    //TODO: Add controller for adding or deleting recipes from a cookbook
+    public async Task<CookBookDTO> AddRecipeToCookBook(Guid userId, Guid cookBookId, Guid recipeId)
+    {
+        var cookBook = await _unitOfWork.Repository<CookBook>().GetByConditionWithIncludes(c => c.Id == cookBookId && c.UserId == userId, "Recipes").FirstOrDefaultAsync();
+
+        if(cookBook is null) throw new CookBookNotFoundException($"CookBook not found: {cookBookId}");
+
+        var recipe = await _unitOfWork.Repository<Recipe>().GetByCondition(r => r.Id == recipeId && r.UserId == userId).FirstOrDefaultAsync();
+        if (recipe is null) throw new RecipeNotFoundException(recipeId);
+
+        if (cookBook.Recipes.Contains(recipe)) 
+            throw new CookBookCouldNotBeUpdatedException($"Recipe already exists in cook book: {recipeId}");
+
+        cookBook.Recipes.Add(recipe);
+
+        cookBook = _unitOfWork.Repository<CookBook>().Update(cookBook);
+        _unitOfWork.Complete();
+
+        if (cookBook is null) throw new CookBookCouldNotBeCreatedException($"Could not add recipe to cookbook: {recipeId}");
+
+        return _mapper.Map<CookBookDTO>(cookBook);
+
+    }
+
+    public async Task<CookBookDTO> RemoveRecipeFromCookBook(Guid userId, Guid cookBookId, Guid recipeId)
+    {
+        var cookBook = await _unitOfWork.Repository<CookBook>().GetByConditionWithIncludes(c => c.Id == cookBookId && c.UserId == userId, "Recipes").FirstOrDefaultAsync();
+
+        if (cookBook is null) throw new CookBookNotFoundException($"CookBook not found: {cookBookId}");
+
+        var recipeIndex = cookBook.Recipes.FindIndex(x => x.Id == recipeId);
+
+        if (recipeIndex == -1)
+        {
+            throw new RecipeNotFoundException(recipeId);
+        }
+        else
+        {
+            cookBook.Recipes.RemoveAt(recipeIndex);
+        }
+
+        cookBook = _unitOfWork.Repository<CookBook>().Update(cookBook);
+        _unitOfWork.Complete();
+
+        if (cookBook is null) throw new CookBookCouldNotBeUpdatedException($"Could not remove recipe from cookbook: {recipeId}");
+
+        return _mapper.Map<CookBookDTO>(cookBook);
+        
+    }
 }

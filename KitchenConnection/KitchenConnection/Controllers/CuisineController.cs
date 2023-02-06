@@ -22,7 +22,7 @@ public class CuisineController : ControllerBase
 
     [HttpPost]
     [Authorize(AuthenticationSchemes = "Bearer", Roles = "RSP_Admin")]
-    public async Task<ActionResult<CuisineDTO>> Create(Cuisine cuisineToCreate)
+    public async Task<ActionResult<CuisineDTO>> Create(CuisineCreateDTO cuisineToCreate)
     {
         try
         {
@@ -36,7 +36,7 @@ public class CuisineController : ControllerBase
         }
     }
 
-    [HttpGet]
+    [HttpGet("all")]
     public async Task<ActionResult<List<CuisineDTO>>> GetAll()
     {
 
@@ -55,11 +55,11 @@ public class CuisineController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<CuisineDTO>> Get(Guid cuisineId)
+    public async Task<ActionResult<CuisineDTO>> Get(Guid id)
     {
         try
         {
-            var cuisine = await _cuisineService.Get(cuisineId);
+            var cuisine = await _cuisineService.Get(id);
 
             return Ok(cuisine);
         }

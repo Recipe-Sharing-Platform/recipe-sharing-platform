@@ -1,5 +1,7 @@
 ﻿using KitchenConnection.BusinessLogic.Helpers.Exceptions.CollectionExceptions;
+using KitchenConnection.BusinessLogic.Helpers.Exceptions.CookBookExceptions;
 using KitchenConnection.BusinessLogic.Helpers.Exceptions.RecipeExceptions;
+using KitchenConnection.BusinessLogic.Services;
 using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.Models.DTOs.Collection;
 using Microsoft.AspNetCore.Authorization;
@@ -130,6 +132,60 @@ public class CollectionController : ControllerBase
         {
             _logger.LogError($"Error at Class: {nameof(CollectionController)}, Method: {nameof(Delete)}, Exception: {ex}");
             return NotFound(ex.Message);
+        }
+    }
+
+    [HttpPut("addRecipe")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    public async Task<IActionResult> AddRecipeToCollection(Guid cookBookId, Guid recipeId)
+    {
+        try
+        {
+            var userId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var cookBook = await _collectionService.AddRecipeToCollection(userId, cookBookId, recipeId);
+            return Ok(cookBookId);
+        }
+        catch (RecipeNotFoundException ex)
+        {
+            _logger.LogError($"Error at Class: {nameof(CookBookController)}, Method: {nameof(AddRecipeToCollection)}, Exception: {ex}");
+            return NotFound(ex.Message);
+        }
+        catch (CollectionNotFoundException ex)
+        {
+            _logger.LogError($"Error at Class: {nameof(CookBookController)}, Method: {nameof(AddRecipeToCollection)}, Exception: {ex}");
+            return NotFound(ex.Message);
+        }
+        catch (CollectionCouldNotBeCreatedException ex)
+        {
+            _logger.LogError($"Error at Class: {nameof(CookBookController)}, Method: {nameof(AddRecipeToCollection)}, Exception: {ex}");
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpPut("removeRecipe")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    public async Task<IActionResult> RemoveRecipeFromCollection(Guid cookBookId, Guid recipeId)
+    {
+        try
+        {
+            var userId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var cookBook = await _collectionService.RemoveRecipeFromCollection(userId, cookBookId, recipeId);
+            return Ok(cookBookId);
+        }
+        catch (RecipeNotFoundException ex)
+        {
+            _logger.LogError($"Error at Class: {nameof(CookBookController)}, Method: {nameof(RemoveRecipeFromCollection)}, Exception: {ex}");
+            return NotFound(ex.Message);
+        }
+        catch (CollectionNotFoundException ex)
+        {
+            _logger.LogError($"Error at Class: {nameof(CookBookController)}, Method: {nameof(RemoveRecipeFromCollection)}, Exception: {ex}");
+            return NotFound(ex.Message);
+        }
+        catch (CollectionCouldNotBeCreatedException ex)
+        {
+            _logger.LogError($"Error at Class: {nameof(CookBookController)}, Method: {nameof(RemoveRecipeFromCollection)}, Exception: {ex}");
+            return BadRequest(ex.Message);
         }
     }
 

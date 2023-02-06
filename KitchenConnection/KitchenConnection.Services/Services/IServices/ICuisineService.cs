@@ -5,7 +5,7 @@ using KitchenConnection.Models.Entities;
 namespace KitchenConnection.BusinessLogic.Services.IServices {
     public interface ICuisineService
     {
-        Task<CuisineDTO> Create(Cuisine cuisineToCreate);
+        Task<CuisineDTO> Create(CuisineCreateDTO cuisineToCreate);
         Task<CuisineDTO> Get(Guid cuisineId);
         Task<List<CuisineDTO>> GetAll();
         Task<CuisineDTO> Update(CuisineUpdateDTO cuisineToUpdate);

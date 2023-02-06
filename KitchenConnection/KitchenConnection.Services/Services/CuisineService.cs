@@ -20,9 +20,9 @@ namespace KitchenConnection.BusinessLogic.Services {
             _mapper = mapper;
         }
 
-        public async Task<CuisineDTO> Create(Cuisine cuisineToCreate)
+        public async Task<CuisineDTO> Create(CuisineCreateDTO cuisineToCreate)
         {
-            var cuisine = await _unitOfWork.Repository<Cuisine>().Create(cuisineToCreate);
+            var cuisine = await _unitOfWork.Repository<Cuisine>().Create(_mapper.Map<Cuisine>(cuisineToCreate));
 
             if (cuisine is null) throw new CuisineCouldNotBeCreatedException("Cuisine could not be created!");
 
