@@ -3,15 +3,17 @@ using KitchenConnection.BusinessLogic.Helpers;
 using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.Controllers;
 using KitchenConnection.DataLayer.Data.UnitOfWork;
-using KitchenConnection.DataLayer.Models.DTOs.Recipe;
-using KitchenConnection.DataLayer.Models.Entities;
-using KitchenConnection.DataLayer.Models.Entities.Mappings;
+using KitchenConnection.Models.DTOs.Recipe;
+using KitchenConnection.Models.Entities;
+using KitchenConnection.Models.Entities.Mappings;
 using KitchenConnection.Models.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System.Security.Claims;
 using System.Security.Principal;
+using Castle.Core.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace KitchenConnection.UnitTesting
 {
@@ -49,11 +51,13 @@ namespace KitchenConnection.UnitTesting
         public async void CreateRecipe_ShouldReturnRecipe()
         {
             var recipes = GetMockRecipesDtos();
-            var recipeToCreate = _mapper.Map<RecipeCreateRequestDTO>(recipes[0]);
+            var recipeToCreate = _mapper.Map<RecipeCreateDTO>(recipes[0]);
 
-            _recipeMockService.Setup(x => x.Create(recipeToCreate,user1.Id).Result)
+            _recipeMockService.Setup(x => x.Create(user1.Id,recipeToCreate).Result)
                .Returns(recipes[0]);
-            var recipeController = new RecipeController(_recipeMockService.Object);
+
+            ILogger<RecipeController> logger=null;//wont be actually used
+            var recipeController = new RecipeController(_recipeMockService.Object,logger);
 
             //mock httpcontext with fake user
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
@@ -85,7 +89,20 @@ namespace KitchenConnection.UnitTesting
 
             _recipeMockService.Setup(x => x.Get(recipes[0].Id).Result)
                .Returns(recipes[0]);
-            var recipeController = new RecipeController(_recipeMockService.Object);
+            ILogger<RecipeController> logger = null;//wont be actually used
+            var recipeController = new RecipeController(_recipeMockService.Object, logger);
+
+
+            //mock httpcontext with fake user
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, user1.Id.ToString())
+            }, "mock"));
+
+            recipeController.ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext() { User = user }
+            };
 
             //act
             ActionResult<RecipeDTO> actionResult = await recipeController.Get(recipeId1);
@@ -109,7 +126,20 @@ namespace KitchenConnection.UnitTesting
 
             _recipeMockService.Setup(x => x.GetAll().Result)
                .Returns(recipes);
-            var recipeController = new RecipeController(_recipeMockService.Object);
+            ILogger<RecipeController> logger = null;//wont be actually used
+            var recipeController = new RecipeController(_recipeMockService.Object, logger);
+
+
+            //mock httpcontext with fake user
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, user1.Id.ToString())
+            }, "mock"));
+
+            recipeController.ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext() { User = user }
+            };
 
             //act
             ActionResult<List<RecipeDTO>> actionResult = await recipeController.GetAll();
@@ -130,9 +160,21 @@ namespace KitchenConnection.UnitTesting
             //arrange
             var recipes = GetMockRecipesDtos();
 
-            _recipeMockService.Setup(x => x.Delete(recipes[0].Id).Result)
+            _recipeMockService.Setup(x => x.Delete(recipes[0].Id,user1.Id).Result)
                 .Returns(recipes[0]);
-            var recipeController = new RecipeController(_recipeMockService.Object);           
+            ILogger<RecipeController> logger = null;//wont be actually used
+            var recipeController = new RecipeController(_recipeMockService.Object, logger);
+
+            //mock httpcontext with fake user
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, user1.Id.ToString())
+            }, "mock"));
+
+            recipeController.ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext() { User = user }
+            };
 
             //act
             ActionResult<RecipeDTO> actionResult = await recipeController.Delete(recipeId1);
@@ -154,9 +196,22 @@ namespace KitchenConnection.UnitTesting
             var recipes = GetMockRecipesDtos();
             RecipeUpdateDTO recipeToUpdate = _mapper.Map<RecipeUpdateDTO>(recipes[0]);
             recipeToUpdate.Name = "Updated Name";
-            _recipeMockService.Setup(x => x.Update(recipeToUpdate).Result)
+
+            _recipeMockService.Setup(x => x.Update(recipeToUpdate,user1.Id).Result)
                 .Returns(_mapper.Map<RecipeDTO>(recipeToUpdate));
-            var recipeController = new RecipeController(_recipeMockService.Object);
+            ILogger<RecipeController> logger = null;//wont be actually used
+            var recipeController = new RecipeController(_recipeMockService.Object, logger);
+
+            //mock httpcontext with fake user
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, user1.Id.ToString())
+            }, "mock"));
+
+            recipeController.ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext() { User = user }
+            };
 
             //act
             ActionResult<RecipeDTO> actionResult = await recipeController.Update(recipeToUpdate);
@@ -203,7 +258,7 @@ namespace KitchenConnection.UnitTesting
                             Recipe=new Recipe(),//???
                             Amount = 100,
                             Name="Milk",
-                            Unit=DataLayer.Models.Enums.Unit.Mililiter,
+                            Unit=Models.Enums.Unit.Mililiter,
                         }
                     },               
                     Instructions=new List<RecipeInstruction>
@@ -227,9 +282,8 @@ namespace KitchenConnection.UnitTesting
                     },
                     CuisineId=Guid.NewGuid(),
                     Cuisine=new Cuisine(),
-                    PrepTime=new DateTime(),
-                    CookTime=new DateTime(),
-                    TotalTime=new DateTime(),
+                    PrepTime=2,
+                    CookTime=2,
                     Servings=2,
                     Yield=10,
                     Calories=500,
@@ -284,7 +338,7 @@ namespace KitchenConnection.UnitTesting
                             Recipe=new Recipe(),//???
                             Amount = 200,
                             Name="Coffee",
-                            Unit=DataLayer.Models.Enums.Unit.Mililiter,
+                            Unit=Models.Enums.Unit.Mililiter,
                         }
                     },
                     Instructions=new List<RecipeInstruction>
@@ -308,9 +362,8 @@ namespace KitchenConnection.UnitTesting
                     },
                     CuisineId=Guid.NewGuid(),
                     Cuisine=new Cuisine(),
-                    PrepTime=new DateTime(),
-                    CookTime=new DateTime(),
-                    TotalTime=new DateTime(),
+                    PrepTime=2,
+                    CookTime=2,                    
                     Servings=2,
                     Yield=10,
                     Calories=500,
@@ -365,7 +418,7 @@ namespace KitchenConnection.UnitTesting
                             Recipe=new Recipe(),//???
                             Amount = 300,
                             Name="Potatoe",
-                            Unit=DataLayer.Models.Enums.Unit.Mililiter,
+                            Unit=Models.Enums.Unit.Mililiter,
                         }
                     },
                     Instructions=new List<RecipeInstruction>
@@ -389,9 +442,8 @@ namespace KitchenConnection.UnitTesting
                     },
                     CuisineId=Guid.NewGuid(),
                     Cuisine=new Cuisine(),
-                    PrepTime=new DateTime(),
-                    CookTime=new DateTime(),
-                    TotalTime=new DateTime(),
+                    PrepTime=2,
+                    CookTime=2,                    
                     Servings=2,
                     Yield=10,
                     Calories=500,

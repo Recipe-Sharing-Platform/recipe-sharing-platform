@@ -2,17 +2,18 @@
 using KitchenConnection.BusinessLogic.Helpers;
 using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.Controllers;
-using KitchenConnection.DataLayer.Models.DTOs.Collection;
-using KitchenConnection.DataLayer.Models.DTOs.Recipe;
-using KitchenConnection.DataLayer.Models.DTOs.RecipeTag;
-using KitchenConnection.DataLayer.Models.Entities;
-using KitchenConnection.DataLayer.Models.Entities.Mappings;
+using KitchenConnection.Models.DTOs.Collection;
+using KitchenConnection.Models.DTOs.Recipe;
+using KitchenConnection.Models.DTOs.RecipeTag;
+using KitchenConnection.Models.Entities;
+using KitchenConnection.Models.Entities.Mappings;
 using KitchenConnection.Models.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System.Security.Claims;
 using System.Security.Principal;
+using Microsoft.Extensions.Logging;
 
 namespace KitchenConnection.UnitTesting
 {
@@ -51,9 +52,10 @@ namespace KitchenConnection.UnitTesting
             var colls = GetMockCollectionDtos();
             var collToCreate = _mapper.Map<CollectionCreateRequestDTO>(colls[0]);
 
-            _collectionMockService.Setup(x => x.Create(collToCreate, user1.Id).Result)
+            _collectionMockService.Setup(x => x.Create(user1.Id,collToCreate).Result)
                .Returns(colls[0]);
-            var collectionController = new CollectionController(_collectionMockService.Object);
+            ILogger<RecipeController> logger = null;//wont be actually used
+            var collectionController = new CollectionController(_collectionMockService.Object,logger);
 
             //mock httpcontext with fake user
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
@@ -83,9 +85,21 @@ namespace KitchenConnection.UnitTesting
             //arrange
             var colls = GetMockCollectionDtos();
 
-            _collectionMockService.Setup(x => x.Get(colls[0].Id).Result)
+            _collectionMockService.Setup(x => x.Get(user1.Id,colls[0].Id).Result)
                .Returns(colls[0]);
-            var collectionController = new CollectionController(_collectionMockService.Object);
+            ILogger<RecipeController> logger = null;//wont be actually used
+            var collectionController = new CollectionController(_collectionMockService.Object,logger);
+
+            //mock httpcontext with fake user
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, user1.Id.ToString())
+            }, "mock"));
+
+            collectionController.ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext() { User = user }
+            };
 
             //act
             ActionResult<CollectionDTO> actionResult = await collectionController.Get(collectionId1);
@@ -107,9 +121,21 @@ namespace KitchenConnection.UnitTesting
             //arrange
             var colls = GetMockCollectionDtos();
 
-            _collectionMockService.Setup(x => x.GetAll().Result)
+            _collectionMockService.Setup(x => x.GetAll(user1.Id).Result)
                .Returns(colls);
-            var collectionController = new CollectionController(_collectionMockService.Object);
+            ILogger<RecipeController> logger = null;//wont be actually used
+            var collectionController = new CollectionController(_collectionMockService.Object,logger);
+
+            //mock httpcontext with fake user
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, user1.Id.ToString())
+            }, "mock"));
+
+            collectionController.ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext() { User = user }
+            };
 
             //act
             ActionResult<List<CollectionDTO>> actionResult = await collectionController.GetAll();
@@ -128,9 +154,21 @@ namespace KitchenConnection.UnitTesting
             //arrange
             var colls = GetMockCollectionDtos();
 
-            _collectionMockService.Setup(x => x.Delete(colls[0].Id).Result)
+            _collectionMockService.Setup(x => x.Delete(user1.Id, colls[0].Id).Result)
                 .Returns(colls[0]);
-            var collectionController = new CollectionController(_collectionMockService.Object);
+            ILogger<RecipeController> logger = null;//wont be actually used
+            var collectionController = new CollectionController(_collectionMockService.Object,logger);
+
+            //mock httpcontext with fake user
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, user1.Id.ToString())
+            }, "mock"));
+
+            collectionController.ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext() { User = user }
+            };
 
             //act
             ActionResult<CollectionDTO> actionResult = await collectionController.Delete(collectionId1);
@@ -152,9 +190,23 @@ namespace KitchenConnection.UnitTesting
             var colls = GetMockCollectionDtos();
             var collectionToUpdate = _mapper.Map<CollectionUpdateDTO>(colls[0]);
             collectionToUpdate.Name = "Updated Tag Name";
-            _collectionMockService.Setup(x => x.Update(collectionToUpdate).Result)
+
+            _collectionMockService.Setup(x => x.Update(user1.Id,collectionToUpdate).Result)
                 .Returns(_mapper.Map<CollectionDTO>(collectionToUpdate));
-            var collectionController = new CollectionController(_collectionMockService.Object);
+
+            ILogger<RecipeController> logger = null;//wont be actually used
+            var collectionController = new CollectionController(_collectionMockService.Object,logger);
+
+            //mock httpcontext with fake user
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, user1.Id.ToString())
+            }, "mock"));
+
+            collectionController.ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext() { User = user }
+            };
 
             //act
             ActionResult<CollectionDTO> actionResult = await collectionController.UpdateCollection(collectionToUpdate);

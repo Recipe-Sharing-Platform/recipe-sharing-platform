@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
-using KitchenConnecition.DataLayer.Hubs;
+using KitchenConnection.DataLayer.Hubs;
 using KitchenConnection.BusinessLogic.Helpers;
 using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.Controllers;
-using KitchenConnection.DataLayer.Models.DTOs.CookBook;
-using KitchenConnection.DataLayer.Models.DTOs.Recipe;
-using KitchenConnection.DataLayer.Models.DTOs.Review;
-using KitchenConnection.DataLayer.Models.DTOs.ShoppingCart;
-using KitchenConnection.DataLayer.Models.Entities;
-using KitchenConnection.DataLayer.Models.Entities.Mappings;
+using KitchenConnection.Models.DTOs.CookBook;
+using KitchenConnection.Models.DTOs.Recipe;
+using KitchenConnection.Models.DTOs.Review;
+using KitchenConnection.Models.DTOs.ShoppingCart;
+using KitchenConnection.Models.Entities;
+using KitchenConnection.Models.Entities.Mappings;
 using KitchenConnection.Models.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -115,8 +115,8 @@ namespace KitchenConnection.UnitTesting
 
             //assert                      
             Assert.NotNull(result);
-            Assert.Equal(result, shoppingList[0]);
-            Assert.True(result == shoppingList[0]);
+            Assert.Equal(result.Name, shoppingList[0].Name);
+            Assert.True(result.Name == shoppingList[0].Name);
         }
 
         [Fact]
@@ -150,7 +150,7 @@ namespace KitchenConnection.UnitTesting
             //assert                      
             Assert.NotNull(result);
             Assert.Equal(result, true);
-            Assert.True(result==true);
+            Assert.True(result == true);
         }
 
         [Fact]

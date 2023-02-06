@@ -2,16 +2,18 @@
 using KitchenConnection.BusinessLogic.Helpers;
 using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.Controllers;
-using KitchenConnection.DataLayer.Models.DTOs.Recipe;
-using KitchenConnection.DataLayer.Models.DTOs.RecipeTag;
-using KitchenConnection.DataLayer.Models.Entities;
-using KitchenConnection.DataLayer.Models.Entities.Mappings;
+using KitchenConnection.Models.DTOs.Recipe;
+using KitchenConnection.Models.DTOs.RecipeTag;
+using KitchenConnection.Models.Entities;
+using KitchenConnection.Models.Entities.Mappings;
 using KitchenConnection.Models.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System.Security.Claims;
 using System.Security.Principal;
+using KitchenConnection.Models.DTOs.Tag;
+using Microsoft.Extensions.Logging;
 
 namespace KitchenConnection.UnitTesting
 {
@@ -52,7 +54,9 @@ namespace KitchenConnection.UnitTesting
 
             _tagMockService.Setup(x => x.Create(tagToCreate).Result)
                .Returns(tags[0]);
-            var tagController = new TagsController(_tagMockService.Object);          
+
+            ILogger<TagsController> logger = null;//wont be actually used
+            var tagController = new TagsController(_tagMockService.Object,logger);          
 
             ActionResult<TagDTO> actionResult = await tagController.Create(tagToCreate);
 
@@ -73,7 +77,9 @@ namespace KitchenConnection.UnitTesting
 
             _tagMockService.Setup(x => x.Get(tags[0].Id).Result)
                .Returns(tags[0]);
-            var tagController = new TagsController(_tagMockService.Object);
+
+            ILogger<TagsController> logger = null;//wont be actually used
+            var tagController = new TagsController(_tagMockService.Object,logger);
 
             //act
             ActionResult<TagDTO> actionResult = await tagController.Get(tagId1);
@@ -97,7 +103,9 @@ namespace KitchenConnection.UnitTesting
 
             _tagMockService.Setup(x => x.GetAll().Result)
                .Returns(tags);
-            var tagController = new TagsController(_tagMockService.Object);
+
+            ILogger<TagsController> logger = null;//wont be actually used
+            var tagController = new TagsController(_tagMockService.Object,logger);
 
             //act
             ActionResult<List<TagDTO>> actionResult = await tagController.GetAll();
@@ -118,7 +126,8 @@ namespace KitchenConnection.UnitTesting
 
             _tagMockService.Setup(x => x.Delete(tags[0].Id).Result)
                 .Returns(tags[0]);
-            var tagController = new TagsController(_tagMockService.Object);
+            ILogger<TagsController> logger = null;//wont be actually used
+            var tagController = new TagsController(_tagMockService.Object,logger);
 
             //act
             ActionResult<TagDTO> actionResult = await tagController.Delete(tagId1);
@@ -147,7 +156,9 @@ namespace KitchenConnection.UnitTesting
             tagToUpdate.Name = "Updated Tag Name";
             _tagMockService.Setup(x => x.Update(tagToUpdate).Result)
                 .Returns(tagToUpdate);
-            var tagController = new TagsController(_tagMockService.Object);
+
+            ILogger<TagsController> logger = null;//wont be actually used
+            var tagController = new TagsController(_tagMockService.Object,logger);
 
             //act
             ActionResult<TagDTO> actionResult = await tagController.Update(tagToUpdate);

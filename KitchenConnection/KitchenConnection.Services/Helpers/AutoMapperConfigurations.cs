@@ -79,6 +79,22 @@ public class AutoMapperConfigurations : Profile
         CreateMap<RecommendationScore, RecommendationScoreCreateDto>().ReverseMap();
         CreateMap<ShoppingListItemDTO, ShoppingListItem>().ReverseMap();
         CreateMap<ShoppingListItemCreateDTO, ShoppingListItem>().ReverseMap();
+
+        //needed for unit testing
+        CreateMap<RecipeDTO, RecipeUpdateDTO>().ReverseMap();
+        CreateMap<RecipeIngredientDTO, RecipeIngredientUpdateDTO>().ReverseMap();
+        CreateMap<RecipeInstructionDTO, RecipeInstructionUpdateDTO>().ReverseMap();
+        CreateMap<TagDTO, RecipeTagUpdateDTO>().ReverseMap();
+        CreateMap<RecipeDTO, RecipeCreateDTO>().ReverseMap();
+        CreateMap<TagDTO, TagCreateDTO>().ReverseMap();
+        CreateMap<RecipeIngredientDTO, RecipeIngredientCreateDTO>().ReverseMap();
+        CreateMap<RecipeInstructionDTO, RecipeInstructionCreateDTO>().ReverseMap();
+        CreateMap<CollectionDTO, CollectionCreateRequestDTO>().ReverseMap();
+        CreateMap<CookBookDTO, CollectionUpdateDTO>().ReverseMap();
+        CreateMap<CookBookDTO, CookBookCreateRequestDTO>().ReverseMap();
+        CreateMap<CookBookDTO, CookBookUpdateDTO>().ReverseMap();
+        CreateMap<CollectionDTO, CollectionUpdateDTO>().ReverseMap();
+        CreateMap<ReviewDTO,ReviewUpdateDTO>().ReverseMap();
     }
 }
 

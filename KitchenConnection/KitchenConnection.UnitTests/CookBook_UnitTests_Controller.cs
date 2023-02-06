@@ -2,11 +2,12 @@
 using KitchenConnection.BusinessLogic.Helpers;
 using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.Controllers;
-using KitchenConnection.DataLayer.Models.DTOs.CookBook;
-using KitchenConnection.DataLayer.Models.Entities;
+using KitchenConnection.Models.DTOs.CookBook;
+using KitchenConnection.Models.Entities;
 using KitchenConnection.Models.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System.Security.Claims;
 
@@ -50,7 +51,8 @@ namespace KitchenConnection.UnitTesting
 
             _cookbookMockService.Setup(x => x.Create(cookbookToCreate, user1.Id).Result)
                .Returns(cookbooks[0]);
-            var cookbookController = new CookBookController(_cookbookMockService.Object);
+            ILogger<RecipeController> logger = null;//wont be actually used
+            var cookbookController = new CookBookController(_cookbookMockService.Object,logger);
 
             //mock httpcontext with fake user
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
@@ -82,7 +84,9 @@ namespace KitchenConnection.UnitTesting
 
             _cookbookMockService.Setup(x => x.Get(cookbooks[0].Id).Result)
                .Returns(cookbooks[0]);
-            var cookbookController = new CookBookController(_cookbookMockService.Object);
+
+            ILogger<RecipeController> logger = null;//wont be actually used
+            var cookbookController = new CookBookController(_cookbookMockService.Object,logger);
 
             //act
             ActionResult<CookBookDTO> actionResult = await cookbookController.Get(cookbookId1);
@@ -106,7 +110,9 @@ namespace KitchenConnection.UnitTesting
 
             _cookbookMockService.Setup(x => x.GetAll().Result)
                .Returns(cookbooks);
-            var cookbookController = new CookBookController(_cookbookMockService.Object);
+
+            ILogger<RecipeController> logger = null;//wont be actually used
+            var cookbookController = new CookBookController(_cookbookMockService.Object,logger);
 
             //act
             ActionResult<List<CookBookDTO>> actionResult = await cookbookController.GetAll();
@@ -125,9 +131,22 @@ namespace KitchenConnection.UnitTesting
             //arrange
             var cookbooks = GetMockCookbookDtos();
 
-            _cookbookMockService.Setup(x => x.Delete(cookbooks[0].Id).Result)
+            _cookbookMockService.Setup(x => x.Delete(cookbooks[0].Id,user1.Id).Result)
                 .Returns(cookbooks[0]);
-            var cookbookController = new CookBookController(_cookbookMockService.Object);
+
+            ILogger<RecipeController> logger = null;//wont be actually used
+            var cookbookController = new CookBookController(_cookbookMockService.Object,logger);
+
+            //mock httpcontext with fake user
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, user1.Id.ToString())
+            }, "mock"));
+
+            cookbookController.ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext() { User = user }
+            };
 
             //act
             ActionResult<CookBookDTO> actionResult = await cookbookController.Delete(cookbookId1);
@@ -149,9 +168,23 @@ namespace KitchenConnection.UnitTesting
             var cookbooks = GetMockCookbookDtos();
             var cookbookToUpdate = _mapper.Map<CookBookUpdateDTO>(cookbooks[0]);
             cookbookToUpdate.Name = "Updated Cookbook Name";
-            _cookbookMockService.Setup(x => x.Update(cookbookToUpdate).Result)
+
+            _cookbookMockService.Setup(x => x.Update(cookbookToUpdate,user1.Id).Result)
                 .Returns(_mapper.Map<CookBookDTO>(cookbookToUpdate));
-            var cookbookController = new CookBookController(_cookbookMockService.Object);
+
+            ILogger<RecipeController> logger = null;//wont be actually used
+            var cookbookController = new CookBookController(_cookbookMockService.Object,logger);
+
+            //mock httpcontext with fake user
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, user1.Id.ToString())
+            }, "mock"));
+
+            cookbookController.ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext() { User = user }
+            };
 
             //act
             ActionResult<CookBookDTO> actionResult = await cookbookController.UpdateCookBook(cookbookToUpdate);

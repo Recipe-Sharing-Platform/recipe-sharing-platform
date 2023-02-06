@@ -38,7 +38,7 @@ public class RecommendationsController:ControllerBase
 
     [HttpGet("GetCollectionRecommendation")]
     [Authorize(AuthenticationSchemes = "Bearer")]
-    public async Task<IActionResult> GetCollectionRecommendations(int length)
+    public async Task<ActionResult<List<Recipe>>> GetCollectionRecommendations(int length)
     {
         try
         {
