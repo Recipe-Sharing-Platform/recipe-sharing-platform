@@ -130,5 +130,14 @@ public class CookBookService : ICookBookService
 
         return cookBookDTO;
     }
+
+    public async Task<List<CookBookDTO>> GetPaginated(int page, int pageSize)
+    {
+        var recipes = await _unitOfWork.Repository<CookBook>().GetPaginated(page, pageSize)
+           .Include(u => u.User).Include(r => r.Recipes).ToListAsync();
+
+        return _mapper.Map<List<CookBookDTO>>(recipes);
+    }
+
     //TODO: Add controller for adding or deleting recipes from a cookbook
 }

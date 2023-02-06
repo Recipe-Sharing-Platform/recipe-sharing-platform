@@ -58,7 +58,7 @@ namespace KitchenConnection.Controllers {
             }
             catch (RecipeReviewsNotFoundException ex)
             {
-                _logger.LogError($"Error at Class: {nameof(RecipeController)}, Method: {nameof(Create)}, Exception: {ex}");
+                _logger.LogError($"Error at Class: {nameof(RecipeController)}, Method: {nameof(GetAll)}, Exception: {ex}");
                 return NotFound(ex.Message);
             }
         }
@@ -74,7 +74,7 @@ namespace KitchenConnection.Controllers {
             }
             catch(ReviewNotFoundException ex)
             {
-                _logger.LogError($"Error at Class: {nameof(RecipeController)}, Method: {nameof(Create)}, Exception: {ex}");
+                _logger.LogError($"Error at Class: {nameof(RecipeController)}, Method: {nameof(Update)}, Exception: {ex}");
                 return NotFound(ex.Message);
             }
         }
@@ -90,7 +90,7 @@ namespace KitchenConnection.Controllers {
             }
             catch (ReviewNotFoundException ex)
             {
-                _logger.LogError($"Error at Class: {nameof(RecipeController)}, Method: {nameof(Create)}, Exception: {ex}");
+                _logger.LogError($"Error at Class: {nameof(RecipeController)}, Method: {nameof(Delete)}, Exception: {ex}");
                 return NotFound(ex.Message);
             }
         }

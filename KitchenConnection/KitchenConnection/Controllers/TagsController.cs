@@ -1,4 +1,5 @@
-﻿using KitchenConnection.BusinessLogic.Services.IServices;
+﻿using KitchenConnection.BusinessLogic.Helpers.Exceptions.TagExceptions;
+using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.Models.DTOs.Tag;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,58 +12,91 @@ namespace KitchenConnection.Controllers;
 public class TagsController : ControllerBase
 {
     private readonly ITagService _tagService;
-    public TagsController(ITagService tagService)
+    private readonly ILogger<TagsController> _logger;
+
+    public TagsController(ITagService tagService, ILogger<TagsController> logger)
     {
         _tagService = tagService;
+        _logger = logger;
     }
 
     [HttpGet]
     public async Task<ActionResult<List<TagDTO>>> GetAll()
     {
-        var tags = await _tagService.GetAll();
+        try
+        {
+            var tags = await _tagService.GetAll();
 
-        if(tags == null) return NotFound();
-        
-        return Ok(tags);
+            return Ok(tags);
+        }
+        catch (TagsNotFoundException ex)
+        {
+            _logger.LogError($"Error at Class: {nameof(TagsController)}, Method: {nameof(GetAll)}, Exception: {ex}");
+            return NotFound(ex.Message);
+        }
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<TagDTO>> Get(Guid id)
     {
-        var tag = await _tagService.Get(id);
-        
-        if(tag == null) return NotFound();
+        try
+        {
+            var tag = await _tagService.Get(id);
 
-        return Ok(tag);
+            return Ok(tag);
+        }
+        catch (TagsNotFoundException ex)
+        {
+            _logger.LogError($"Error at Class: {nameof(TagsController)}, Method: {nameof(Get)}, Exception: {ex}");
+            return NotFound(ex.Message);
+        }
     }
 
     [HttpPost]
     public async Task<ActionResult<TagDTO>> Create(TagCreateDTO tagToCreate)
     {
-        var tag = await _tagService.Create(tagToCreate);
+        try
+        {
+            var tag = await _tagService.Create(tagToCreate);
 
-        if (tag == null) return BadRequest("Tag could not be created!");
-        
-        return Ok(tag);
+            return Ok(tag);
+        }
+        catch (TagCouldNotBeCreatedException ex)
+        {
+            _logger.LogError($"Error at Class: {nameof(TagsController)}, Method: {nameof(Create)}, Exception: {ex}");
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpPut]
     public async Task<ActionResult<TagDTO>> Update(TagDTO tagToUpdate) 
     {
-        var tag = await _tagService.Update(tagToUpdate);
+        try
+        {
+            var tag = await _tagService.Update(tagToUpdate);
 
-        if (tag == null) return BadRequest("Tag could not be updated!");
-
-        return Ok(tag);
+            return Ok(tag);
+        }
+        catch (TagNotFoundException ex)
+        {
+            _logger.LogError($"Error at Class: {nameof(TagsController)}, Method: {nameof(Update)}, Exception: {ex}");
+            return NotFound(ex.Message);
+        }
     }
 
     [HttpDelete]
     public async Task<ActionResult<TagDTO>> Delete(Guid id)
     {
-        var tag = await _tagService.Delete(id);
+        try
+        {
+            var tag = await _tagService.Delete(id);
 
-        if (tag == null) return BadRequest("Tag could not be deleted!");
-
-        return Ok(tag);
+            return Ok(tag);
+        }
+        catch (TagNotFoundException ex)
+        {
+            _logger.LogError($"Error at Class: {nameof(TagsController)}, Method: {nameof(Delete)}, Exception: {ex}");
+            return NotFound(ex.Message);
+        }
     }
 }

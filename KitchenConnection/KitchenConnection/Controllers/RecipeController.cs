@@ -88,12 +88,12 @@ public class RecipeController : ControllerBase
         }
         catch(RecipeNotFoundException ex)
         {
-            _logger.LogError($"Error at Class: {nameof(RecipeController)}, Method: {nameof(Create)}, Exception: {ex}");
+            _logger.LogError($"Error at Class: {nameof(RecipeController)}, Method: {nameof(GetRecipeNutrients)}, Exception: {ex}");
             return NotFound(ex.Message);
         }
         catch (RecipeNutrientsNotFoundException ex)
         {
-            _logger.LogError($"Error at Class: {nameof(RecipeController)}, Method: {nameof(Create)}, Exception: {ex}");
+            _logger.LogError($"Error at Class: {nameof(RecipeController)}, Method: {nameof(GetRecipeNutrients)}, Exception: {ex}");
             return NotFound(ex.Message);
         }
     }
@@ -109,7 +109,7 @@ public class RecipeController : ControllerBase
         }
         catch (RecipeCouldNotBeUpdatedException ex)
         {
-            _logger.LogError($"Error at Class: {nameof(RecipeController)}, Method: {nameof(Create)}, Exception: {ex}");
+            _logger.LogError($"Error at Class: {nameof(RecipeController)}, Method: {nameof(Update)}, Exception: {ex}");
             return NotFound(ex.Message);
         }
     }
@@ -125,7 +125,7 @@ public class RecipeController : ControllerBase
         }
         catch (RecipeNotFoundException ex)
         {
-            _logger.LogError($"Error at Class: {nameof(RecipeController)}, Method: {nameof(Create)}, Exception: {ex}");
+            _logger.LogError($"Error at Class: {nameof(RecipeController)}, Method: {nameof(Delete)}, Exception: {ex}");
             return NotFound(ex.Message);
         }
     }

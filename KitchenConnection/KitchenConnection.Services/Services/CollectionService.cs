@@ -4,6 +4,8 @@ using KitchenConnection.BusinessLogic.Helpers.Exceptions.RecipeExceptions;
 using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.DataLayer.Data.UnitOfWork;
 using KitchenConnection.Models.DTOs.Collection;
+using KitchenConnection.Models.DTOs.CookBook;
+using KitchenConnection.Models.DTOs.Recipe;
 using KitchenConnection.Models.Entities;
 using KitchenConnection.Models.Entities.Mappings;
 using Microsoft.EntityFrameworkCore;
@@ -60,17 +62,17 @@ namespace KitchenConnection.BusinessLogic.Services
             var collection = await _unitOfWork.Repository<Collection>().GetById(x => x.Id == id)
                 .Include(r => r.Recipes)
                 .ThenInclude(x => x.Recipe)
-            .ThenInclude(r => r.Cuisine)
-            .Include(r => r.Recipes)
-            .ThenInclude(x => x.Recipe)
-            .ThenInclude(r => r.Tags)
-            .Include(r => r.Recipes)
-            .ThenInclude(x => x.Recipe)
-            .ThenInclude(r => r.Ingredients)
-            .Include(r => r.Recipes)
-            .ThenInclude(x => x.Recipe)
-            .ThenInclude(r => r.Instructions)
-            .Where(x => x.UserId == userId).FirstOrDefaultAsync();
+                .ThenInclude(r => r.Cuisine)
+                .Include(r => r.Recipes)
+                .ThenInclude(x => x.Recipe)
+                .ThenInclude(r => r.Tags)
+                .Include(r => r.Recipes)
+                .ThenInclude(x => x.Recipe)
+                .ThenInclude(r => r.Ingredients)
+                .Include(r => r.Recipes)
+                .ThenInclude(x => x.Recipe)
+                .ThenInclude(r => r.Instructions)
+                .Where(x => x.UserId == userId).FirstOrDefaultAsync();
 
             if (collection is null) throw new CollectionNotFoundException(id);
 
@@ -89,6 +91,8 @@ namespace KitchenConnection.BusinessLogic.Services
             collectionToCreate.Recipes.ForEach(recipeId =>
             {
                 var recipe = _unitOfWork.Repository<Recipe>().GetByConditionWithIncludes(r => r.Id == recipeId, "User, Cuisine, Tags, Ingredients, Instructions").FirstOrDefault();
+                if (recipe is null) throw new RecipeNotFoundException(recipeId);
+
                 if (recipe != null)
                 {
                     collection.Recipes.Add(new CollectionRecipe { Collection = collection, RecipeId = recipeId });
@@ -146,6 +150,14 @@ namespace KitchenConnection.BusinessLogic.Services
 
             var collectionDTO = _mapper.Map<CollectionDTO>(collection);
             return collectionDTO;
+        }
+
+        public async Task<List<CollectionDTO>> GetPaginated(int page, int pageSize)
+        {
+            var recipes = await _unitOfWork.Repository<Collection>().GetPaginated(page, pageSize)
+                .Include(u => u.User).Include(r => r.Recipes).ToListAsync();
+
+            return _mapper.Map<List<CollectionDTO>>(recipes);
         }
     }
 }

@@ -18,7 +18,6 @@ namespace KitchenConnection.BusinessLogic.Services
         public readonly IUnitOfWork _unitOfWork;
         public readonly IMapper _mapper;
 
-        public readonly IRecipeNutrientsService _nutrientsService;
         public ShoppingListService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;

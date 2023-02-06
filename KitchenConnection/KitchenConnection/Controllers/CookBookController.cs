@@ -2,7 +2,9 @@ using KitchenConnection.BusinessLogic.Helpers.Exceptions.CollectionExceptions;
 using KitchenConnection.BusinessLogic.Helpers.Exceptions.CookBookExceptions;
 using KitchenConnection.BusinessLogic.Helpers.Exceptions.RecipeExceptions;
 using KitchenConnection.BusinessLogic.Helpers.Exceptions.CookBookExceptions;
+using KitchenConnection.BusinessLogic.Services;
 using KitchenConnection.BusinessLogic.Services.IServices;
+using KitchenConnection.Models.DTOs.Collection;
 using KitchenConnection.Models.DTOs.CookBook;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -42,12 +44,16 @@ public class CookBookController : ControllerBase {
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<CookBookDTO>>> GetAll() {
-        try {
+    public async Task<ActionResult<List<CookBookDTO>>> GetAll()
+    {
+        try
+        {
             var cookBooks = await _cookBookService.GetAll();
             return Ok(cookBooks);
-        } catch (CollectionsNotFoundException ex) {
-            _logger.LogError($"Error at Class: {nameof(CookBookController)}, Method: {nameof(Create)}, Exception: {ex}");
+        }
+        catch (CollectionsNotFoundException ex)
+        {
+            _logger.LogError($"Error at Class: {nameof(CookBookController)}, Method: {nameof(GetAll)}, Exception: {ex}");
             return NotFound(ex.Message);
         }
     }
@@ -57,24 +63,40 @@ public class CookBookController : ControllerBase {
         try {
             var cookBook = await _cookBookService.Get(id);
             return Ok(cookBook);
-        } catch (CookBookNotFoundException ex) {
-            _logger.LogError($"Error at Class: {nameof(CookBookController)}, Method: {nameof(Create)}, Exception: {ex}");
+        }
+        catch (CookBookNotFoundException ex)
+        {
+            _logger.LogError($"Error at Class: {nameof(CookBookController)}, Method: {nameof(Get)}, Exception: {ex}");
             return NotFound(ex.Message);
         }
     }
 
+    [HttpGet]
+    public async Task<ActionResult<List<CookBookDTO>>> GetPaginated(int page, int pageSize)
+    {
+        List<CookBookDTO> collections = await _cookBookService.GetPaginated(page, pageSize);
+
+        return collections;
+    }
+
     [HttpPut]
-    public async Task<ActionResult<CookBookDTO>> UpdateCookBook(CookBookUpdateDTO cookBookToUpdate) {
-        try {
-            var userId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            var cookBook = await _cookBookService.Update(cookBookToUpdate, userId);
+    public async Task<ActionResult<CookBookDTO>> UpdateCookBook(CookBookUpdateDTO cookBookToUpdate)
+    {
+        try
+        {
+            var UserId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var cookBook = await _cookBookService.Update(UserId, cookBookToUpdate);
             return Ok(cookBook);
-        } catch (CookBookNotFoundException ex) {
-            _logger.LogError($"Error at Class: {nameof(CookBookController)}, Method: {nameof(Create)}, Exception: {ex}");
+        }
+        catch (CookBookNotFoundException ex)
+        {
+            _logger.LogError($"Error at Class: {nameof(CookBookController)}, Method: {nameof(UpdateCookBook)}, Exception: {ex}");
             return NotFound(ex.Message);
 
-        } catch (CookBookCouldNotBeUpdatedException ex) {
-            _logger.LogError($"Error at Class: {nameof(CookBookController)}, Method: {nameof(Create)}, Exception: {ex}");
+        }
+        catch (CookBookCouldNotBeUpdatedException ex)
+        {
+            _logger.LogError($"Error at Class: {nameof(CookBookController)}, Method: {nameof(UpdateCookBook)}, Exception: {ex}");
             return BadRequest(ex.Message);
         }
     }

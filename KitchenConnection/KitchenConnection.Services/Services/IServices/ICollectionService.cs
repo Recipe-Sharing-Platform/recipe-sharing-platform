@@ -8,5 +8,6 @@ namespace KitchenConnection.BusinessLogic.Services.IServices {
         Task<List<CollectionDTO>> GetAll(Guid userId);
         Task<CollectionDTO> Get(Guid userId,Guid id);
         Task<CollectionDTO> Delete(Guid userId, Guid id);
+        Task<List<CollectionDTO>> GetPaginated(int page, int pageSize);
     }
 }

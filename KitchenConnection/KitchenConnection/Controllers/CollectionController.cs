@@ -1,7 +1,9 @@
 ﻿using KitchenConnection.BusinessLogic.Helpers.Exceptions.CollectionExceptions;
 using KitchenConnection.BusinessLogic.Helpers.Exceptions.RecipeExceptions;
+using KitchenConnection.BusinessLogic.Services;
 using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.Models.DTOs.Collection;
+using KitchenConnection.Models.DTOs.Recipe;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -34,7 +36,7 @@ public class CollectionController : ControllerBase
         }
         catch (CollectionsNotFoundException ex)
         {
-            _logger.LogError($"Error at Class: {nameof(CollectionController)}, Method: {nameof(Create)}, Exception: {ex}");
+            _logger.LogError($"Error at Class: {nameof(CollectionController)}, Method: {nameof(GetAll)}, Exception: {ex}");
             return NotFound(ex.Message);
         }
     }
@@ -51,10 +53,18 @@ public class CollectionController : ControllerBase
         }
         catch (CollectionNotFoundException ex)
         {
-            _logger.LogError($"Error at Class: {nameof(CollectionController)}, Method: {nameof(Create)}, Exception: {ex}");
+            _logger.LogError($"Error at Class: {nameof(CollectionController)}, Method: {nameof(Get)}, Exception: {ex}");
             return NotFound(ex.Message);
         }
 
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<List<CollectionDTO>>> GetPaginated(int page, int pageSize)
+    {
+        List<CollectionDTO> collections = await _collectionService.GetPaginated(page, pageSize);
+
+        return collections;
     }
     [HttpPost]
     public async Task<ActionResult<CollectionDTO>> Create(CollectionCreateRequestDTO collectionToCreate)
@@ -85,14 +95,19 @@ public class CollectionController : ControllerBase
             var collection = await _collectionService.Update(UserId, collectionToUpdate);
             return Ok(collection);
         }
+        catch (RecipeNotFoundException ex)
+        {
+            _logger.LogError($"Error at Class: {nameof(CookBookController)}, Method: {nameof(Create)}, Exception: {ex}");
+            return BadRequest(ex.Message);
+        }
         catch (CollectionNotFoundException ex)
         {
-            _logger.LogError($"Error at Class: {nameof(CollectionController)}, Method: {nameof(Create)}, Exception: {ex}");
+            _logger.LogError($"Error at Class: {nameof(CollectionController)}, Method: {nameof(UpdateCollection)}, Exception: {ex}");
             return NotFound(ex.Message);
         }
         catch (CollectionCouldNotBeUpdatedException ex)
         {
-            _logger.LogError($"Error at Class: {nameof(CollectionController)}, Method: {nameof(Create)}, Exception: {ex}");
+            _logger.LogError($"Error at Class: {nameof(CollectionController)}, Method: {nameof(UpdateCollection)}, Exception: {ex}");
             return BadRequest(ex.Message);
         }
     }
@@ -109,7 +124,7 @@ public class CollectionController : ControllerBase
         }
         catch (CollectionsNotFoundException ex)
         {
-            _logger.LogError($"Error at Class: {nameof(CollectionController)}, Method: {nameof(Create)}, Exception: {ex}");
+            _logger.LogError($"Error at Class: {nameof(CollectionController)}, Method: {nameof(Delete)}, Exception: {ex}");
             return NotFound(ex.Message);
         }
     }
