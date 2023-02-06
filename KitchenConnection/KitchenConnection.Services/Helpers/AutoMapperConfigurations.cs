@@ -60,7 +60,7 @@ public class AutoMapperConfigurations : Profile
         CreateMap<RecipeIngredientDTO, RecipeIngredientUpdateDTO>().ReverseMap();
         CreateMap<RecipeInstructionDTO, RecipeInstructionUpdateDTO>().ReverseMap();
         CreateMap<TagDTO, RecipeTagUpdateDTO>().ReverseMap();
-        CreateMap<RecipeDTO, RecipeCreateRequestDTO>().ReverseMap();
+        //CreateMap<RecipeDTO, RecipeCreateRequestDTO>().ReverseMap();
         CreateMap<TagDTO, TagCreateDTO>().ReverseMap();
         CreateMap<RecipeIngredientDTO, RecipeIngredientCreateDTO>().ReverseMap();
         CreateMap<RecipeInstructionDTO, RecipeInstructionCreateDTO>().ReverseMap();

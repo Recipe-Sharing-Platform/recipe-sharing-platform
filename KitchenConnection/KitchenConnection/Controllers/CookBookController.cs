@@ -84,8 +84,8 @@ public class CookBookController : ControllerBase {
     {
         try
         {
-            var UserId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            var cookBook = await _cookBookService.Update(UserId, cookBookToUpdate);
+            var userId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var cookBook = await _cookBookService.Update(cookBookToUpdate, userId);
             return Ok(cookBook);
         }
         catch (CookBookNotFoundException ex)

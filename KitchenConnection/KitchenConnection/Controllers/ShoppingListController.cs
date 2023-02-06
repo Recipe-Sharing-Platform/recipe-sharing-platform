@@ -1,6 +1,7 @@
 ﻿using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.Models.DTOs.Recipe;
 using KitchenConnection.Models.DTOs.ShoppingCart;
+using KitchenConnection.Models.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
