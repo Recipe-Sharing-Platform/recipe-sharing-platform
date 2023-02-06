@@ -152,9 +152,9 @@ namespace KitchenConnection.BusinessLogic.Services
             return collectionDTO;
         }
 
-        public async Task<List<CollectionDTO>> GetPaginated(int page, int pageSize)
+        public async Task<List<CollectionDTO>> GetPaginated(int page, int pageSize, Guid userId)
         {
-            var recipes = await _unitOfWork.Repository<Collection>().GetPaginated(page, pageSize)
+            var recipes = await _unitOfWork.Repository<Collection>().GetByConditionPaginated(x => x.UserId == userId, x => x.Id, pageSize, pageSize)
                 .Include(u => u.User).Include(r => r.Recipes).ToListAsync();
 
             return _mapper.Map<List<CollectionDTO>>(recipes);

@@ -78,9 +78,9 @@ namespace KitchenConnection.BusinessLogic.Services {
             return _mapper.Map<List<ReviewDTO>>(reviews);
         }
 
-        public async Task<ReviewDTO> Update(ReviewUpdateDTO reviewToUpdate)
+        public async Task<ReviewDTO> Update(ReviewUpdateDTO reviewToUpdate, Guid userId)
         {
-            var review = await _unitOfWork.Repository<Review>().GetById(x => x.Id == reviewToUpdate.Id).FirstOrDefaultAsync();
+            var review = await _unitOfWork.Repository<Review>().GetById(x => x.Id == reviewToUpdate.Id && x.UserId == userId).FirstOrDefaultAsync();
 
             if (review is null) throw new ReviewNotFoundException(reviewToUpdate.Id);
 
@@ -93,9 +93,9 @@ namespace KitchenConnection.BusinessLogic.Services {
             return _mapper.Map<ReviewDTO>(review);
         }
 
-        public async Task<ReviewDTO> Delete(Guid reviewId)
+        public async Task<ReviewDTO> Delete(Guid reviewId, Guid userId)
         {
-            var review = await _unitOfWork.Repository<Review>().GetById(x => x.Id == reviewId).FirstOrDefaultAsync();
+            var review = await _unitOfWork.Repository<Review>().GetById(x => x.Id == reviewId && x.UserId == userId).FirstOrDefaultAsync();
 
             if (review == null) throw new ReviewNotFoundException(reviewId);
 

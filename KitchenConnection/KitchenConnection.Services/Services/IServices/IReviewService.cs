@@ -5,7 +5,7 @@ namespace KitchenConnection.BusinessLogic.Services.IServices {
     {
         Task<ReviewDTO> Create(Guid userId, ReviewCreateDTO reviewToCreate);
         Task<List<ReviewDTO>> GetRecipeReviews(Guid recipeId);
-        Task<ReviewDTO> Update(ReviewUpdateDTO reviewToUpdate);
-        Task<ReviewDTO> Delete(Guid recipeId);
+        Task<ReviewDTO> Update(ReviewUpdateDTO reviewToUpdate, Guid userId);
+        Task<ReviewDTO> Delete(Guid reviewId, Guid userId);
     }
 }

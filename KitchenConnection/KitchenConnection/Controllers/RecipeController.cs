@@ -9,7 +9,6 @@ namespace KitchenConnection.Controllers;
 
 [ApiController]
 [Route("api/recipes")]
-[Authorize(AuthenticationSchemes = "Bearer")]
 public class RecipeController : ControllerBase
 {
     private readonly IRecipeService _recipeService;
@@ -21,6 +20,7 @@ public class RecipeController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<ActionResult<RecipeDTO>> Create(RecipeCreateDTO recipeToCreate)
     {
         try
@@ -46,6 +46,7 @@ public class RecipeController : ControllerBase
 
     [HttpGet]
     [Route("getAll")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "RSP_Admin")]
     public async Task<ActionResult<List<RecipeDTO>>> GetAll()
     {
         try
@@ -56,7 +57,7 @@ public class RecipeController : ControllerBase
         }
         catch(RecipesNotFoundException ex)
         {
-            _logger.LogError($"Error at Class: {nameof(RecipeController)}, Method: {nameof(Create)}, Exception: {ex}");
+            _logger.LogError($"Error at Class: {nameof(RecipeController)}, Method: {nameof(GetAll)}, Exception: {ex}");
             return NotFound(ex.Message);
         }
     }
@@ -72,7 +73,7 @@ public class RecipeController : ControllerBase
         }
         catch (RecipeNotFoundException ex)
         {
-            _logger.LogError($"Error at Class: {nameof(RecipeController)}, Method: {nameof(Create)}, Exception: {ex}");
+            _logger.LogError($"Error at Class: {nameof(RecipeController)}, Method: {nameof(Get)}, Exception: {ex}");
             return NotFound(ex.Message);
         }
     }
@@ -99,11 +100,13 @@ public class RecipeController : ControllerBase
     }
 
     [HttpPut]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<ActionResult<RecipeDTO>> Update(RecipeUpdateDTO recipeToUpdate)
     {
         try
         {
-            var recipe = await _recipeService.Update(recipeToUpdate);
+            var userId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var recipe = await _recipeService.Update(recipeToUpdate, userId);
 
             return Ok(recipe);
         }
@@ -115,11 +118,13 @@ public class RecipeController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<ActionResult<RecipeDTO>> Delete(Guid id)
     {
         try
         {
-            var recipe = await _recipeService.Delete(id);
+            var userId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var recipe = await _recipeService.Delete(id, userId);
 
             return Ok(recipe);
         }

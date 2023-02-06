@@ -9,7 +9,6 @@ namespace KitchenConnection.Controllers;
 
 [ApiController]
 [Route("api/cuisines")]
-[Authorize(AuthenticationSchemes = "Bearer", Roles = "RSP_Admin")]
 public class CuisineController : ControllerBase
 {
     private readonly ICuisineService _cuisineService;
@@ -22,6 +21,7 @@ public class CuisineController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "RSP_Admin")]
     public async Task<ActionResult<CuisineDTO>> Create(Cuisine cuisineToCreate)
     {
         try
@@ -73,12 +73,13 @@ public class CuisineController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<CuisineDTO>>> GetPaginated(int page, int size)
     {
-        var cuisiens = await _cuisineService.GetPaginated(page, size);
+        var cuisines = await _cuisineService.GetPaginated(page, size);
 
-        return Ok(cuisiens);
+        return Ok(cuisines);
     }
 
     [HttpPut]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "RSP_Admin")]
     public async Task<ActionResult<CuisineDTO>> Update(CuisineUpdateDTO cuisineToUpdate)
     {
         try
@@ -99,6 +100,7 @@ public class CuisineController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "RSP_Admin")]
     public async Task<ActionResult<CuisineDTO>> Delete(Guid id)
     {
         try

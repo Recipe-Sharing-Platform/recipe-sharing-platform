@@ -140,9 +140,9 @@ public class RecipeService : IRecipeService {
         return nutrients;
     }
 
-    public async Task<RecipeDTO> Update(RecipeUpdateDTO recipeToUpdate)
+    public async Task<RecipeDTO> Update(RecipeUpdateDTO recipeToUpdate, Guid userId)
     {
-        var recipe = await _unitOfWork.Repository<Recipe>().GetByConditionWithIncludes(x => x.Id == recipeToUpdate.Id, "User, Ingredients, Instructions, Tags, Cuisine").FirstOrDefaultAsync();
+        var recipe = await _unitOfWork.Repository<Recipe>().GetByConditionWithIncludes(x => x.Id == recipeToUpdate.Id && x.UserId == userId, "User, Ingredients, Instructions, Tags, Cuisine").FirstOrDefaultAsync();
 
         if (recipe == null) throw new RecipeNotFoundException(recipeToUpdate.Id);
 
@@ -183,15 +183,15 @@ public class RecipeService : IRecipeService {
         return updatedRecipe;
     }
 
-    public async Task<RecipeDTO> Delete(Guid recipeId)
+    public async Task<RecipeDTO> Delete(Guid recipeId, Guid userId)
     {
-        var recipe = await _unitOfWork.Repository<Recipe>().GetById(r => r.Id == recipeId).FirstOrDefaultAsync();
+        var recipe = await _unitOfWork.Repository<Recipe>().GetById(r => r.Id == recipeId && r.UserId == userId).FirstOrDefaultAsync();
 
         if (recipe == null) throw new RecipeNotFoundException(recipeId);
 
         _unitOfWork.Repository<Recipe>().Delete(recipe);
-        _messageSender.SendMessage(new { RecipeId = recipe.Id }, "delete-recipes");
         _unitOfWork.Complete();
+        _messageSender.SendMessage(new { RecipeId = recipe.Id }, "delete-recipes");
 
         _cacheService.RemoveData("recipes");
         _cacheService.RemoveData($"recipe-{recipeId}");

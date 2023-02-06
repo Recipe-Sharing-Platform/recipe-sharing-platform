@@ -1,10 +1,6 @@
 using KitchenConnection.BusinessLogic.Helpers.Exceptions.CollectionExceptions;
 using KitchenConnection.BusinessLogic.Helpers.Exceptions.CookBookExceptions;
-using KitchenConnection.BusinessLogic.Helpers.Exceptions.RecipeExceptions;
-using KitchenConnection.BusinessLogic.Helpers.Exceptions.CookBookExceptions;
-using KitchenConnection.BusinessLogic.Services;
 using KitchenConnection.BusinessLogic.Services.IServices;
-using KitchenConnection.Models.DTOs.Collection;
 using KitchenConnection.Models.DTOs.CookBook;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +9,6 @@ using System.Security.Claims;
 namespace KitchenConnection.Controllers;
 [ApiController]
 [Route("api/cookbooks")]
-[Authorize(AuthenticationSchemes = "Bearer")]
 public class CookBookController : ControllerBase {
     private readonly ICookBookService _cookBookService;
     private readonly ILogger<RecipeController> _logger;
@@ -26,6 +21,7 @@ public class CookBookController : ControllerBase {
     }
 
     [HttpPost]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<ActionResult<CookBookDTO>> Create(CookBookCreateRequestDTO cookBookToCreate) {
         try {
             var UserId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
@@ -80,6 +76,7 @@ public class CookBookController : ControllerBase {
     }
 
     [HttpPut]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<ActionResult<CookBookDTO>> UpdateCookBook(CookBookUpdateDTO cookBookToUpdate)
     {
         try
@@ -102,6 +99,7 @@ public class CookBookController : ControllerBase {
     }
 
     [HttpDelete("{id}")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> Delete(Guid id) {
         var userId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
         CookBookDTO cookBook;

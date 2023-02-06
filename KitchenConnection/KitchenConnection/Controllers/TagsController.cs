@@ -8,7 +8,6 @@ namespace KitchenConnection.Controllers;
 
 [ApiController]
 [Route("api/tags")]
-[Authorize(AuthenticationSchemes = "Bearer")]
 public class TagsController : ControllerBase
 {
     private readonly ITagService _tagService;
@@ -53,6 +52,7 @@ public class TagsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<ActionResult<TagDTO>> Create(TagCreateDTO tagToCreate)
     {
         try
@@ -69,7 +69,8 @@ public class TagsController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<ActionResult<TagDTO>> Update(TagDTO tagToUpdate) 
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "RSP_Admin")]
+    public async Task<ActionResult<TagDTO>> Update(TagDTO tagToUpdate)
     {
         try
         {
@@ -85,6 +86,7 @@ public class TagsController : ControllerBase
     }
 
     [HttpDelete]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "RSP_Admin")]
     public async Task<ActionResult<TagDTO>> Delete(Guid id)
     {
         try

@@ -1,9 +1,7 @@
 ﻿using KitchenConnection.BusinessLogic.Helpers.Exceptions.CollectionExceptions;
 using KitchenConnection.BusinessLogic.Helpers.Exceptions.RecipeExceptions;
-using KitchenConnection.BusinessLogic.Services;
 using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.Models.DTOs.Collection;
-using KitchenConnection.Models.DTOs.Recipe;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -12,7 +10,6 @@ namespace KitchenConnection.Controllers;
 
 [ApiController]
 [Route("api/collections")]
-[Authorize(AuthenticationSchemes = "Bearer")]
 public class CollectionController : ControllerBase
 {
     private readonly ICollectionService _collectionService;
@@ -27,6 +24,7 @@ public class CollectionController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<ActionResult<List<CollectionDTO>>> GetAll()
     {
         try
@@ -42,6 +40,7 @@ public class CollectionController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<ActionResult<CollectionDTO>> Get(Guid id)
     {
         try
@@ -60,13 +59,16 @@ public class CollectionController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<ActionResult<List<CollectionDTO>>> GetPaginated(int page, int pageSize)
     {
-        List<CollectionDTO> collections = await _collectionService.GetPaginated(page, pageSize);
+        var userId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+        List<CollectionDTO> collections = await _collectionService.GetPaginated(page, pageSize, userId);
 
         return collections;
     }
     [HttpPost]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<ActionResult<CollectionDTO>> Create(CollectionCreateRequestDTO collectionToCreate)
     {
         try
@@ -86,6 +88,7 @@ public class CollectionController : ControllerBase
     }
 
     [HttpPut]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<ActionResult<CollectionDTO>> UpdateCollection(CollectionUpdateDTO collectionToUpdate)
     {
         try
@@ -114,6 +117,7 @@ public class CollectionController : ControllerBase
 
 
     [HttpDelete("{id}")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public async Task<IActionResult> Delete(Guid id)
     {
         var UserId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
