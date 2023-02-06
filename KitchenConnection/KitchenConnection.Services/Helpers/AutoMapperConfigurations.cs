@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using KitchenConnection.Models.DTOs;
 using KitchenConnection.Models.DTOs.Collection;
 using KitchenConnection.Models.DTOs.CookBook;
@@ -45,7 +45,33 @@ public class AutoMapperConfigurations : Profile
         CreateMap<Collection, CollectionDTO>().ForMember(src => src.Recipes, dest => dest.MapFrom(c => c.Recipes.Select(rc => rc.Recipe))).ReverseMap();
 
         CreateMap<User, UserCreateDTO>().ReverseMap();
+
         CreateMap<User, UserDTO>().ForMember(dest => dest.Name, opt => opt.MapFrom(src => String.Format("{0} {1}", src.FirstName, src.LastName))).ReverseMap();
+
+        CreateMap<Review, ReviewCreateDTO>().ReverseMap();
+        CreateMap<Review, ReviewDTO>().ReverseMap();
+
+        CreateMap<RecommendationScore, RecommendationScoreCreateDto>().ReverseMap();
+        CreateMap<ShoppingListItemDTO, ShoppingListItem>().ReverseMap();
+         CreateMap<ShoppingListItemCreateDTO, ShoppingListItem>().ReverseMap();
+
+        //needed for unit testing
+        CreateMap<RecipeDTO, RecipeUpdateDTO>().ReverseMap();
+        CreateMap<RecipeIngredientDTO, RecipeIngredientUpdateDTO>().ReverseMap();
+        CreateMap<RecipeInstructionDTO, RecipeInstructionUpdateDTO>().ReverseMap();
+        CreateMap<TagDTO, RecipeTagUpdateDTO>().ReverseMap();
+        CreateMap<RecipeDTO, RecipeCreateRequestDTO>().ReverseMap();
+        CreateMap<TagDTO, TagCreateDTO>().ReverseMap();
+        CreateMap<RecipeIngredientDTO, RecipeIngredientCreateDTO>().ReverseMap();
+        CreateMap<RecipeInstructionDTO, RecipeInstructionCreateDTO>().ReverseMap();
+        CreateMap<CollectionDTO, CollectionCreateRequestDTO>().ReverseMap();
+        CreateMap<CookBookDTO, CollectionUpdateDTO>().ReverseMap();
+        CreateMap<CookBookDTO, CookBookCreateRequestDTO>().ReverseMap();
+        CreateMap<CookBookDTO, CookBookUpdateDTO>().ReverseMap();
+        CreateMap<CollectionDTO, CollectionUpdateDTO>().ReverseMap();
+
+        CreateMap<User, UserDTO>().ForMember(dest => dest.Name, opt => opt.MapFrom(src => String.Format("{0} {1}", src.FirstName, src.LastName))).ReverseMap();
+
 
         CreateMap<Review, ReviewCreateDTO>().ReverseMap();
         CreateMap<Review, ReviewDTO>().ReverseMap();

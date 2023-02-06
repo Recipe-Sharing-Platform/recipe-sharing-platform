@@ -1,4 +1,3 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33110.190
@@ -18,6 +17,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KitchenConnection.Models", "KitchenConnection.Models\KitchenConnection.Models.csproj", "{F0238113-9183-4E26-AB3C-82681827CAA4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KitchenConnection.Notifier", "KitchenConnection.Notifier\KitchenConnection.Notifier.csproj", "{1373C63E-E802-417A-BB4C-8D04DF02B2BF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KitchenConnection.UnitTests", "KitchenConnection.UnitTests\KitchenConnection.UnitTests.csproj", "{A297D7C3-F3F8-4820-959A-1B0AA563308E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +46,10 @@ Global
 		{78180A55-4754-4D9B-AF68-402655CC4DC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{78180A55-4754-4D9B-AF68-402655CC4DC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{78180A55-4754-4D9B-AF68-402655CC4DC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A297D7C3-F3F8-4820-959A-1B0AA563308E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A297D7C3-F3F8-4820-959A-1B0AA563308E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A297D7C3-F3F8-4820-959A-1B0AA563308E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A297D7C3-F3F8-4820-959A-1B0AA563308E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6BAD4EE2-0147-493C-B72B-998AC39B1971}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6BAD4EE2-0147-493C-B72B-998AC39B1971}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6BAD4EE2-0147-493C-B72B-998AC39B1971}.Release|Any CPU.ActiveCfg = Release|Any CPU

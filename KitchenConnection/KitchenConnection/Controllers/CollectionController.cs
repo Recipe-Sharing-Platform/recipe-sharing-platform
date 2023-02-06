@@ -89,7 +89,6 @@ public class CollectionController : ControllerBase
         {
             _logger.LogError($"Error at Class: {nameof(CollectionController)}, Method: {nameof(Create)}, Exception: {ex}");
             return NotFound(ex.Message);
-
         }
         catch (CollectionCouldNotBeUpdatedException ex)
         {

@@ -1,4 +1,6 @@
-﻿using KitchenConnection.BusinessLogic.Helpers.Exceptions.RecommendationExceptions;
+using KitchenConnection.BusinessLogic.Services.IServices;
+using KitchenConnection.Models.Entities;
+using KitchenConnection.BusinessLogic.Helpers.Exceptions.RecommendationExceptions;
 using KitchenConnection.BusinessLogic.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +21,7 @@ namespace KitchenConnection.Controllers {
         }
 
         [HttpGet("GetSingleRecommendation")]
-        public async Task<IActionResult> GetSingleRecommendation()
+        public async Task<ActionResult<Recipe>> GetSingleRecommendation()
         {
             try
             {

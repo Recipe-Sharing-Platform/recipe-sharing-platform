@@ -19,7 +19,7 @@ namespace KitchenConnection.Controllers {
 
         [HttpPost]
         [Route("shoppinglist")]
-        public async Task<ActionResult<RecipeDTO>> AddToShoppingList(List<ShoppingListItemCreateDTO> shoppingListToCreate)
+        public async Task<ActionResult<List<ShoppingListItemCreateDTO>>> AddToShoppingList(List<ShoppingListItemCreateDTO> shoppingListToCreate)
         {
             var UserId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             var shoppingList = await _shoppingListService.AddToShoppingList(UserId, shoppingListToCreate);
@@ -33,7 +33,7 @@ namespace KitchenConnection.Controllers {
         }
         [HttpDelete]
         [Route("")]
-        public async Task<ActionResult<List<ShoppingListItemCreateDTO>>> DeleteShoppingListItems(Guid itemId)
+        public async Task<ActionResult<bool>> DeleteShoppingListItems(Guid itemId)
         {
             var userId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             var deletedItems = await _shoppingListService.DeleteFromShoppingList(userId, itemId);
@@ -43,12 +43,12 @@ namespace KitchenConnection.Controllers {
                 return NotFound();
             }
 
-            return Ok();
+            return Ok(deletedItems);
         }
 
         [HttpGet]
         [Route("{shoppingListItemId}")]
-        public async Task<ActionResult<ShoppingListItemDTO>> GetShoppingListItem(Guid shoppingListItemId)
+        public async Task<ActionResult<ShoppingListItem>> GetShoppingListItem(Guid shoppingListItemId)
         {
             var userId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             var shoppingListItem = await _shoppingListService.GetShoppingListItemById(userId, shoppingListItemId);
@@ -60,6 +60,7 @@ namespace KitchenConnection.Controllers {
 
             return Ok(shoppingListItem);
         }
+
         [HttpGet]
         [Route("getlink/{shoppingListItemId}")]
         public async Task<IActionResult> GetShoppingListItemLink(Guid shoppingListItemId)
@@ -78,7 +79,7 @@ namespace KitchenConnection.Controllers {
 
 
         [HttpGet]
-        public async Task<ActionResult<List<ShoppingListItemDTO>>> GetShoppingList()
+        public async Task<ActionResult<List<ShoppingListItem>>> GetShoppingList()
         {
             var userId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             var shoppingList = await _shoppingListService.GetShoppingListForUser(userId);
