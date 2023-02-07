@@ -63,13 +63,16 @@ public class RecipeController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    [AllowAnonymous]
     public async Task<ActionResult<RecipeDTO>> Get(Guid id)
     {
         try
         {
-            Guid? userId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var guidId = userId is null ? Guid.Empty : new Guid(userId);
             
-            var recipe = await _recipeService.Get(id,userId);
+            var recipe = await _recipeService.Get(id, guidId);
 
             return Ok(recipe);
         }

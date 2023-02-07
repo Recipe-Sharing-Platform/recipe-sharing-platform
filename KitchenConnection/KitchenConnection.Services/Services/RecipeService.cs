@@ -70,24 +70,30 @@ public class RecipeService : IRecipeService {
         return recipeDTO;
     }
 
+    private async Task SetScoreOnTags(List<Tag> tags, Guid? userId) {
+        foreach (Tag tag in tags) {
+            //create a recommendation score
+            await _recommendationsService.SetScore(userId, tag.Id);
+        }
+    }
+
     public async Task<RecipeDTO> Get(Guid recipeId, Guid? userId)
     {
         var singleRecipe = _cacheService.GetData<RecipeDTO>($"recipe-{recipeId}");
-        if (singleRecipe is not null) return singleRecipe;
+        if (singleRecipe is not null) {
+            if(userId is not null && userId != Guid.Empty)
+                await SetScoreOnTags(_mapper.Map<List<Tag>>(singleRecipe.Tags), userId);
+            return singleRecipe;
+        }
 
         var recipe = await _unitOfWork.Repository<Recipe>().GetByConditionWithIncludes(recipe => recipe.Id == recipeId, "User, Ingredients, Instructions, Tags, Cuisine").FirstOrDefaultAsync();
 
         if (recipe is null) throw new RecipeNotFoundException(recipeId);
 
         //create a recommendation score for each tag in recipe
-        if(userId!=null && userId != Guid.Empty)
-        {
-            foreach (Tag tag in recipe.Tags)
-            {
-                //create a recommendation score
-                await _recommendationsService.SetScore(userId, tag.Id);
-            }
-        }       
+        if (userId != null && userId != Guid.Empty) {
+            await SetScoreOnTags(recipe.Tags, userId);
+        }
 
         var expirationTime = DateTimeOffset.Now.AddDays(1);
 
