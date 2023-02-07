@@ -68,6 +68,8 @@ public class AutoMapperConfigurations : Profile
         CreateMap<CookBookDTO, CookBookUpdateDTO>().ReverseMap();
         CreateMap<CollectionDTO, CollectionUpdateDTO>().ReverseMap();
         CreateMap<CollectionDTO, CollectionCreateRequestDTO>().ReverseMap();
+        CreateMap<RecipeDTO, RecipeUpdateDTO>().ReverseMap();
+        CreateMap<ReviewDTO, ReviewUpdateDTO>().ReverseMap();
     }
 }
 

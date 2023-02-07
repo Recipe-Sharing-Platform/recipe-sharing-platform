@@ -87,7 +87,7 @@ namespace KitchenConnection.UnitTesting
             //arrange
             var recipes = GetMockRecipesDtos();
 
-            _recipeMockService.Setup(x => x.Get(recipes[0].Id).Result)
+            _recipeMockService.Setup(x => x.Get(recipes[0].Id,user1.Id).Result)
                .Returns(recipes[0]);
             ILogger<RecipeController> logger = null;//wont be actually used
             var recipeController = new RecipeController(_recipeMockService.Object, logger);
