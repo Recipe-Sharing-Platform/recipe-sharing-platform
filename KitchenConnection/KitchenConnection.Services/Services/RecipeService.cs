@@ -85,7 +85,7 @@ public class RecipeService : IRecipeService {
             foreach (Tag tag in recipe.Tags)
             {
                 //create a recommendation score
-                await _recommendationsService.SetScore(recipe.UserId, tag.Id);
+                await _recommendationsService.SetScore(userId, tag.Id);
             }
         }       
 
