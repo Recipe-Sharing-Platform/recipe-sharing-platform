@@ -70,7 +70,7 @@ public class RecipeService : IRecipeService {
         return recipeDTO;
     }
 
-    public async Task<RecipeDTO> Get(Guid recipeId)
+    public async Task<RecipeDTO> Get(Guid recipeId, Guid? userId)
     {
         var singleRecipe = _cacheService.GetData<RecipeDTO>($"recipe-{recipeId}");
         if (singleRecipe is not null) return singleRecipe;
@@ -80,11 +80,14 @@ public class RecipeService : IRecipeService {
         if (recipe is null) throw new RecipeNotFoundException(recipeId);
 
         //create a recommendation score for each tag in recipe
-        foreach (Tag tag in recipe.Tags)
+        if(userId!=null && userId != Guid.Empty)
         {
-            //create a recommendation score
-            await _recommendationsService.SetScore(recipe.UserId, tag.Id);          
-        }
+            foreach (Tag tag in recipe.Tags)
+            {
+                //create a recommendation score
+                await _recommendationsService.SetScore(recipe.UserId, tag.Id);
+            }
+        }       
 
         var expirationTime = DateTimeOffset.Now.AddDays(1);
 

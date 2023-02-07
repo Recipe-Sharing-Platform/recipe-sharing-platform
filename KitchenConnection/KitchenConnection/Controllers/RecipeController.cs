@@ -67,7 +67,9 @@ public class RecipeController : ControllerBase
     {
         try
         {
-            var recipe = await _recipeService.Get(id);
+            Guid? userId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            
+            var recipe = await _recipeService.Get(id,userId);
 
             return Ok(recipe);
         }
