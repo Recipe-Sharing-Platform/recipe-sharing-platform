@@ -1,4 +1,5 @@
-﻿using KitchenConnection.BusinessLogic.Services.IServices;
+﻿using KitchenConnection.BusinessLogic.Helpers.Exceptions.ShoppingListExceptions;
+using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.Models.DTOs.ShoppingCart;
 using KitchenConnection.Models.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -22,14 +23,15 @@ public class ShoppingListController : ControllerBase
     public async Task<ActionResult<List<ShoppingListItemCreateDTO>>> AddToShoppingList(List<ShoppingListItemCreateDTO> shoppingListToCreate)
     {
         var UserId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-        var shoppingList = await _shoppingListService.AddToShoppingList(UserId, shoppingListToCreate);
-
-        if (shoppingList == null)
+        try
         {
-            return BadRequest("Items could not be added");
+            var shoppingList = await _shoppingListService.AddToShoppingList(UserId, shoppingListToCreate);
+            return Ok(shoppingList);
         }
-
-        return Ok(shoppingList);
+        catch(ShoppingListItemCouldNotBeAddedException ex)
+        {
+            return NotFound(ex.Message);
+        }
     }
     [HttpDelete]
     [Route("{itemId}")]
@@ -37,14 +39,19 @@ public class ShoppingListController : ControllerBase
     public async Task<ActionResult<bool>> DeleteShoppingListItems(Guid itemId)
     {
         var userId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-        var deletedItems = await _shoppingListService.DeleteFromShoppingList(userId, itemId);
-
-        if (deletedItems == false)
+        try
         {
-            return NotFound();
+            var deletedItems = await _shoppingListService.DeleteFromShoppingList(userId, itemId);
+            return Ok(deletedItems);
         }
-
-        return Ok(deletedItems);
+        catch(ShoppingListItemNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch(ShoppingListItemCouldNotBeDeletedException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpGet]
@@ -53,14 +60,15 @@ public class ShoppingListController : ControllerBase
     public async Task<ActionResult<ShoppingListItem>> GetShoppingListItem(Guid shoppingListItemId)
     {
         var userId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-        var shoppingListItem = await _shoppingListService.GetShoppingListItemById(userId, shoppingListItemId);
-
-        if (shoppingListItem == null)
+        try
         {
-            return NotFound();
+            var shoppingListItem = await _shoppingListService.GetShoppingListItemById(userId, shoppingListItemId);
+            return Ok(shoppingListItem);
         }
-
-        return Ok(shoppingListItem);
+        catch(ShoppingListItemNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
     }
 
     [HttpGet]
@@ -74,7 +82,7 @@ public class ShoppingListController : ControllerBase
             var finalUrl = await _shoppingListService.GetShoppingListItemUrl(userId, shoppingListItemId);
             return Redirect(finalUrl);
         }
-        catch (Exception ex)
+        catch (ShoppingListItemNotFoundException ex)
         {
             return NotFound(ex.Message);
         }
@@ -86,13 +94,14 @@ public class ShoppingListController : ControllerBase
     public async Task<ActionResult<List<ShoppingListItem>>> GetShoppingList()
     {
         var userId = new Guid(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-        var shoppingList = await _shoppingListService.GetShoppingListForUser(userId);
-
-        if (shoppingList == null)
+        try
         {
-            return NotFound();
+            var shoppingList = await _shoppingListService.GetShoppingListForUser(userId);
+            return Ok(shoppingList);
         }
-
-        return Ok(shoppingList);
+        catch (ShoppingListItemsNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
     }
 }

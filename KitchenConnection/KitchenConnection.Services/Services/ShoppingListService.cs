@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using KitchenConnection.BusinessLogic.Helpers.Exceptions.ShoppingListExceptions;
 using KitchenConnection.BusinessLogic.Services.IServices;
 using KitchenConnection.DataLayer.Data.UnitOfWork;
 using KitchenConnection.Models.DTOs.ShoppingCart;
@@ -29,10 +30,17 @@ namespace KitchenConnection.BusinessLogic.Services
             var shoppingListItems = shoppingListCreate.Select(item => new ShoppingListItemDTO(userId, item)).ToList();
             var entities = _mapper.Map<List<ShoppingListItem>>(shoppingListItems);
 
-            await _unitOfWork.Repository<ShoppingListItem>().CreateRange(entities);
-            _unitOfWork.Complete();
+            try
+            {
+                await _unitOfWork.Repository<ShoppingListItem>().CreateRange(entities);
+                _unitOfWork.Complete();
 
-            return shoppingListCreate;
+                return shoppingListCreate;
+            }
+            catch (Exception ex)
+            {
+                throw new ShoppingListItemCouldNotBeAddedException("Failed to add shopping list item");
+            }
         }
         public async Task<bool> DeleteFromShoppingList(Guid userId, Guid shoppingListItemId)
         {
@@ -41,12 +49,19 @@ namespace KitchenConnection.BusinessLogic.Services
 
             if (shoppingListItem == null)
             {
-                throw new Exception("No shopping list item found with the specified id for the given user.");
+                throw new ShoppingListItemNotFoundException(shoppingListItemId);
             }
 
-            _unitOfWork.Repository<ShoppingListItem>().Delete(shoppingListItem);
-            result = _unitOfWork.Complete();
-            return result;
+            try
+            {
+                _unitOfWork.Repository<ShoppingListItem>().Delete(shoppingListItem);
+                result = _unitOfWork.Complete();
+                return result;
+            }
+            catch(Exception ex)
+            {
+                throw new ShoppingListItemCouldNotBeDeletedException("ShoppingList item could not be deleted");
+            }
         }
         public async Task<ShoppingListItem> GetShoppingListItemById(Guid userId, Guid shoppingListItemId)
         {
@@ -54,7 +69,7 @@ namespace KitchenConnection.BusinessLogic.Services
 
             if (shoppingListItem == null)
             {
-                throw new Exception("No shopping list item found with the specified id for the given user.");
+                throw new ShoppingListItemNotFoundException(shoppingListItemId);
             }
 
             return shoppingListItem;
@@ -66,20 +81,27 @@ namespace KitchenConnection.BusinessLogic.Services
 
             if (shoppingListItem == null)
             {
-                throw new Exception("No shopping list item found with the specified id for the given user.");
+                throw new ShoppingListItemNotFoundException(shoppingListItemId);
             }
 
             string groceryShopUrl = "http://www.walmart.com/search?q=";
             string itemName = shoppingListItem.Name;
             string[] itemNameWords = itemName.Split(' ');
-            string encodedItemName = WebUtility.UrlEncode(string.Join("+", itemNameWords));
+            string encodedItemName = string.Join("+", itemNameWords);
             string finalUrl = groceryShopUrl + encodedItemName;
      
             return finalUrl;
         }
         public async Task<List<ShoppingListItem>> GetShoppingListForUser(Guid userId)
         {
-            return await _unitOfWork.Repository<ShoppingListItem>().GetByCondition(x => x.UserId == userId).ToListAsync();
+            try
+            {
+                return await _unitOfWork.Repository<ShoppingListItem>().GetByCondition(x => x.UserId == userId).ToListAsync();
+            }
+            catch(Exception ex)
+            {
+                throw new ShoppingListItemsNotFoundException();
+            }
         }
 
 
