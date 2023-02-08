@@ -13,8 +13,9 @@ namespace KitchenConnection.DataLayer.Hubs {
         }
 
 
-        public void BroadcastReview(ReviewCreateDTO review) {
-            Clients.All.SendAsync("Receivereview", review);
+        public void BroadcastReview(ReviewDTO review,Guid recipeCreatorId) {
+            Clients.Group(recipeCreatorId.ToString()).SendAsync("Receivereview", review);
         }
     }
 }
+

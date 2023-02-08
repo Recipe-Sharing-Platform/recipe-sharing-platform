@@ -20,15 +20,18 @@ namespace KitchenConnection.BusinessLogic.Services {
         private readonly IRecipeService _recipeService;
         private readonly IHubContext<NotificationHub> _hubContext;
         private readonly MessageSender _messageSender;
+        private readonly NotificationHub _notificationHub;
 
 
-        public ReviewService(IUnitOfWork unitOfWork, IMapper mapper, IRecommendationsService recommendationsService, IRecipeService recipeService, IHubContext<NotificationHub> hubContext, MessageSender messageSender) {
+        public ReviewService(IUnitOfWork unitOfWork, IMapper mapper, IRecommendationsService recommendationsService, IRecipeService recipeService, IHubContext<NotificationHub> hubContext, MessageSender messageSender, NotificationHub notificationHub)
+        {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _recommendationsService = recommendationsService;
             _recipeService = recipeService;
             _hubContext = hubContext;
             _messageSender = messageSender;
+            _notificationHub = notificationHub;
         }
 
         public async Task<ReviewDTO> Create(Guid userId, ReviewCreateDTO reviewToCreate)
@@ -63,10 +66,10 @@ namespace KitchenConnection.BusinessLogic.Services {
             review.Recipe.User = null;
             review.User.Reviews = null;
             _messageSender.SendMessage(new { User = review.User, Recipe = review.Recipe, Review = review }, "created-review-email");
+            var reviewDTO = _mapper.Map<ReviewDTO>(review);
+            _notificationHub.BroadcastReview(reviewDTO, recipeCreatorId);
 
-            await _hubContext.Clients.Group(recipeCreatorId.ToString()).SendAsync("Receivereview", review);
-
-            return _mapper.Map<ReviewDTO>(review);
+            return reviewDTO;
         }
 
         public async Task<List<ReviewDTO>> GetRecipeReviews(Guid recipeId)
